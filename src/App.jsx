@@ -64,7 +64,7 @@ const CandidateDetailsPage = lazy(() =>
 ========================= */
 const LandingPage = lazy(() => import("./page/LandingPage"));
 
-const Login = lazy(() => import("./page/Login"));
+const Login = lazy(() => import("./page/Login-Updated"));
 const Signup = lazy(() => import("./page/Signup"));
 const OtpVerification = lazy(() => import("./page/OtpVerification"));
 // const IntroAnalysisApp = lazy(() => import("./page/REsult"));
@@ -280,6 +280,10 @@ function App() {
                       <Route
                         path="result-management/view"
                         element={<IntroAnalysis />}
+                      />
+                      <Route
+                        path="user-management/:candidateId"
+                        element={<CandidateDetailsPage />}
                       />
                       <Route
                         path="profile"

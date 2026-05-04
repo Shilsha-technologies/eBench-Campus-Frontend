@@ -8,7 +8,7 @@ import useDebounce from "../../../libs/useDebounce";
 // import Loader from "../../../libs/Loader";
 // import toast from "react-hot-toast";
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
-import { useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery, useImportCandidateBySubVendorMutation, useSendTestLinkToCandidatesMutation } from "../../../redux/services/subvendorApi";
+import { useActivateInactivateUserBySubVendorMutation, useAddCandidateBySubVendorMutation, useDeleteCandidateByCandidateIdbySubVendorMutation, useGetAllCandidatesBySubVendorQuery, useImportCandidateBySubVendorMutation, useSendTestLinkToCandidatesMutation } from "../../../redux/services/subvendorApi";
 import { Tooltip } from 'react-tooltip'
 import CustomModal from "../../../libs/CustomModal";
 
@@ -821,27 +821,34 @@ export default function CandidatesPage() {
   const [selectingEnd, setSelectingEnd] = useState(false);
   const [calViewYear, setCalViewYear] = useState(new Date().getFullYear());
   const [calViewMonth, setCalViewMonth] = useState(new Date().getMonth());
+  const role = localStorage.getItem("role");
 
   const [editCandidate, setEditCandidate] = useState(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", branch: "CSE", year: "1st" });
   const [errors, setErrors] = useState({});
 
-  const [addCampusVendor, { isLoading: isVendorAdding }] = useAddCampusVendorMutation()
-  const [addImportVendor, { isLoading: isVendorImporting }] = useImportCampusVendorMutation()
-  const [activateInactivateUser, { isLoading: userLoading }] = useActiveInactiveCandidateMutation()
+  const [addCampusVendor, { isLoading: isVendorAdding }] = role === "sub_vendor"
+    ? useAddCandidateBySubVendorMutation() : useAddCampusVendorMutation()
+  const [addImportVendor, { isLoading: isVendorImporting }] = role === "sub_vendor"
+    ? useImportCandidateBySubVendorMutation() : useImportCampusVendorMutation()
+  const [activateInactivateUser, { isLoading: userLoading }] = role === "sub_vendor"
+    ? useActivateInactivateUserBySubVendorMutation() : useActiveInactiveCandidateMutation()
 
 
   // ── Bulk selection ──────────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState([]);
   const [bulkMode, setBulkMode] = useState(false);
 
-  const role = localStorage.getItem("role");
 
 
   const { data, isLoading, error } =
     role === "sub_vendor"
       ? useGetAllCandidatesBySubVendorQuery(
-        { page, pageSize, search: debouncedQuery, filterNationality, filterResidence },
+        {
+          page, pageSize, search: debouncedQuery, status: filterStatus,
+          filterNationality, filterResidence, fromDate, toDate,
+          min_cgpa: minCgpa, max_cgpa: maxCgpa
+        },
         { refetchOnMountOrArgChange: false }
       )
       : useGetAllUserByVendorQuery(
@@ -911,7 +918,7 @@ export default function CandidatesPage() {
 
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteUser, { isLoading: deleteLoading }] = useDeleteCandidateByCandidateIdMutation();
+  const [deleteUser, { isLoading: deleteLoading }] = role=="sub_vendor" ? useDeleteCandidateByCandidateIdbySubVendorMutation() : useDeleteCandidateByCandidateIdMutation();
 
   const [deleteUserDetails, setDeleteUserDetails] = useState(null);
 
@@ -974,7 +981,6 @@ export default function CandidatesPage() {
       formdata.append("department", department);
       formdata.append("is_pursuing", is_persuing ? true : false)
     }
-
     try {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
       if (result?.error) {
@@ -1226,7 +1232,10 @@ export default function CandidatesPage() {
         )} */}
 
               <button
-                onClick={() => navigate(`/vendor/candidates/${row.id}`)}
+                onClick={() => {
+                  const basePath = role === "sub_vendor" ? "/subvendor/user-management" : "/vendor/candidates";
+                  navigate(`${basePath}/${row.id}`);
+                }}
                 className="text-xs bg-gray-50 cursor-pointer text-gray-700 hover:bg-gray-100 px-2.5 py-1 rounded-lg font-medium"
                 title="View Details"
               >
@@ -1289,13 +1298,6 @@ export default function CandidatesPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => setBulkMode(true)}
-            className="bg-indigo-50 cursor-pointer text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-xl text-sm font-semibold"
-          >
-            Send Test Link
-          </button>
-
           <button
             onClick={openAdd}
             className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
@@ -1458,6 +1460,19 @@ export default function CandidatesPage() {
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        {
+          data?.candidates?.length > 0 &&
+          <div className="py-3 px-4">
+            <button
+              onClick={() => setBulkMode(!bulkMode)}
+              className="bg-indigo-50 cursor-pointer text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-xl text-sm font-semibold"
+            >
+              {bulkMode ? 'Cancel' : 'Send Test Link'}
+            </button>
+          </div>
+        }
+
+
         <Table
           columns={columns}
           data={filteredData}
@@ -1539,14 +1554,14 @@ export default function CandidatesPage() {
         <div className="relative">
           <div
             className={`absolute inset-0 rounded-lg transition-opacity duration-300 ${deleteUserDetails?.status == "active"
-                ? "bg-gradient-to-r from-red-500 to-red-600 opacity-10"
-                : "bg-gradient-to-r from-green-500 to-green-600 opacity-5"
+              ? "bg-gradient-to-r from-red-500 to-red-600 opacity-10"
+              : "bg-gradient-to-r from-green-500 to-green-600 opacity-5"
               }`}
           />
           <div
             className={`relative border rounded-xl p-3 backdrop-blur-sm ${deleteUserDetails?.status == "active"
-                ? "bg-white/90 border-red-200 shadow-red-100"
-                : "bg-white/90 border-green-200"
+              ? "bg-white/90 border-red-200 shadow-red-100"
+              : "bg-white/90 border-green-200"
               } shadow-xl`}
           >
             <div className="space-y-3">
@@ -1567,8 +1582,8 @@ export default function CandidatesPage() {
               <div className="flex justify-around items-center">
                 <div className="text-center">
                   <div className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium ${deleteUserDetails?.status == "active"
-                      ? "bg-red-50 text-red-700 border border-red-200"
-                      : "bg-green-50 text-green-700 border border-green-200"
+                    ? "bg-red-50 text-red-700 border border-red-200"
+                    : "bg-green-50 text-green-700 border border-green-200"
                     }`}>
                     {deleteUserDetails?.status == "active" ? "● Active" : "○ Inactive"}
                   </div>

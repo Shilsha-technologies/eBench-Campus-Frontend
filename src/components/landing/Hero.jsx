@@ -618,10 +618,10 @@ const THEMES = {
     ctas: [
 
       { label: "Register Your Campus", style: "primary" },
+      { label: "Login as Employee", style: "primary" },
 
       { label: "Login", style: "outline" },
 
-      // { label: "View Demo", style: "ghost" },
 
     ],
 
@@ -1214,6 +1214,15 @@ export default function HeroSection() {
 
   const [mode, setMode] = useState("campus");
 
+  // Auto-toggle between modes every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMode(prevMode => prevMode === "campus" ? "student" : "campus");
+    }, 5000); // 5 seconds interval
+
+    return () => clearInterval(interval); 
+  }, []);
+
   const theme = THEMES[mode];
 
   const navigate = useNavigate();
@@ -1365,6 +1374,8 @@ export default function HeroSection() {
                       navigate("/vendor-signup");
                     } else if (cta.label === "Login") {
                       navigate("/login");
+                    } else if (cta.label === "Login as Employee") {
+                      navigate("/employee/login");
                     }
                   }}
                 >

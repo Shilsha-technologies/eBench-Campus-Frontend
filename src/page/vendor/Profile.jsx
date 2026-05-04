@@ -1401,15 +1401,15 @@ const PhoneInput = ({
           rules={{
             required: required ? "Phone number is required" : false,
             pattern: {
-              value: /^[0-9]{7,15}$/,
-              message: "Enter a valid phone number (digits only, 7–15 digits)",
+              value: /^[0-9]{10}$/,
+              message: "Enter a valid phone number (exactly 10 digits)",
             },
           }}
           render={({ field }) => (
             <input
               {...field}
               type="tel"
-              placeholder="9000000000"
+              placeholder="9050205060"
               disabled={disable}
               className={`flex-1 px-3 py-2.5 text-sm outline-none rounded-r-xl transition-all
                 ${disable ? "bg-gray-50 text-gray-500 cursor-default" : "bg-transparent"}`}

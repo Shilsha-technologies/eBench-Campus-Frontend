@@ -4,7 +4,7 @@ export const vendorApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllUserByVendor: builder.query({
       query: ({
-        page,
+        page, 
         pageSize,
         search,
         filterNationality,
