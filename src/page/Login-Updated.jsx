@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import logo from "../assets/ebenchCampu.png";
+import logo from "../assets/eBenchCampu.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/services/authApi";
 import { useDispatch } from "react-redux";
