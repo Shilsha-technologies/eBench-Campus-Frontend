@@ -1,47 +1,8 @@
-// import React, { useState } from "react";
-// import Sidebar from "./Sidebar";
-// import Header from "./Header";
-// import DashboardHome from "../../../page/subVendor/DashboardHome";
-// import UserManagement from "../../../page/vendor/user/UserManagement";
-// // import Profile from "./Profile";
-
-// const DashboardLayout = () => {
-//   const [activeMenu, setActiveMenu] = useState("dashboard");
-
-//   const renderContent = () => {
-//     switch (activeMenu) {
-//       case "dashboard":
-//         return <DashboardHome />;
-//       case "users":
-//         return <UserManagement />;
-//       case "profile":
-//         // return <Profile />;
-//       default:
-//         return <DashboardHome />;
-//     }
-//   };
-
-//   return (
-//     <div className="flex h-screen bg-[#f4f7fb]">
-//       <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-
-//       <div className="flex-1 flex flex-col">
-//         <Header />
-//         <main className="p-8 overflow-y-auto">{renderContent()}</main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DashboardLayout;
-
-
-import  { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Outlet } from "react-router-dom";
 import { requestPermission } from "../../../redux/services/firebase";
-
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,22 +12,32 @@ const DashboardLayout = () => {
   }, []);
 
   return (
-    <div className="h-screen flex overflow-hidden bg-[#f5f7fb]">
+    <div className="min-h-screen bg-gray-50 flex">
+      
+      {/* Global Styles */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+        @keyframes fade-in { 
+          from { opacity: 0; transform: translateY(-8px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-fade-in { animation: fade-in 0.2s ease-out; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
+      `}</style>
 
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-      {/* Right Section */}
-      <div className="flex-1 flex flex-col">
-
-        {/* Header FIXED */}
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64 transition-all duration-300">
         <Header setSidebarOpen={setSidebarOpen} />
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto pt-16">
-          {/* <DashboardContent /> */}
+        <main className="flex-1 overflow-y-auto p-4">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -315,7 +315,6 @@ export default function DashboardPage() {
         <StatCard label="Tests Completed" value={testsCompleted} icon="✅" color="emerald" change={5} />
         <StatCard label="Remaining Credits" value={data?.credits} icon="💳" color="amber" />
       </div>
-
       {/* Secondary stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -341,12 +340,12 @@ export default function DashboardPage() {
       {/* Bottom row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent activity */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between p-5 border-b border-gray-100">
+        <div className="bg-white rounded-2xl border  border-gray-100 shadow-sm">
+          <div className="flex items-center sticky top-0 bg-white justify-between p-5 border-b border-gray-100">
             <h3 className="font-semibold text-gray-900">Recent Activity</h3>
             <span className="text-xs text-gray-400">Last 7 days</span>
           </div>
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y h-85 overflow-auto divide-gray-50">
             {RECENT_ACTIVITY.map((a, index) => (
               <div key={index} className="flex items-start gap-3 p-4">
                 <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm flex-shrink-0">{a.icon}</div>

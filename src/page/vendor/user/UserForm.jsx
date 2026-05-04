@@ -35,30 +35,25 @@ const validationSchema = yup.object().shape({
     // }),
 
     degree: yup.string().when([], {
-        is: () => moduleType === "campus",
         then: (schema) => schema.required("Degree is required"),
     }),
 
     specialization: yup.string().when([], {
-        is: () => moduleType === "campus",
         then: (schema) => schema.required("Specialization is required"),
     }),
 
     enrollmentYear: yup.string().when([], {
-        is: () => moduleType === "campus",
         then: (schema) => schema.required("Enrollment year required"),
     }),
 
 
     cgpa: yup.string().when([], {
-        is: () => moduleType === "campus",
         then: (schema) => schema.required("CGPA required"),
     }),
 
 
 
     department: yup.string().when([], {
-        is: () => moduleType === "campus",
         then: (schema) => schema.required("Department required"),
     }),
 });
@@ -78,7 +73,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         mode: "onBlur",
     });
 
-    console.log("idvrnfitSddming",isVendorAdding)
+    console.log("idvrnfitSddming", isVendorAdding)
     const countryCode = watch("countryCode") || "in";
     const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
     // const 
@@ -105,30 +100,26 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
 
     const handleFormSubmit = (data) => {
-        console.log("koko",data)
+        // console.log("koko", data)
         // debugger;
         const payload = {
             first_name: data.firstName,
             last_name: data.lastName,
             email: data.email,
             mobile: data.mobileNumber,
-
             birth_country: data.birthCountry?.value,
             nationality: data.nationality?.value,
             country_of_residence: data.countryOfResidence?.value,
-
-            ...(moduleType === "campus" && {
-                university_name: data.universityName,
-                college_name: data.collegeName,
-                degree: data.degree,
-                specialization: data.specialization,
-                enrollment_year: data.enrollmentYear,
-                graduation_year: data.graduationYear,
-                cgpa: data.cgpa,
-                roll_number: data.rollNumber,
-                department: data.department,
-                is_persuing: data?.isPursuing
-            }),
+            university_name: data.universityName,
+            college_name: data.collegeName,
+            degree: data.degree,
+            specialization: data.specialization,
+            enrollment_year: data.enrollmentYear,
+            graduation_year: data.graduationYear,
+            cgpa: data.cgpa,
+            roll_number: data.rollNumber,
+            department: data.department,
+            is_persuing: data?.isPursuing
         };
 
         onSubmit(payload, false);
@@ -299,45 +290,31 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                         )}
                     </div>
 
-                    {moduleType === "campus" && (
-                        <>
-                           
-                            {/* Degree */}
-                            {/* <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Degree</label>
-                                <input {...register("degree")}
-                                    className={`w-full border rounded-lg p-2 outline-none ${errors.degree ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    placeholder="Degree Name"
-                                />
-                                {errors.degree && <p className="text-sm text-red-500 mt-1">{errors.degree.message}</p>}
-                            </div> */}
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Degree</label>
+                        <select
+                            {...register("degree")}
+                            className={`w-full border rounded-lg p-2 outline-none ${errors.degree ? "border-red-500" : "border-gray-300"
+                                }`}
+                        >
+                            <option value="">
+                                {degLoading ? "Loading..." : "Select Degree"}
+                            </option>
 
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Degree</label>
-                                <select
-                                    {...register("degree")}
-                                    className={`w-full border rounded-lg p-2 outline-none ${errors.degree ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                >
-                                    <option value="">
-                                        {degLoading ? "Loading..." : "Select Degree"}
-                                    </option>
+                            {degrees?.data?.length > 0 && degrees?.data?.map((deg) => (
+                                <option key={deg.id} value={deg.name}>
+                                    {deg.name}
+                                </option>
+                            ))}
+                        </select>
 
-                                    {degrees?.data?.length > 0 && degrees?.data?.map((deg) => (
-                                        <option key={deg.id} value={deg.name}>
-                                            {deg.name}
-                                        </option>
-                                    ))}
-                                </select>
+                        {errors.degree && (
+                            <p className="text-sm text-red-500 mt-1">{errors.degree.message}</p>
+                        )}
+                    </div>
 
-                                {errors.degree && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.degree.message}</p>
-                                )}
-                            </div>
-
-                            {/* Department */}
-                            {/* <div>
+                    {/* Department */}
+                    {/* <div>
                                 <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
                                 <input {...register("department")}
 
@@ -347,31 +324,31 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                 />
                                 {errors.department && <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>}
                             </div> */}
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
-                                <select
-                                    {...register("department")}
-                                    className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.department ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                >
-                                    <option value="">
-                                        {deptLoading ? "Loading..." : "Select Department"}
-                                    </option>
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
+                        <select
+                            {...register("department")}
+                            className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.department ? "border-red-500" : "border-gray-300"
+                                }`}
+                        >
+                            <option value="">
+                                {deptLoading ? "Loading..." : "Select Department"}
+                            </option>
 
-                                    {departments?.data?.length > 0 && departments?.data?.map((dept) => (
-                                        <option key={dept.name} value={dept.id}>
-                                            {dept.name}
-                                        </option>
-                                    ))}
-                                </select>
+                            {departments?.data?.length > 0 && departments?.data?.map((dept) => (
+                                <option key={dept.name} value={dept.id}>
+                                    {dept.name}
+                                </option>
+                            ))}
+                        </select>
 
-                                {errors.department && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>
-                                )}
-                            </div>
+                        {errors.department && (
+                            <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>
+                        )}
+                    </div>
 
-                            {/* Specialization */}
-                            {/* <div>
+                    {/* Specialization */}
+                    {/* <div>
                                 <label className="font-medium text-sm text-gray-700 mb-1">Specialization</label>
                                 <input {...register("specialization")}
                                     className={`w-full border rounded-lg p-2 outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"
@@ -380,61 +357,61 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                 />
                                 {errors.specialization && <p className="text-sm text-red-500 mt-1">{errors.specialization.message}</p>}
                             </div> */}
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">
-                                    Specialization
-                                </label>
-                                <select
-                                    {...register("specialization")}
-                                    className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                >
-                                    <option value="">
-                                        {specLoading ? "Loading..." : "Select Specialization"}
-                                    </option>
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">
+                            Specialization
+                        </label>
+                        <select
+                            {...register("specialization")}
+                            className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"
+                                }`}
+                        >
+                            <option value="">
+                                {specLoading ? "Loading..." : "Select Specialization"}
+                            </option>
 
-                                    {specializations?.data?.length > 0 && specializations?.data?.map((spec) => (
-                                        <option key={spec.name} value={spec.id}>
-                                            {spec.name}
-                                        </option>
-                                    ))}
-                                </select>
+                            {specializations?.data?.length > 0 && specializations?.data?.map((spec) => (
+                                <option key={spec.name} value={spec.id}>
+                                    {spec.name}
+                                </option>
+                            ))}
+                        </select>
 
-                                {errors.specialization && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.specialization.message}
-                                    </p>
-                                )}
-                            </div>
+                        {errors.specialization && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.specialization.message}
+                            </p>
+                        )}
+                    </div>
 
-                            {/* Enrollment Year */}
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Enrollment (Month / Year)</label>
+                    {/* Enrollment Year */}
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Enrollment (Month / Year)</label>
 
-                                <input
-                                    type="month"
-                                    placeholder="Month Year"
-                                    {...register("enrollmentYear")}
-                                    className={`w-full border rounded-lg p-2 text-gray-500 outline-none 
+                        <input
+                            type="month"
+                            placeholder="Month Year"
+                            {...register("enrollmentYear")}
+                            className={`w-full border rounded-lg p-2 text-gray-500 outline-none 
     ${errors.enrollmentYear ? "border-red-500" : "border-gray-300"}`}
-                                />
-                                <label
-                                    className="absolute left-2 top-2 text-gray-400 text-sm 
+                        />
+                        <label
+                            className="absolute left-2 top-2 text-gray-400 text-sm 
     transition-all peer-focus:-top-2 peer-focus:text-xs 
     peer-focus:text-[#286a94] peer-valid:-top-2 peer-valid:text-xs bg-white px-1"
-                                >
-                                    Month & Year
-                                </label>
+                        >
+                            Month & Year
+                        </label>
 
-                                {errors.enrollmentYear && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.enrollmentYear.message}
-                                    </p>
-                                )}
-                            </div>
+                        {errors.enrollmentYear && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.enrollmentYear.message}
+                            </p>
+                        )}
+                    </div>
 
-                            {/* Graduation Year */}
-                            {/* <div>
+                    {/* Graduation Year */}
+                    {/* <div>
                                 <label>Graduation Date</label>
                                 <input type="date" {...register("graduationYear")}
                                     className={`w-full border rounded-lg p-2 outline-none text-gray-500 ${errors.graduationYear ? "border-red-500" : "border-gray-300"
@@ -442,82 +419,81 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                 />
                                 {errors.graduationYear && <p className="text-sm text-red-500 mt-1">{errors.graduationYear.message}</p>}
                             </div> */}
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Graduation (Month / Year)
-                                </label>
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Graduation (Month / Year)
+                        </label>
 
-                                {/* Month Input */}
-                                <input
-                                    type="month"
-                                    {...register("graduationYear")}
-                                    disabled={watch("isPursuing")}
-                                    className={`w-full border rounded-lg p-2 outline-none text-gray-500
+                        {/* Month Input */}
+                        <input
+                            type="month"
+                            {...register("graduationYear")}
+                            disabled={watch("isPursuing")}
+                            className={`w-full border rounded-lg p-2 outline-none text-gray-500
     ${errors.graduationYear ? "border-red-500" : "border-gray-300"}
     ${watch("isPursuing") ? "bg-gray-100 cursor-not-allowed" : ""}`}
-                                />
+                        />
 
-                                {/* Still Pursuing */}
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="pursuing"
-                                        placeholder="Month Year"
-                                        checked={watch("isPursuing")}
-                                        onChange={(e) => {
-                                            const checked = e.target.checked;
-                                            setValue("isPursuing", checked);
+                        {/* Still Pursuing */}
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="pursuing"
+                                placeholder="Month Year"
+                                checked={watch("isPursuing")}
+                                onChange={(e) => {
+                                    const checked = e.target.checked;
+                                    setValue("isPursuing", checked);
 
-                                            // Clear date if pursuing
-                                            if (checked) {
-                                                setValue("graduationYear", "");
-                                            }
-                                        }}
-                                    />
-                                    <label htmlFor="pursuing" className="text-sm text-gray-600">
-                                        Still Pursuing
-                                    </label>
-                                </div>
+                                    // Clear date if pursuing
+                                    if (checked) {
+                                        setValue("graduationYear", "");
+                                    }
+                                }}
+                            />
+                            <label htmlFor="pursuing" className="text-sm text-gray-600">
+                                Still Pursuing
+                            </label>
+                        </div>
 
-                                {/* Error */}
-                                {errors.graduationYear && (
-                                    <p className="text-sm text-red-500 mt-1">
-                                        {errors.graduationYear.message}
-                                    </p>
-                                )}
-                            </div>
+                        {/* Error */}
+                        {errors.graduationYear && (
+                            <p className="text-sm text-red-500 mt-1">
+                                {errors.graduationYear.message}
+                            </p>
+                        )}
+                    </div>
 
-                            {/* CGPA */}
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">CGPA</label>
-                                <input {...register("cgpa")}
-                                    className={`w-full border rounded-lg p-2 outline-none ${errors.cgpa ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    placeholder="CGPA"
-                                />
-                                {errors.cgpa && <p className="text-sm text-red-500 mt-1">{errors.cgpa.message}</p>}
-                            </div>
+                    {/* CGPA */}
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">CGPA</label>
+                        <input {...register("cgpa")}
+                            className={`w-full border rounded-lg p-2 outline-none ${errors.cgpa ? "border-red-500" : "border-gray-300"
+                                }`}
+                            placeholder="CGPA"
+                        />
+                        {errors.cgpa && <p className="text-sm text-red-500 mt-1">{errors.cgpa.message}</p>}
+                    </div>
 
-                            {/* Roll Number */}
-                            <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Roll Number (Optional)</label>
-                                <input {...register("rollNumber")}
-                                    className={`w-full border rounded-lg p-2 outline-none ${errors.rollNumber ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    placeholder="Roll Number"
-                                />
-                                {errors.rollNumber && <p className="text-sm text-red-500 mt-1">{errors.rollNumber.message}</p>}
-                            </div>
+                    {/* Roll Number */}
+                    <div>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Roll Number (Optional)</label>
+                        <input {...register("rollNumber")}
+                            className={`w-full border rounded-lg p-2 outline-none ${errors.rollNumber ? "border-red-500" : "border-gray-300"
+                                }`}
+                            placeholder="Roll Number"
+                        />
+                        {errors.rollNumber && <p className="text-sm text-red-500 mt-1">{errors.rollNumber.message}</p>}
+                    </div>
 
 
-                        </>
-                    )}
+
 
                     {/* Buttons */}
                     <div className="col-span-3 flex justify-end gap-4 pt-4">
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="px-4 cursor-pointer py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
                             {isVendorAdding ? 'Saving...' : 'Save User'}
                         </button>

@@ -66,6 +66,13 @@ function Navbar({ nav }) {
             Log in
           </button>
 
+          {/* <button
+            onClick={() => navigate("/employee-login")}
+            className="text-sm cursor-pointer font-semibold text-blue-500 px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            Login Employee
+          </button> */}
+
           <button
             onClick={() => navigate("/vendor-signup")}
             className="text-sm cursor-pointer font-bold text-white px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-sky-400 shadow-[0_6px_20px_rgba(43,127,255,0.35)] hover:shadow-[0_8px_24px_rgba(43,127,255,0.45)] hover:-translate-y-0.5 transition-all"

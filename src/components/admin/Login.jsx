@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Header from "../../page/Header";
 import { useAdminLoginMutation } from "../../redux/services/adminApi";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
@@ -52,7 +51,6 @@ export default function AdminLoginPage() {
 
     return (
         <div className="min-h-screen w-full bg-white flex flex-col">
-            <Header />
             <div className="flex flex-col md:flex-row  flex-1">
                 {/* Left Section */}
                 <LeftScreen/>

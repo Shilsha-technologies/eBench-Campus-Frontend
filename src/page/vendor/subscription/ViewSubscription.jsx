@@ -261,6 +261,7 @@ export const MySubscriptions = () => {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
+      <p className="text-sm  text-blue-900">{`Sending a test link costs ${data?.data?.credits_per_test_link??0} credit. Your available credits will be reduced accordingly.`}</p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {headerDetail?.map((stat) => (
           <div key={stat.label} className="rounded-lg border border-gray-100 bg-white p-5 shadow-sm">

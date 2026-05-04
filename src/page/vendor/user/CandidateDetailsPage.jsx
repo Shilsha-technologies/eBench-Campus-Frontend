@@ -1,15 +1,27 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCandidateByIdQuery } from "../../../redux/services/vendorApi";
+import { useGetCandidateByIdBySubVendorQuery } from "../../../redux/services/subvendorApi";
 import { ArrowLeft, User, Mail, Phone, Calendar, GraduationCap, Award, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, PlayCircle, Download, Eye } from "lucide-react";
 
 export default function CandidateDetailsPage() {
   const { candidateId } = useParams();
   const navigate = useNavigate();
   
-  const { data: candidateData, isLoading, error } = useGetCandidateByIdQuery(candidateId, {
-    skip: !candidateId
+  // Get user role from localStorage
+  const role = localStorage.getItem('role');
+  
+  // Use appropriate API based on role
+  const vendorQuery = useGetCandidateByIdQuery(candidateId, {
+    skip: !candidateId || role !== 'vendor'
   });
+  
+  const subvendorQuery = useGetCandidateByIdBySubVendorQuery(candidateId, {
+    skip: !candidateId || role !== 'sub_vendor'
+  });
+  
+  // Select the appropriate query result based on role
+  const { data: candidateData, isLoading, error } = role === 'sub_vendor' ? subvendorQuery : vendorQuery;
 
   const candidate = candidateData?.candidate;
   console.log("candidate", candidate)

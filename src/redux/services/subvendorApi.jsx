@@ -65,8 +65,41 @@ export const SubvendorApi = api.injectEndpoints({
       invalidatesTags: ['Candidates'],
     }),
     getAllCandidatesBySubVendor: builder.query({
-      query: ({ page, pageSize, search, filterNationality, filterResidence }) => ({
-        url: `/subvendor/candidates?search=${search}&nationality=${filterNationality}&country_of_residence=${filterResidence}&page=${page}&limit=${pageSize}`,
+      query: (
+        {
+           page,
+        pageSize,
+        search,
+        filterNationality,
+        filterResidence,
+        status,
+        university,
+        degree,
+        min_cgpa,
+        max_cgpa,
+        fromDate,
+        toDate,
+        sortBy,
+        sortOrder,
+        }
+      ) => ({
+         url: `/subvendor/candidates`,
+         params: {
+          search,
+          nationality: filterNationality,
+          country: filterResidence,
+          status_filter: status,
+          university_name: university,
+          degree,
+          min_cgpa,
+          max_cgpa,
+          from_date: fromDate,
+          to_date: toDate,
+          sort_by: sortBy,
+          sort_order: sortOrder,
+          page,
+          limit: pageSize,
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -150,6 +183,37 @@ export const SubvendorApi = api.injectEndpoints({
         method: "GET"
       })
     }),
+    deleteCandidateByCandidateIdbySubVendor: builder.mutation({
+      query: (candidateId) => ({
+        url: `/subvendor/candidate/${candidateId}`,
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      invalidatesTags: ["Candidates"]
+    }),
+    getCandidateByIdBySubVendor: builder.query({
+      query: (candidateId) => ({
+        url: `/subvendor/candidate/${candidateId}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: ["Subvendor"],
+    }),
+    activateInactivateUserBySubVendor: builder.mutation({
+      query: (data) => ({
+        url: '/subvendor/candidates/status',
+        method: "PATCH",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        }
+      }),
+      invalidatesTags: ['Subvendor','subvendorDashboard'],
+    }),
     subVendorLogout:builder.mutation({
       query:() =>({
         url:`/subvendor/logout`,
@@ -162,6 +226,6 @@ export const SubvendorApi = api.injectEndpoints({
   })
 })
 
-export const { useSubvendorDashboardApiQuery, useResultManagementDetailBySubVendorQuery,useViewResultByUserIdBySubVendorQuery, useEmployeeLoginMutation,useSendTestLinkToCandidatesMutation, useImportCandidateBySubVendorMutation, useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery,
+export const { useSubvendorDashboardApiQuery, useDeleteCandidateByCandidateIdbySubVendorMutation, useResultManagementDetailBySubVendorQuery,useViewResultByUserIdBySubVendorQuery, useEmployeeLoginMutation,useSendTestLinkToCandidatesMutation, useImportCandidateBySubVendorMutation, useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery,
   useSubVendorChangePasswordMutation, useSubVendorResetPasswordMutation,useSubVendorLogoutMutation,useSubVendorResetPasswordApproveMutation,
-  useGetOrganisationDetailQuery,useSubvendorProfileQuery, } = SubvendorApi
+  useGetOrganisationDetailQuery,useSubvendorProfileQuery,useGetCandidateByIdBySubVendorQuery,useActivateInactivateUserBySubVendorMutation } = SubvendorApi
