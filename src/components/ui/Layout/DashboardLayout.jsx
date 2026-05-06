@@ -214,7 +214,7 @@ export function Sidebar({ isOpen, onClose }) {
     { to: "/vendor/candidates", label: "Candidates", icon: "", end: false },
     { to: "/vendor/results", label: "Test & Results", icon: "", end: false },
     { to: "/vendor/subscription/view", label: "Subscription", icon: "", end: false },
-    { to: "/vendor/employee", label: "Employees", icon: "", end: false },
+    { to: "/vendor/employee", label: "Role Management", icon: "", end: false },
     { to: "/vendor/profile", label: "Campus Profile", icon: "", end: false },
   ];
 
@@ -368,7 +368,7 @@ export function Sidebar({ isOpen, onClose }) {
           <button
             onClick={handleLogout}
             disabled={isLoading}
-            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full cursor-pointer flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

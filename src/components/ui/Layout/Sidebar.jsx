@@ -230,6 +230,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, role = "admin" }) => {
       icon: Gem,
     },
     {
+      to: "/admin/campus-management",
+      label: "Campus Management",
+      icon: Users,
+    },
+    {
       label: "Subscription",
       icon: Gem,
       submenu: [

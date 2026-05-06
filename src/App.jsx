@@ -13,6 +13,8 @@ import AdminForgetPassword from "./components/admin/AdminForgetPassword";
 import { AuthProvider } from "./libs/AuthProvider";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import { StudentProvider } from "./context/StudentContext";
+import StudentTestButton from "./components/test/StudentTestButton";
 
 /* =========================
     Lazy Loaded Layout
@@ -37,6 +39,18 @@ const SubscriptionList = lazy(() =>
   import("./components/admin/SubscriptionList")
 );
 const AdminLoginPage = lazy(() => import("./components/admin/Login"));
+const CampusManagement = lazy(() =>
+  import("./components/admin/CampusManagement")
+);
+const CampusStudents = lazy(() =>
+  import("./components/admin/CampusStudents")
+);
+const CampusDetail = lazy(() =>
+  import("./components/admin/CampusDetail")
+);
+const CampusEmployees = lazy(() =>
+  import("./components/admin/CampusEmployees")
+);
 
 /* =========================
    Lazy Loaded Vendor Pages
@@ -96,6 +110,17 @@ const ViewSubVendorDetails = lazy(() => import('./page/vendor/role/ViewSubVendor
 
 const DashboardSubVendorLayout = lazy(() => import('./components/subvendor/DashboardLayout/DashboardLayout'))
 const ProfileSection=lazy(() =>import('./page/subVendor/SubVendorProfile'))
+
+/* =========================
+   Lazy Loaded Student Pages
+========================= */
+const StudentDashboardLayout = lazy(() => import('./components/student/DashboardLayout'));
+const StudentDashboard = lazy(() => import('./page/student/Dashboard'));
+const StudentRequestTest = lazy(() => import('./page/student/RequestTest'));
+const StudentTestHistory = lazy(() => import('./page/student/TestHistory'));
+const StudentResults = lazy(() => import('./page/student/Results'));
+const StudentCredits = lazy(() => import('./page/student/Credits'));
+const StudentProfile = lazy(() => import('./page/student/Profile'));
 /* =========================
    App Component
 ========================= */ //110011
@@ -132,6 +157,8 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+        {/* Development testing button - placed inside Router */}
+        {/* <StudentTestButton /> */}
         <AppErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -217,6 +244,22 @@ function App() {
                         path="vendor-management"
                         element={<VendorManagement />}
                       />
+                      <Route
+                        path="campus-management"
+                        element={<CampusManagement />}
+                      />
+                      <Route
+                        path="campus/:campusId"
+                        element={<CampusDetail />}
+                      />
+                      <Route
+                        path="campus/:campusId/students"
+                        element={<CampusStudents />}
+                      />
+                      <Route
+                        path="campus/:campusId/employees"
+                        element={<CampusEmployees />}
+                      />
                     </Route>
 
                     {/* ===== Vendor Routes ===== */}
@@ -257,7 +300,7 @@ function App() {
                         path="candidates/:candidateId"
                         element={<CandidateDetailsPage />}
                       />
-                      <Route path="role-management/view" element={<ViewSubVendorDetails />} />
+                      <Route path="employee/view" element={<ViewSubVendorDetails />} />
                     </Route>
 
                     {/* ===== Sub Vendor Routes ===== */}
@@ -289,6 +332,27 @@ function App() {
                         path="profile"
                         element={<ProfileSection />}
                       />
+                    </Route>
+
+                    {/* ===== Student Routes ===== */}
+                    <Route
+                      path="/student/*"
+                      element={
+                        <AppErrorBoundary>
+                          <ProtectedRoute allowedRoles={["student"]}>
+                            <StudentProvider>
+                              <StudentDashboardLayout />
+                            </StudentProvider>
+                          </ProtectedRoute>
+                        </AppErrorBoundary>
+                      }
+                    >
+                      <Route path="dashboard" element={<StudentDashboard />} />
+                      <Route path="request" element={<StudentRequestTest />} />
+                      <Route path="history" element={<StudentTestHistory />} />
+                      <Route path="results" element={<StudentResults />} />
+                      <Route path="credits" element={<StudentCredits />} />
+                      <Route path="profile" element={<StudentProfile />} />
                     </Route>
                   </Routes>
                 </AuthProvider>

@@ -18,6 +18,7 @@ export const vendorApi = api.injectEndpoints({
         toDate,
         sortBy,
         sortOrder,
+        owner_filter,
       }) => ({
         url: `/campus/candidates`,
         params: {
@@ -33,6 +34,7 @@ export const vendorApi = api.injectEndpoints({
           to_date: toDate,
           sort_by: sortBy,
           sort_order: sortOrder,
+          owner_filter,
           page,
           limit: pageSize,
         },
@@ -429,6 +431,16 @@ export const vendorApi = api.injectEndpoints({
       }),
       providesTags: ["Vendor"],
     }),
+    getCandidateOwnerDropdown: builder.query({
+      query: () => ({
+        url: `/campus/candidate-owner-dropdown`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: ["Vendor"],
+    }),
   }),
 });
 
@@ -439,5 +451,5 @@ export const { useAddonCreditsCheckoutMutation, useChangePasswordMutation, useGe
   useUpdateBranchDetailsMutation, useGetSubscriptionDetailQuery, useLazyGetSubscriptionDetailQuery,
   useSelectVendorSubscriptionMutation, useViewSubscriptionListQuery, useVendorDashboardApiQuery,
   useResultManagementDataQuery, useViewResultByUserIdQuery, useDownloadCandidateResultMutation,
-  useLogoutMutation, useAddCampusVendorMutation, useImportCampusVendorMutation, useActiveInactiveCandidateMutation, useGetCandidateByIdQuery
+  useLogoutMutation, useAddCampusVendorMutation, useImportCampusVendorMutation, useActiveInactiveCandidateMutation, useGetCandidateByIdQuery, useGetCandidateOwnerDropdownQuery
 } = vendorApi;

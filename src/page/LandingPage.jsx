@@ -8,6 +8,7 @@ import UserSegments from '../components/landing/UserSegments';
 import FreeTrial from '../components/landing/FreeTrial';
 import Testimonials from '../components/landing/Testimonials';
 import Footer from '../components/landing/Footer';
+import ContactPage from '../components/landing/ContactUs';
 
 const LandingPage = () => {
     const nav = () => { window.scrollTo(0, 0); };
@@ -21,6 +22,7 @@ const LandingPage = () => {
       <Features />
       <UserSegments nav={nav} />
       <FreeTrial nav={nav} />
+      <ContactPage/>
       <Testimonials />
       <Footer nav={nav} />
     </div>

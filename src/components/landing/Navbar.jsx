@@ -39,6 +39,8 @@ function Navbar({ nav }) {
     { label: "Features", id: "features" },
     { label: "How It Works", id: "how-it-works" },
     { label: "Review", id: "review" },
+    { label: "Contact Us", id: "contact-section" },
+
   ];
 
   return (

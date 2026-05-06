@@ -670,7 +670,7 @@ function StatusBadge({ status }) {
   const isActive = status ? "active" : "deactive";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${
+      className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font- tracking-wide ${
         isActive
           ? "bg-emerald-100 text-emerald-700"
           : "bg-red-100 text-red-600"
@@ -846,46 +846,6 @@ export default function EmployeeProfile() {
     <div className=" bg-gradient-to-br from-slate-100 via-indigo-50 to-slate-100 p-4  font-sans">
       <div className="max-w-5xl mx-auto space-y-5">
 
-        {/* ── HEADER ── */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
-            >
-              <ArrowLeft size={16} />
-              Back
-            </button>
-            <div className="w-1 h-10 rounded-full bg-indigo-500 hidden sm:block" />
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-slate-800 leading-tight">
-                {subvendor.name}
-              </h1>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 tracking-wide">
-                  College Employee
-                </span>
-                <StatusBadge status={subvendor?.active} />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-3">
-            <button 
-              onClick={() => setChangePasswordOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-medium cursor-pointer text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors duration-200"
-            >
-              <Key size={16} />
-              Change Password
-            </button>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Last updated: {formatDate(subvendor.created_at)}
-            </div>
-          </div>
-        </div>
-
         {/* ── MAIN GRID ── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
@@ -893,7 +853,7 @@ export default function EmployeeProfile() {
           <div className="md:col-span-1">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               {/* gradient banner */}
-              <div className="h-20 bg-gradient-to-r from-indigo-500 to-violet-500 relative">
+              <div className="h-20 bg-gradient-to-r from-[#042C53] to-[#185FA5] relative">
                 <div className="absolute inset-0 opacity-20"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='1.5' fill='white'/%3E%3C/svg%3E")`,
@@ -906,13 +866,24 @@ export default function EmployeeProfile() {
                 </div>
                 <div className="text-center mb-5">
                   <p className="font-bold text-slate-800 text-base">{subvendor.name}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Sub-Vendor · College Staff</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Sub-Vendor  
+                    <span className="mx-3 text-xs">
+                      <StatusBadge status={subvendor?.active} />
+                    </span>                   
+                  </p>
                 </div>
                 <div className="space-y-0 divide-y divide-slate-100">
                   <InfoRow label="Email" value={subvendor.email} copyable icon={icons.email} />
                   <InfoRow label="Phone" value={subvendor.phone || "Not Available"} copyable icon={icons.phone} />
                   <InfoRow label="Gender" value={subvendor.gender} icon={icons.person} />
                   <InfoRow label="Country" value={subvendor.country} icon={icons.globe} />
+                   <button 
+              onClick={() => setChangePasswordOpen(true)}
+              className="flex items-center mt-5 mx-auto gap-2 px-4 py-2 text-xs font-medium cursor-pointer text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors duration-200"
+            >
+              <Key size={16} />
+              Change Password
+            </button>
                 </div>
               </div>
             </div>
@@ -941,7 +912,7 @@ export default function EmployeeProfile() {
 
             {/* College / Vendor Info */}
             <SectionCard
-              title="College (Vendor) Information"
+              title="Admin Information"
               icon={icons.building}
             >
               <div className="flex items-center gap-4 mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">

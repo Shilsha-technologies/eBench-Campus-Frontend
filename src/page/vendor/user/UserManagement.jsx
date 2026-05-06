@@ -9,6 +9,7 @@ import useDebounce from "../../../libs/useDebounce";
 // import toast from "react-hot-toast";
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
 import { useActivateInactivateUserBySubVendorMutation, useAddCandidateBySubVendorMutation, useDeleteCandidateByCandidateIdbySubVendorMutation, useGetAllCandidatesBySubVendorQuery, useImportCandidateBySubVendorMutation, useSendTestLinkToCandidatesMutation } from "../../../redux/services/subvendorApi";
+import { useGetCandidateOwnerDropdownQuery } from "../../../redux/services/vendorApi";
 import { Tooltip } from 'react-tooltip'
 import CustomModal from "../../../libs/CustomModal";
 
@@ -794,11 +795,14 @@ const MOCK_CANDIDATES = [
 // }
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { Eye } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Eye, Download } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function CandidatesPage() {
   const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+  const sub_vendor_id = searchParams.get("sub_vendor_id")
   const [candidates, setCandidates] = useState(MOCK_CANDIDATES);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -811,7 +815,8 @@ export default function CandidatesPage() {
   const [filterTestStatus, setFilterTestStatus] = useState("all");
   const [sortScore, setSortScore] = useState("none");
   const [showModal, setShowModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -821,6 +826,7 @@ export default function CandidatesPage() {
   const [selectingEnd, setSelectingEnd] = useState(false);
   const [calViewYear, setCalViewYear] = useState(new Date().getFullYear());
   const [calViewMonth, setCalViewMonth] = useState(new Date().getMonth());
+  const [ownerFilter, setOwnerFilter] = useState("all");
   const role = localStorage.getItem("role");
 
   const [editCandidate, setEditCandidate] = useState(null);
@@ -841,6 +847,8 @@ export default function CandidatesPage() {
 
 
 
+  const { data: ownerDropdownData } = role === "sub_vendor" ? { dropdown: [] } : useGetCandidateOwnerDropdownQuery();
+
   const { data, isLoading, error } =
     role === "sub_vendor"
       ? useGetAllCandidatesBySubVendorQuery(
@@ -855,7 +863,7 @@ export default function CandidatesPage() {
         {
           page, pageSize, search: debouncedQuery, status: filterStatus,
           filterNationality, filterResidence, fromDate, toDate,
-          min_cgpa: minCgpa, max_cgpa: maxCgpa
+          min_cgpa: minCgpa, max_cgpa: maxCgpa, owner_filter: ownerFilter
         },
         { refetchOnMountOrArgChange: false }
       );
@@ -897,9 +905,7 @@ export default function CandidatesPage() {
     setSelectedIds(isAllSelected ? [] : filteredData?.filter((c) => c?.testSent === false && c?.cooldown_active === false).map(c => c.id));
   };
   // ────────────────────────────────────────────────────────────
-
-
-  const branches = [...new Set(candidates.map(c => c.branch))];
+  console.log("lop",selectedIds)
 
 
   const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
@@ -913,12 +919,22 @@ export default function CandidatesPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQuery, filterNationality, filterStatus, pageSize, fromDate, toDate, minCgpa, maxCgpa]);
+  }, [debouncedQuery, filterNationality, filterStatus, pageSize, fromDate, toDate, minCgpa, maxCgpa, ownerFilter]);
 
+  // Handle URL parameter for automatic filtering
+  useEffect(() => {
+    if (sub_vendor_id && ownerDropdownData?.dropdown) {
+      // Find the owner filter value that matches the sub_vendor_id
+      const matchedOwner = ownerDropdownData.dropdown.find(item => item.value === sub_vendor_id);
+      if (matchedOwner) {
+        setOwnerFilter(sub_vendor_id);
+      }
+    }
+  }, [sub_vendor_id, ownerDropdownData]);
 
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteUser, { isLoading: deleteLoading }] = role=="sub_vendor" ? useDeleteCandidateByCandidateIdbySubVendorMutation() : useDeleteCandidateByCandidateIdMutation();
+  const [deleteUser, { isLoading: deleteLoading }] = role == "sub_vendor" ? useDeleteCandidateByCandidateIdbySubVendorMutation() : useDeleteCandidateByCandidateIdMutation();
 
   const [deleteUserDetails, setDeleteUserDetails] = useState(null);
 
@@ -1029,7 +1045,7 @@ export default function CandidatesPage() {
     }
   }
 
-  console.log("deactive-model", deleteUserDetails);
+  // console.log("deactive-model", deleteUserDetails);
 
   const openAdd = () => {
     setEditCandidate(null);
@@ -1045,7 +1061,7 @@ export default function CandidatesPage() {
 
   const handleBulkSendTest = async () => {
 
-    console.log("selectedIds", selectedIds);
+    // console.log("selectedIds", selectedIds);
     if (!selectedIds.length) return;
 
 
@@ -1064,6 +1080,31 @@ export default function CandidatesPage() {
     } catch (err) {
       console.log("error", err);
       toast.error(err?.data?.message ?? "Failed to send link");
+    }
+  };
+
+  const handleDownloadReference = async () => {
+    setIsDownloading(true);
+    try {
+      // API call to download reference CSV
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/campus/sample-csv`);
+      if (!response.ok) {
+        throw new Error('Failed to download reference file');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'candidate_reference_template.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      toast.error('Failed to download reference file. Please try again.');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -1286,7 +1327,7 @@ export default function CandidatesPage() {
     },
   ];
 
-  console.log("jo-code", minCgpa, maxCgpa);
+  // console.log("jo-code", minCgpa, maxCgpa);
 
   return (
     <div className="p-2 space-y-6">
@@ -1300,17 +1341,28 @@ export default function CandidatesPage() {
         <div className="flex gap-2">
           <button
             onClick={openAdd}
-            className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
+            className={`${role === "sub_vendor" ? "bg-[#185FA5] hover:bg-[#0C447C]" : "bg-indigo-600 hover:bg-indigo-700"} cursor-pointer text-white px-4 py-2 rounded-xl text-sm transition-colors`}
           >
             + Add Candidate
           </button>
 
           <label onClick={() => setShowImportModal(true)}
-            className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
+            className={`${role === "sub_vendor" ? "bg-[#185FA5] hover:bg-[#0C447C]" : "bg-indigo-600 hover:bg-indigo-700"} cursor-pointer text-white px-4 py-2 rounded-xl text-sm  transition-colors`}
           >
             Import CSV
           </label>
+          <button
+            className={`${role === "sub_vendor" ? "bg-[#185FA5] hover:bg-[#0C447C]" : "bg-indigo-600 hover:bg-indigo-700"} cursor-pointer text-white px-4 py-2 rounded-xl text-sm  flex items-center gap-2 transition-colors`}
+
+            onClick={handleDownloadReference}
+            disabled={isDownloading}
+          >
+            <Download size={16} />
+            {isDownloading ? 'Downloading...' : 'reference CSV File'}
+          </button>
         </div>
+
+
       </div>
 
       {/* Filters */}
@@ -1337,8 +1389,7 @@ export default function CandidatesPage() {
           <option value="">Nationality (All)</option>
           {countryData?.data?.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}
         </select>
-
-        {/* Date Range Picker */}
+          {/* Date Range Picker */}
         <div className="relative">
           <button onClick={() => setShowCalendar(p => !p)}
             className={`border rounded-xl px-3 py-2.5 text-sm bg-white min-w-[200px] text-left
@@ -1411,6 +1462,18 @@ export default function CandidatesPage() {
           )}
         </div>
 
+
+        {/* Owner Filter */}
+        {role !== "sub_vendor" && (
+          <select value={ownerFilter} onChange={(e) => setOwnerFilter(e.target.value)}
+            className="border max-w-48 outline-none border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            {ownerDropdownData?.dropdown?.map((item) => (
+              <option key={item.value} value={item.value}>{item.label}</option>
+            ))}
+          </select>
+        )}
+
+      
         {/* CGPA Range Dropdown */}
         <select
           onChange={(e) => {
@@ -1464,7 +1527,7 @@ export default function CandidatesPage() {
           data?.candidates?.length > 0 &&
           <div className="py-3 px-4">
             <button
-              onClick={() => setBulkMode(!bulkMode)}
+              onClick={() => [setBulkMode(!bulkMode),setSelectedIds([])]}
               className="bg-indigo-50 cursor-pointer text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-xl text-sm font-semibold"
             >
               {bulkMode ? 'Cancel' : 'Send Test Link'}
