@@ -1697,6 +1697,58 @@ export default function ProfilePage() {
               {...register("address", { required: "Address is required" })}
             />
 
+
+            {/* State Dropdown */}
+            <Controller
+              name="state"
+              control={control}
+              rules={{ required: "State is required" }}
+              render={({ field }) => (
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    State <span className="text-red-500 ml-0.5">*</span>
+                  </label>
+                  <select
+                    {...field}
+                    disabled={!isEditing || loadingStates}
+                    value={selectedState}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value);
+                      handleStateChange(value);
+                    }}
+                    className={`px-3 py-2.5 rounded-xl border text-sm outline-none transition-all
+                      ${!isEditing || loadingStates
+                        ? "bg-gray-50 text-gray-500 cursor-default border-gray-100"
+                        : errors.state
+                          ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                          : "border-gray-200 bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                      }`}
+                  >
+                    <option value="">Select State</option>
+                    {states.map((state) => (
+                      <option key={state.iso2} value={state.iso2}>
+                        {state.name}
+                      </option>
+                    ))}
+                  </select>
+                  {loadingStates && (
+                    <span className="text-xs text-gray-500">Loading states...</span>
+                  )}
+                  {statesError && (
+                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
+                      <span>⚠</span> {statesError}
+                    </span>
+                  )}
+                  {errors.state && (
+                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
+                      <span>⚠</span> {errors.state.message}
+                    </span>
+                  )}
+                </div>
+              )}
+            />
+
             {/* City Dropdown */}
             <Controller
               name="city"
@@ -1745,57 +1797,6 @@ export default function ProfilePage() {
                   {errors.city && (
                     <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
                       <span>⚠</span> {errors.city.message}
-                    </span>
-                  )}
-                </div>
-              )}
-            />
-
-            {/* State Dropdown */}
-            <Controller
-              name="state"
-              control={control}
-              rules={{ required: "State is required" }}
-              render={({ field }) => (
-                <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-gray-700">
-                    State <span className="text-red-500 ml-0.5">*</span>
-                  </label>
-                  <select
-                    {...field}
-                    disabled={!isEditing || loadingStates}
-                    value={selectedState}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      handleStateChange(value);
-                    }}
-                    className={`px-3 py-2.5 rounded-xl border text-sm outline-none transition-all
-                      ${!isEditing || loadingStates
-                        ? "bg-gray-50 text-gray-500 cursor-default border-gray-100"
-                        : errors.state
-                          ? "border-red-400 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-                          : "border-gray-200 bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                      }`}
-                  >
-                    <option value="">Select State</option>
-                    {states.map((state) => (
-                      <option key={state.iso2} value={state.iso2}>
-                        {state.name}
-                      </option>
-                    ))}
-                  </select>
-                  {loadingStates && (
-                    <span className="text-xs text-gray-500">Loading states...</span>
-                  )}
-                  {statesError && (
-                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
-                      <span>⚠</span> {statesError}
-                    </span>
-                  )}
-                  {errors.state && (
-                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
-                      <span>⚠</span> {errors.state.message}
                     </span>
                   )}
                 </div>

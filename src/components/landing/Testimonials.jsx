@@ -8,7 +8,7 @@ function Testimonials() {
     { q: "EbenchCampus helped me prepare for placement season. The mock tests and AI insights boosted my confidence and performance.", n: "Amit Kumar", r: "B.Tech Mechanical", i: "AK", c: "#0FA8E0" },
   ];
   return (
-    <section id="review" className="py-24 px-8 bg-linear-to-b from-[#F7FBFF] to-[#EFF6FF]">
+    <section id="review" className="py-24 px-8 bg-linear-to-b from-[#F7FBFF] to-[#ffffff]">
       <div className="max-w-6xl mx-auto">
         <SectionHeader
           title="Loved by Students & Parents"

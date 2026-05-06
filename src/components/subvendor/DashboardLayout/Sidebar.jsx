@@ -43,7 +43,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     try {
       const result = await subVendorLogout()
       if (result?.data?.status) {
-        toast.success("Subvendor Logout Successfully.")
+        toast.success("Employee Logout Successfully.")
         localStorage.clear()
         setTimeout(() => {
           navigate("/employee/login")

@@ -232,9 +232,9 @@ const RoleManagement = () => {
         
          <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Employee</h2>
+          <h2 className="text-xl font-bold text-gray-900">Sub Admin (Employee)</h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            {total??0} total employee added
+            {total??0} total sub admin added
           </p>
         </div>
        <div className="flex gap-2">   
@@ -242,7 +242,7 @@ const RoleManagement = () => {
             onClick={() => setEditing(true)}
             className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
           >
-            + Add Employee
+            + Add Sub Admin
           </button>
 
         </div>
@@ -379,7 +379,7 @@ const RoleManagement = () => {
                               {/* View */}
                               <button
                                 onClick={() => {
-                                  navigate(`/vendor/role-management/view?id=${u.id}`);
+                                  navigate(`/vendor/employee/view?id=${u.id}`);
                                   setOpenId(null);
                                 }}
                                 className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700
@@ -484,7 +484,7 @@ const RoleManagement = () => {
 
             {/* Modal Content */}
             <div className="relative w-full max-w-xl overflow-y-auto max-h-80 md:max-h-full p-6 bg-white rounded-lg shadow-lg">
-              <h2 className="mb-2 text-lg font-semibold">Employee Detail Form</h2>
+              <h2 className="mb-2 text-lg font-semibold">Add Sub-Admin (Employee)</h2>
               <hr className=" text-gray-300 mb-4" />
               <form className="space-y-4" onSubmit={handleSubmit(save)}>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -626,7 +626,7 @@ const RoleManagement = () => {
                 <div className="flex flex-row gap-3">
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-md bg-[#1b68c0]  text-white hover:bg-blue-500 transition"
+                    className="px-4 cursor-pointer py-1.5 rounded-md bg-[#1b68c0]  text-white hover:bg-blue-500 transition"
                   >
                     Save
                   </button>
@@ -634,7 +634,7 @@ const RoleManagement = () => {
                   <button
                     type="button"
                     onClick={() => setEditing(false)}
-                    className="px-4 py-1.5 rounded-md bg-red-500 text-white hover:bg-red-700 transition"
+                    className="px-4 cursor-pointer py-1.5 rounded-md bg-red-500 text-white hover:bg-red-700 transition"
                   >
                     Cancel
                   </button>

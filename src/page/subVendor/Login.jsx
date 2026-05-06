@@ -465,7 +465,7 @@ export default function CampusLogin() {
         localStorage.setItem('subvendorId', sub_vendor_id)
         localStorage.setItem('vendorId', vendor_id)
         localStorage.setItem('email',email)
-        toast.success("Subvendor Login Successfully")
+        toast.success("Employee Login Successfully")
         setTimeout(() => {
           navigate('/subvendor/dashboard')
         }, 500)

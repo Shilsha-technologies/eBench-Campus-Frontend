@@ -212,7 +212,7 @@ export const SubvendorApi = api.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
       }),
-      invalidatesTags: ['Subvendor','subvendorDashboard'],
+      invalidatesTags: ['Subvendor','subvendorDashboard','Candidates'],
     }),
     subVendorLogout:builder.mutation({
       query:() =>({

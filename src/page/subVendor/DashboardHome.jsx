@@ -1,4 +1,4 @@
-// import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi";
+import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi";
 // import { motion } from "framer-motion";
 // import { useNavigate } from "react-router-dom";
 // import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
@@ -6,8 +6,8 @@
 // const DashboardContent = () => {
 //   const navigate=useNavigate()
 
-//   const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
-//   console.log("dashaboard-details",data);
+  // const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
+  // console.log("dashaboard-details",data);
 
 //   const recentCredits = data?.credits_summary?.plans;
 //   const recentUsers = data?.recent_candidates;
@@ -229,15 +229,6 @@ const stats = [
   { label: "Remaining Credits", value: 52, icon: "🎯", color: "from-rose-500 to-rose-600", light: "bg-rose-50 text-rose-600" },
 ];
 
-const candidates = [
-  { name: "Priya Mehta", email: "priya@email.com", mobile: "+91 9823456701", status: "Completed", score: 87, statusColor: "bg-emerald-100 text-emerald-700" },
-  { name: "Rohan Verma", email: "rohan@email.com", mobile: "+91 9823456702", status: "Pending", score: null, statusColor: "bg-amber-100 text-amber-700" },
-  { name: "Sneha Gupta", email: "sneha@email.com", mobile: "+91 9823456703", status: "Completed", score: 72, statusColor: "bg-emerald-100 text-emerald-700" },
-  { name: "Amit Tiwari", email: "amit@email.com", mobile: "+91 9823456704", status: "Link Sent", score: null, statusColor: "bg-blue-100 text-blue-700" },
-  { name: "Kavita Nair", email: "kavita@email.com", mobile: "+91 9823456705", status: "Completed", score: 94, statusColor: "bg-emerald-100 text-emerald-700" },
-  { name: "Dev Pandey", email: "dev@email.com", mobile: "+91 9823456706", status: "Failed", score: 41, statusColor: "bg-rose-100 text-rose-700" },
-];
-
 const performanceData = [
   { name: "Jan", score: 68 }, { name: "Feb", score: 74 }, { name: "Mar", score: 71 },
   { name: "Apr", score: 85 }, { name: "May", score: 79 }, { name: "Jun", score: 92 },
@@ -249,16 +240,7 @@ const monthlyTests = [
   { name: "May", sent: 38, completed: 30 }, { name: "Jun", sent: 47, completed: 40 },
 ];
 
-const passFailData = [
-  { name: "Pass", value: 68, color: "#10b981" },
-  { name: "Fail", value: 18, color: "#f43f5e" },
-  { name: "Pending", value: 14, color: "#f59e0b" },
-];
 
-const completionData = [
-  { name: "Week 1", rate: 72 }, { name: "Week 2", rate: 81 }, { name: "Week 3", rate: 78 },
-  { name: "Week 4", rate: 89 }, { name: "Week 5", rate: 85 }, { name: "Week 6", rate: 93 },
-];
 
 const activities = [
   { type: "added", icon: "👤", msg: "Priya Mehta added as candidate", time: "2 min ago", color: "bg-blue-100 text-blue-600" },
@@ -268,18 +250,10 @@ const activities = [
   { type: "added", icon: "👤", msg: "Dev Pandey added as candidate", time: "3 days ago", color: "bg-blue-100 text-blue-600" },
 ];
 
-const notifications = [
-  { icon: "⚠️", title: "Subscription Expiring Soon", desc: "Pro plan expires in 12 days. Renew now.", color: "border-l-amber-400 bg-amber-50", badge: "bg-amber-100 text-amber-700" },
-  { icon: "🕒", title: "Pending Candidate Tests", desc: "36 candidates haven't completed their tests.", color: "border-l-blue-400 bg-blue-50", badge: "bg-blue-100 text-blue-700" },
-  { icon: "📋", title: "New Result Available", desc: "Sneha Gupta's test result is ready to view.", color: "border-l-emerald-400 bg-emerald-50", badge: "bg-emerald-100 text-emerald-700" },
-];
 
 const quickActions = [
   { label: "View Candidate", icon: "👥", color: "bg-blue-600 hover:bg-blue-700", textColor: "text-white",to:'/subvendor/user-management' },
-  // { label: "Send Test Link", icon: "📩", color: "bg-indigo-600 hover:bg-indigo-700", textColor: "text-white" },
   { label: "View Results", icon: "📊", color: "bg-emerald-600 hover:bg-emerald-700", textColor: "text-white",to:'/subvendor/result-management' },
-  // { label: "Subscription", icon: "💳", color: "bg-purple-600 hover:bg-purple-700", textColor: "text-white" },
-  // { label: "Candidate List", icon: "👥", color: "bg-slate-700 hover:bg-slate-800", textColor: "text-white" },
   { label: "View Profile", icon: "📅", color: "bg-rose-600 hover:bg-rose-700", textColor: "text-white",to:'/subvendor/profile' },
 ];
 
@@ -335,6 +309,8 @@ function SectionTitle({ children, sub }) {
 export default function EmployeeDashboard() {
   const dt = useDateTime();
   const navigate=useNavigate();
+    const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
+  console.log("dashaboard-details",data);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#F4F9FF] to-[#E6F1FB] font-sans">
@@ -433,23 +409,6 @@ export default function EmployeeDashboard() {
         <div className="anim anim-2 grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Notifications Panel */}
           <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
-            {/* <SectionTitle sub="Alerts & reminders">Notifications</SectionTitle> */}
-            {/* <div className="space-y-4">
-              {notifications.map((n, i) => (
-                <div key={i} className={`${n.color} border-l-4 rounded-r-2xl p-5`}>
-                  <div className="flex items-start gap-4">
-                    <span className="text-xl mt-1">{n.icon}</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-[#042C53] text-base">{n.title}</p>
-                      <p className="text-[#378ADD] text-sm mt-1 leading-relaxed">{n.desc}</p>
-                      <button className={`mt-3 ${n.badge} text-sm px-4 py-2 rounded-xl font-medium hover:opacity-80 transition`}>Take Action</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div> */}
-
-            {/* Activity Feed */}
             <div className="border-[#B5D4F4]">
               <SectionTitle sub="What happened recently">Recent Activity</SectionTitle>
     
@@ -544,51 +503,76 @@ export default function EmployeeDashboard() {
         {/* ── SUBSCRIPTION SECTION ────────────────────────────── */}
         <div className="anim anim-4 bg-white rounded-3xl shadow-lg border border-[#B5D4F4] overflow-hidden">
           <div className="px-8 pt-8 pb-6 flex items-start justify-between">
-            <SectionTitle sub="Your current plan details">Subscription Overview</SectionTitle>
-            <span className="px-4 py-2 bg-[#185FA5] text-white text-sm font-bold rounded-full">PRO</span>
+            <SectionTitle sub="Admin-assigned country subscriptions">Assigned Subscriptions</SectionTitle>
           </div>
-          <div className="px-8 pb-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-8">
-            {[
-              { label: "Plan Name", value: "Pro Annual", icon: "💳" },
-              { label: "Valid Till", value: "12 May 2025", icon: "📅" },
-              { label: "Candidate Limit", value: "300", icon: "👥" },
-              { label: "Used Credits", value: "248", icon: "🔴" },
-              { label: "Remaining", value: "52", icon: "🟢" },
-              { label: "Renewal", value: "Auto", icon: "🔄" },
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col gap-2 p-4 bg-[#F4F9FF] rounded-2xl">
-                <p className="text-sm text-[#378ADD] font-medium">{item.icon} {item.label}</p>
-                <p className="font-bold text-[#042C53] text-lg">{item.value}</p>
-              </div>
-            ))}
-          </div>
-          {/* Progress */}
           <div className="px-8 pb-8">
-            <div className="flex justify-between text-sm text-[#378ADD] mb-3">
-              <span>Credit Usage</span>
-              <span className="font-semibold text-[#042C53]">248 / 300 used</span>
+            {/* Country Subscriptions */}
+            <div className="mb-8">
+              <div className="space-y-3">
+                {[
+                  { country: "India", plan: "Pro Annual", credits: "200/250", validTill: "12 May 2025", status: "Active" },
+                  { country: "United States", plan: "Pro Annual", credits: "48/50", validTill: "15 June 2025", status: "Active" },
+                  { country: "United Kingdom", plan: "Pro Annual", credits: "0/0", validTill: "20 July 2025", status: "Active" },
+                ].map((subscription, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-[#F4F9FF] rounded-2xl border border-[#B5D4F4]">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-[#185FA5] text-white rounded-full flex items-center justify-center font-bold">
+                        {subscription.country.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#042C53]">{subscription.country}</p>
+                        <p className="text-sm text-[#378ADD]">{subscription.plan}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-[#042C53]">{subscription.credits} credits</p>
+                      <p className="text-xs text-[#378ADD]">Valid till {subscription.validTill}</p>
+                      <span className={`inline-block mt-1 px-2 py-1 text-xs rounded-full ${
+                        subscription.status === "Active" 
+                          ? "bg-emerald-100 text-emerald-700" 
+                          : "bg-amber-100 text-amber-700"
+                      }`}>
+                        {subscription.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="h-4 bg-[#E6F1FB] rounded-full overflow-hidden">
-              <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{ width: "82.7%" }} />
+            
+            {/* Overall Summary */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+              {[
+                { label: "Total Countries", value: "3", icon: "🌍" },
+                { label: "Total Credits", value: "300", icon: "�" },
+                { label: "Used Credits", value: "248", icon: "🔴" },
+                { label: "Remaining", value: "52", icon: "🟢" },
+                { label: "Active Plans", value: "2", icon: "✅" },
+                { label: "Pending Plans", value: "1", icon: "⏳" },
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col gap-2 p-4 bg-[#F4F9FF] rounded-2xl">
+                  <p className="text-sm text-[#378ADD] font-medium">{item.icon} {item.label}</p>
+                  <p className="font-bold text-[#042C53] text-lg">{item.value}</p>
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between text-sm mt-2">
-              <span className="text-[#378ADD]">82.7% used</span>
-              <span className="text-amber-600 font-medium">⚠️ 52 credits remaining</span>
+            
+            {/* Overall Progress */}
+            <div className="mt-8">
+              <div className="flex justify-between text-sm text-[#378ADD] mb-3">
+                <span>Total Credit Usage</span>
+                <span className="font-semibold text-[#042C53]">248 / 300 used</span>
+              </div>
+              <div className="h-4 bg-[#E6F1FB] rounded-full overflow-hidden">
+                <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{ width: "82.7%" }} />
+              </div>
+              <div className="flex justify-between text-sm mt-2">
+                <span className="text-[#378ADD]">82.7% used</span>
+                <span className="text-amber-600 font-medium">⚠️ 52 credits remaining</span>
+              </div>
             </div>
           </div>
-          <div className="px-8 pb-8 flex gap-4">
-            <button className="px-6 py-3 bg-[#185FA5] hover:bg-[#0C447C] text-white text-base font-semibold rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-lg">
-              Upgrade Plan
-            </button>
-            <button className="px-6 py-3 bg-[#F4F9FF] hover:bg-[#E6F1FB] text-[#042C53] text-base font-semibold rounded-2xl transition border border-[#B5D4F4]">
-              View Invoice
-            </button>
-          </div>
-        </div>
-
-        {/* ── FOOTER ──────────────────────────────────────────── */}
-        <div className="anim anim-5 text-center text-sm text-[#378ADD] pb-6">
-          © 2024 eBench Campus · Employee Dashboard · All rights reserved
+          
         </div>
 
       </div>
