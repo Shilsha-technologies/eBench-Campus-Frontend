@@ -457,7 +457,7 @@ export default function ForgotPassword() {
               {/* Back button */}
               <button
                 className="back-btn"
-                onClick={() => step === 1 ? navigate("/login") : setStep(s => { clearErrors(); return s - 1; })}
+                onClick={() => step === 1 ? navigate("/admin-login") : setStep(s => { clearErrors(); return s - 1; })}
                 style={{ display:"flex", alignItems:"center", gap:6, background:"transparent", border:"none", color:"#94a3b8", fontSize:13, fontWeight:500, cursor:"pointer", padding:"4px 8px", borderRadius:8, marginBottom:20, transition:"all .2s", fontFamily:"'DM Sans',sans-serif" }}
               >
                 <ArrowLeft size={14} />
