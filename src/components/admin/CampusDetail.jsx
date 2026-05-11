@@ -976,7 +976,7 @@ export default function VendorDetailPage() {
 
   console.log("Vendor Data:", vendorData);
 
-  const vendor     = vendorData?.vendor?.[0];
+  const vendor     = vendorData?.vendor;
   const candidates = vendorData?.candidates || [];
   const staff      = vendorData?.subvendor || [];
   const stats      = vendorData?.statistics || {};

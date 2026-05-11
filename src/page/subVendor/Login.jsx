@@ -516,6 +516,11 @@ export default function CampusLogin() {
           navigate(`/reset-password/subvendor?email=${result?.data?.email}`)
         }, 1000)
       }
+      if(result?.error){
+        toast.error(result?.error?.data?.detail ?? "Internal Server Error");
+        return;
+      }
+
     } catch (err) {
       toast.error(err?.data?.message ?? "Internal Server Error");
     }
