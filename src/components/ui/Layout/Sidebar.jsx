@@ -224,11 +224,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, role = "admin" }) => {
   /* ---------- MENU CONFIG ---------- */
   const adminMenu = [
     { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    {
-      to: "/admin/vendor-management",
-      label: "Vendor Management",
-      icon: Gem,
-    },
+    
     {
       to: "/admin/campus-management",
       label: "Campus Management",

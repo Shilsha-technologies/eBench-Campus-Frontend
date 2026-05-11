@@ -14,7 +14,7 @@ import { AuthProvider } from "./libs/AuthProvider";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
-import StudentTestButton from "./components/test/StudentTestButton";
+// import StudentTestButton from "./components/test/StudentTestButton";
 
 /* =========================
     Lazy Loaded Layout
@@ -31,9 +31,7 @@ const AdminDashboardLayout = lazy(() =>
 ========================= */
 const AdminDashboard = lazy(() => import("./page/AdminboardPage"));
 const AdminSubscription = lazy(() => import("./page/AdminSubscription"));
-const VendorManagement = lazy(() =>
-  import("./components/admin/VendorManagement")
-);
+
 const RoleManagement = lazy(() => import("./page/vendor/role/RoleManagement"))
 const SubscriptionList = lazy(() =>
   import("./components/admin/SubscriptionList")
@@ -240,16 +238,13 @@ function App() {
                         path="subscription/list"
                         element={<SubscriptionList />}
                       />
-                      <Route
-                        path="vendor-management"
-                        element={<VendorManagement />}
-                      />
+                      
                       <Route
                         path="campus-management"
                         element={<CampusManagement />}
                       />
                       <Route
-                        path="campus/:campusId"
+                        path="campus-management/:campusId"
                         element={<CampusDetail />}
                       />
                       <Route

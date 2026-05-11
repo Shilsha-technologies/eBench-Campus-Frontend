@@ -1,27 +1,223 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useActiveInactiveUserMutation, useGetAllVendorQuery } from "../../redux/services/adminApi";
+import { Table, Badge } from "../../libs/Ui";
+import toast from "react-hot-toast";
+import { Pagination } from "../../page/vendor/user/UserManagement";
+import useDebounce from "../../libs/useDebounce";
+
+// Helper function to get initials from name
+export const getInitials = (name) =>
+  name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 export default function CampusManagement() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const filtered = useMemo(() => {
-    let r = DUMMY_CAMPUSES;
-    if (statusFilter !== "all") r = r.filter((c) => c.status === statusFilter);
-    if (search)
-      r = r.filter(
-        (c) =>
-          c.name.toLowerCase().includes(search.toLowerCase()) ||
-          c.university.toLowerCase().includes(search.toLowerCase()) ||
-          c.location.toLowerCase().includes(search.toLowerCase())
-      );
-    return r;
-  }, [search, statusFilter]);
-  
+    const [search, setSearch] = useState('')
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [sign, setSign] = useState(false)
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const debouncedQuery = useDebounce(search, 500);
+    
+    const [aciveInactive, { isLoading: signLoading, isError: signError, isSuccess }] = useActiveInactiveUserMutation({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedCampus, setSelectedCampus] = useState(null);
+    const {
+      data,
+      error,
+      isLoading,
+      isError,
+    } = useGetAllVendorQuery({ search:debouncedQuery, status:statusFilter, page, limit: pageSize });
+
+    useEffect(() => {
+      setPage(1)
+    },[statusFilter,debouncedQuery])
+
+
+  const filtered = data?.vendors || []
+    // console.log("campus-management", filtered);
+
+
+  let total=data?.total??0
+  const columns = [
+    {
+      key: "name",
+      label: "Campus Name",
+      render: (value, row) => (
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-[#286a94] text-white flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ fontFamily: "Syne, sans-serif" }}>
+            {getInitials(value || 'Unknown')}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold text-sm text-[#1e293b] truncate" title={value || 'N/A'}>
+              {value || 'N/A'}
+            </div>
+            {row.established && (
+              <div className="text-xs text-[#64748b]">Est. {row.established}</div>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: "email",
+      label: "Email",
+      render: (value, row) => (
+        <div className="text-sm text-[#1e293b] truncate" title={value || 'N/A'}>
+          {value || 'N/A'}
+        </div>
+      )
+    },
+    {
+      key: "location",
+      label: "Location",
+      render: (_, row) => {
+        const location = row.city ? `${row.city}${row.state ? `, ${row.state}` : ''}` : 'N/A';
+        return (
+          <div className="text-sm text-[#1e293b] truncate" title={location}>
+            {location}
+          </div>
+        );
+      }
+    },
+    {
+      key: "total_students",
+      label: "Students",
+      render: (value) => (
+        <div className="text-sm text-[#1e293b] font-medium">
+          {value || 0}
+        </div>
+      )
+    },
+    {
+      key: "candidate_count",
+      label: "Candidates",
+      render: (value) => (
+        <div className="text-sm text-[#1e293b] font-medium">
+          {value || 0}
+        </div>
+      )
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (_, row) => (
+        <Badge variant={row.is_disabled ? "red" : "green"}>
+          {row.is_disabled ? "Inactive" : "Active"}
+        </Badge>
+      )
+    },
+    {
+      key: "subscription",
+      label: "Subscription",
+      render: (_, row) => (
+        <div className="flex items-center gap-2">
+          <Badge variant={row.is_subscribed ? "green" : "gray"}>
+            {row.is_subscribed ? "Subscribed" : "Not Subscribed"}
+          </Badge>
+          {row.total_credits && (
+            <span className="text-xs text-[#64748b] whitespace-nowrap" title={`${row.total_credits} credits`}>
+              {row.total_credits} credits
+            </span>
+          )}
+        </div>
+      )
+    },
+    {
+      key: "university",
+      label: "University",
+      render: (value, row) => (
+        <div className="text-sm text-[#1e293b] truncate" title={value || 'N/A'}>
+          {value || 'N/A'}
+        </div>
+      )
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (_, row) => (
+        <div className="flex items-center gap-2">
+          {row.is_disabled ? (
+            <button
+              onClick={() => handleToggleStatus(row)}
+              className="px-3 cursor-pointer py-1.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg text-xs font-medium transition-colors"
+              title="Activate campus"
+            >
+              Active
+            </button>
+          ) : (
+            <button
+              onClick={() => handleToggleStatus(row)}
+              className="px-3 cursor-pointer py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-medium transition-colors"
+              title="Deactivate campus"
+            >
+              Deactive
+            </button>
+          )}
+          <button
+            onClick={() => navigate(`/admin/campus-management/${row.id}`)}
+            className={`p-2 rounded-lg cursor-pointer transition-colors ${
+              row.is_disabled 
+                ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                : 'bg-green-50 text-green-600 hover:bg-green-100'
+            }`}
+            title="View campus details"
+          >
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" 
+              />
+            </svg>
+          </button>
+        </div>
+      )
+    }
+  ];
+
+  // Handle active/inactive toggle
+  const handleToggleStatus = (row) => {
+    setSelectedCampus(row);
+    setShowConfirmModal(true);
+  };
+
+  // Confirm status change
+  const confirmStatusChange = async () => {
+    if (!selectedCampus) return;
+    const formdata=new FormData()
+    formdata.append('vendor_ids',selectedCampus?.id)
+    formdata.append('is_disabled',!selectedCampus.is_disabled)
+    try {
+      const result = await aciveInactive(formdata).unwrap();
+      // debugger;
+      if (result?.status) {
+        toast.success('Status updated successfully')
+        // console.log('Status updated successfully:', result);
+        setShowConfirmModal(false);
+        setSelectedCampus(null);
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
+  };
+
+  // Cancel status change
+  const cancelStatusChange = () => {
+    setShowConfirmModal(false);
+    setSelectedCampus(null);
+  };
 
   return (
-    <div className="flex flex-col h-screen bg-[#f8fafc] text-[#1e293b] overflow-hidden font-sans">
+    <div className="flex flex-col min-h-screen bg-[#f8fafc] text-[#1e293b] overflow-hidden font-sans">
       {/* ── Top bar ─────────────────────────────────────────── */}
       <div className="px-6 py-4 bg-grey-200 border-b border-[#e2e8f0] bg- flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
@@ -37,17 +233,17 @@ export default function CampusManagement() {
 
         {/* Stats row */}
         <div className="flex gap-2.5 flex-wrap">
-          <StatCard label="Total Campuses" value={DUMMY_STATS.totalCampuses} />
-          <StatCard label="Active" value={DUMMY_STATS.activeCampuses} accent="#3b82f6" />
-          <StatCard label="Inactive" value={DUMMY_STATS.inactiveCampuses} accent="#64748b" />
-          <StatCard label="Total Students" value={DUMMY_STATS.totalStudents} accent="#10b981" />
-          <StatCard label="Tests Completed" value={DUMMY_STATS.testsCompleted} accent="#f59e0b" />
-          <StatCard label="Avg. Score" value={`${DUMMY_STATS.averageScore}%`} accent="#3b82f6" />
+          <StatCard label="Total Campuses" value={data?.totalCampuses || 0} />
+          <StatCard label="Active" value={data?.activeCampuses || 0} accent="#3b82f6" />
+          <StatCard label="Inactive" value={data?.inactiveCampuses || 0} accent="#64748b" />
+          <StatCard label="Total Students" value={data?.totalStudents || 0} accent="#10b981" />
+          <StatCard label="Tests Sent" value={data?.testsSent || 0} accent="#f59e0b" />
+          <StatCard label="Avg. Score" value={`${data?.averageScore || 0}%`} accent="#3b82f6" />
         </div>
       </div>
 
       {/* ── Main layout ──────────────────────────────────────── */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto">
         {/* Search + filters */}
         <div className="px-6 py-3  border-[#e2e8f0] bg-[#f8fafc] flex gap-2 flex-shrink-0">
           <input
@@ -72,26 +268,127 @@ export default function CampusManagement() {
           ))}
         </div>
 
-        {/* Cards */}
+        {/* Table */}
         <div className="flex-1 overflow-auto p-6">
-          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((campus) => (
-              <CampusCard
-                key={campus._id}
-                campus={campus}
-                onClick={() => navigate(`/admin/campus/${campus._id}`)}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-[#64748b]">Loading campuses...</div>
+            </div>
+          ) : isError ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-red-500">Error loading campuses: {error?.message || 'Unknown error'}</div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <Table
+                columns={columns}
+                data={filtered}
+                emptyMessage="No campuses match your search"
+                headerBg="bg-[#286a94]"
+                headerTextColor="text-white"
               />
-            ))}
-
-            {filtered.length === 0 && (
-              <div className="col-span-full text-center py-16">
-                <div className="text-5xl mb-4">📭</div>
-                <p className="text-[#64748b] font-medium">No campuses match your search</p>
-              </div>
-            )}
-          </div>
+              {/* Pagination */}
+                      {
+                        filtered?.length > 0 &&
+                        <div className="p-4 flex items-center justify-between">
+                          <div className="text-xs text-[#286a94]">
+                            Showing {Math.min((page - 1) * pageSize + 1, total)}-
+                            {Math.min(page * pageSize, total)} of {total} users
+                          </div>
+              
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-[#286a94]">Rows</span>
+                              <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}
+                                className="px-2 py-1 rounded-md text-xs outline-none   border border-[#286a94] text-[#286a94] bg-white">
+                                {[10, 20, 50].map((s) => <option key={s} value={s}>{s}</option>)}
+                              </select>
+                            </div>
+              
+                            <Pagination page={page} totalPages={data?.total_pages} setPage={setPage} />
+                          </div>
+                        </div>
+                      }
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && selectedCampus && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={cancelStatusChange} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className={`flex items-center justify-between p-6 ${selectedCampus.is_disabled ? 'bg-green-700' : 'bg-red-700'} border-b border-gray-100`}>
+              <h2 className="text-lg font-semibold text-white">
+                {selectedCampus.is_disabled ? 'Activate Campus' : 'Deactivate Campus'}
+              </h2>
+              <button 
+                onClick={cancelStatusChange} 
+                className="w-8 h-8 flex text-white items-center cursor-pointer justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-black  text-xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              <div className={`p-4 rounded-lg mb-4 ${
+                selectedCampus.is_disabled 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-red-50 border border-red-200'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                    selectedCampus.is_disabled 
+                      ? 'bg-green-100 text-green-600' 
+                      : 'bg-red-100 text-red-600'
+                  }`}>
+                    {selectedCampus.is_disabled ? '✓' : '!'}
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold ${
+                      selectedCampus.is_disabled ? 'text-green-900' : 'text-red-900'
+                    }`}>
+                      {selectedCampus.name || 'Unknown Campus'}
+                    </h3>
+                    <p className={`text-sm ${
+                      selectedCampus.is_disabled ? 'text-green-700' : 'text-red-700'
+                    }`}>
+                      {selectedCampus.is_disabled 
+                        ? 'This campus will be activated and users will regain access.' 
+                        : 'This campus will be deactivated and users will lose access.'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-sm text-gray-600 mb-6">
+                Are you sure you want to {selectedCampus.is_disabled ? 'activate' : 'deactivate'} this campus?
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={cancelStatusChange}
+                  className="px-4 py-2.5 text-sm cursor-pointer font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmStatusChange}
+                  disabled={signLoading}
+                  className={`px-4 py-2.5 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
+                    selectedCampus.is_disabled 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-red-600 hover:bg-red-700 text-white'
+                  } ${signLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {signLoading ? 'Processing...' : (selectedCampus.is_disabled ? 'Activate' : 'Deactivate')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -398,8 +695,6 @@ const COLOR_MAP = {
   teal: { bg: "rgba(20,184,166,0.1)", text: "#14b8a6", border: "rgba(20,184,166,0.2)" },
 };
 
-export const getInitials = (name) =>
-  name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 export function Avatar({ name, color = "blue", size = 36 }) {
   const { bg, text, border } = COLOR_MAP[color] || COLOR_MAP.blue;
@@ -426,6 +721,8 @@ const STATUS_STYLES = {
   inactive: "bg-[rgba(100,116,139,0.1)] text-[#64748b] border-[rgba(100,116,139,0.2)]",
   placed: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
   pending: "bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border-[rgba(245,158,11,0.2)]",
+  subscribed: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
+  'not-subscribed': "bg-[rgba(100,116,139,0.1)] text-[#64748b] border-[rgba(100,116,139,0.2)]",
 };
 
 export function StatusTag({ status }) {
@@ -443,7 +740,7 @@ export function StatusTag({ status }) {
 // ── Dummy Data ─────────────────────────────────────────────────
 export const DUMMY_CAMPUSES = [
   {
-    _id: "c001",
+    _id: "ae1bb893-72b6-4647-80a8-5de655c6bd27",
     name: "Indian Institute of Technology",
     university: "IIT System",
     email: "placement@iit.edu",
@@ -495,6 +792,8 @@ export const DUMMY_CAMPUSES = [
     avatarColor: "amber",
   },
 ];
+
+
 
 export const DUMMY_EMPLOYEES = {
   c001: [

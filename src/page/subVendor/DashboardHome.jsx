@@ -209,46 +209,24 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
-const employee = {
-  name: "Arjun Sharma",
-  id: "EMP-20241",
-  designation: "Senior HR Manager",
-  department: "Human Resources",
-  avatar: "AS",
-  company: "eBench Campus",
-  branch: "Mumbai, India",
+// ── Icon Mappings ──────────────────────────────────────────────────────────────
+const statIcons = {
+  "Total Candidates": "👥",
+  "Tests Sent": "📩",
+  "Tests Completed": "✅",
+  "Pending Tests": "⏳",
+  "Active Plan": "💳",
+  "Remaining Credits": "🎯"
 };
 
-const stats = [
-  { label: "Total Candidates", value: 248, icon: "👥", color: "from-blue-500 to-blue-600", light: "bg-blue-50 text-blue-600" },
-  { label: "Tests Sent", value: 192, icon: "📩", color: "from-indigo-500 to-indigo-600", light: "bg-indigo-50 text-indigo-600" },
-  { label: "Tests Completed", value: 156, icon: "✅", color: "from-emerald-500 to-emerald-600", light: "bg-emerald-50 text-emerald-600" },
-  { label: "Pending Tests", value: 36, icon: "⏳", color: "from-amber-500 to-amber-600", light: "bg-amber-50 text-amber-600" },
-  { label: "Active Plan", value: "Pro", icon: "💳", color: "from-purple-500 to-purple-600", light: "bg-purple-50 text-purple-600" },
-  { label: "Remaining Credits", value: 52, icon: "🎯", color: "from-rose-500 to-rose-600", light: "bg-rose-50 text-rose-600" },
-];
-
-const performanceData = [
-  { name: "Jan", score: 68 }, { name: "Feb", score: 74 }, { name: "Mar", score: 71 },
-  { name: "Apr", score: 85 }, { name: "May", score: 79 }, { name: "Jun", score: 92 },
-];
-
-const monthlyTests = [
-  { name: "Jan", sent: 28, completed: 22 }, { name: "Feb", sent: 34, completed: 28 },
-  { name: "Mar", sent: 29, completed: 24 }, { name: "Apr", sent: 41, completed: 35 },
-  { name: "May", sent: 38, completed: 30 }, { name: "Jun", sent: 47, completed: 40 },
-];
-
-
-
-const activities = [
-  { type: "added", icon: "👤", msg: "Priya Mehta added as candidate", time: "2 min ago", color: "bg-blue-100 text-blue-600" },
-  { type: "sent", icon: "📩", msg: "Test link sent to Rohan Verma", time: "18 min ago", color: "bg-indigo-100 text-indigo-600" },
-  { type: "result", icon: "📊", msg: "Result published for Kavita Nair — 94%", time: "1 hr ago", color: "bg-emerald-100 text-emerald-600" },
-  { type: "renew", icon: "🔄", msg: "Pro subscription auto-renewed", time: "2 days ago", color: "bg-purple-100 text-purple-600" },
-  { type: "added", icon: "👤", msg: "Dev Pandey added as candidate", time: "3 days ago", color: "bg-blue-100 text-blue-600" },
-];
+const statColors = {
+  "Total Candidates": { color: "from-blue-500 to-blue-600", light: "bg-blue-50 text-blue-600" },
+  "Tests Sent": { color: "from-indigo-500 to-indigo-600", light: "bg-indigo-50 text-indigo-600" },
+  "Tests Completed": { color: "from-emerald-500 to-emerald-600", light: "bg-emerald-50 text-emerald-600" },
+  "Pending Tests": { color: "from-amber-500 to-amber-600", light: "bg-amber-50 text-amber-600" },
+  "Active Plan": { color: "from-purple-500 to-purple-600", light: "bg-purple-50 text-purple-600" },
+  "Remaining Credits": { color: "from-rose-500 to-rose-600", light: "bg-rose-50 text-rose-600" }
+};
 
 
 const quickActions = [
@@ -282,6 +260,28 @@ function Avatar({ initials, size = "md" }) {
   );
 }
 
+
+function recusive(s,index,temp,ans){
+  if(index==s.length || index>s.length){
+    ans.push(temp.slice(0,temp.length));
+    return;
+  }
+  temp.push(s[index])
+  recusive(s,index+1,temp,ans)
+  temp.pop();
+  recusive(s,index+1,temp,ans)
+}
+
+function solution(s){
+  const ans=[]
+  const temp=[]
+  let index=0;
+  recusive(s,index,temp,ans);
+  
+}
+
+solution("()())()")
+
 function StatCard({ stat }) {
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-200 flex items-center gap-4">
@@ -308,9 +308,54 @@ function SectionTitle({ children, sub }) {
 // ── Main Dashboard ─────────────────────────────────────────────────────────
 export default function EmployeeDashboard() {
   const dt = useDateTime();
-  const navigate=useNavigate();
-    const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
-  console.log("dashaboard-details",data);
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useSubvendorDashboardApiQuery();
+  
+  // console.log("dashboard-details", data);
+  
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-[#F4F9FF] to-[#E6F1FB] font-sans flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#185FA5] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#042C53] font-medium">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Error state
+  if (isError || !data) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-[#F4F9FF] to-[#E6F1FB] font-sans flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-600 text-xl">⚠️</span>
+          </div>
+          <p className="text-[#042C53] font-medium">Error loading dashboard data</p>
+          <p className="text-[#378ADD] text-sm mt-2">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Extract data from API - completely dynamic with N/A fallbacks
+  const employee = data.employee || {};
+  
+  // Transform API stats to match our component structure
+  const stats = data.stats ? data.stats.map(stat => ({
+    label: stat.label || "N/A",
+    value: stat.value !== undefined ? stat.value : "N/A",
+    icon: statIcons[stat.label] || "📊",
+    color: statColors[stat.label]?.color || "from-blue-500 to-blue-600",
+    light: statColors[stat.label]?.light || "bg-blue-50 text-blue-600"
+  })) : [];
+  
+  const performanceData = data.performanceData || [];
+  const monthlyTests = data.monthlyTests || [];
+  const activities = data.activities || [];
+  const assignedSubscription = data.assignedSubscription || [];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#F4F9FF] to-[#E6F1FB] font-sans">
@@ -341,16 +386,16 @@ export default function EmployeeDashboard() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               {/* Left: Greeting + Employee Info */}
               <div className="flex items-center gap-4">
-                <Avatar initials={employee.avatar} size="lg" />
+                <Avatar initials={employee.avatar || "N/A"} size="lg" />
                 <div>
                   <p className="text-blue-200 text-xs font-medium mb-0.5">
                     {greeting(dt.getHours())} 👋
                   </p>
-                  <h1 className="text-white text-xl font-bold leading-tight">{employee.name}</h1>
+                  <h1 className="text-white text-xl font-bold leading-tight">{employee.name || "N/A"}</h1>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
-                    <span className="text-blue-100 text-xs">🪪 {employee.id}</span>
-                    <span className="text-blue-100 text-xs">💼 {employee.designation}</span>
-                    <span className="text-blue-100 text-xs">🏢 {employee.department}</span>
+                    <span className="text-blue-100 text-xs">🪪 {employee.id || "N/A"}</span>
+                    <span className="text-blue-100 text-xs">💼 {employee.designation || "N/A"}</span>
+                    <span className="text-blue-100 text-xs">🏢 {employee.department || "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -358,10 +403,12 @@ export default function EmployeeDashboard() {
               {/* Right: Company + Time */}
               <div className="flex flex-col items-start sm:items-end gap-2">
                 <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur rounded-xl px-4 py-2">
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">N</div>
+                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-600 font-bold text-sm shrink-0">
+                    {employee.company ? employee.company.charAt(0) : "N"}
+                  </div>
                   <div>
-                    <p className="text-white font-semibold text-sm">{employee.company}</p>
-                    <p className="text-blue-200 text-xs">📍 {employee.branch}</p>
+                    <p className="text-white font-semibold text-sm">{employee.company || "N/A"}</p>
+                    <p className="text-blue-200 text-xs">📍 {employee.branch || "N/A"}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -392,7 +439,7 @@ export default function EmployeeDashboard() {
 
         {/* ── STATS CARDS ─────────────────────────────────────── */}
         <div className="anim anim-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {stats.map((s, i) => (
+          {stats.length > 0 ? stats.map((s, i) => (
             <div key={i} className="bg-white rounded-2xl p-5 shadow-lg border border-[#B5D4F4] hover:shadow-xl transition-shadow duration-300 flex items-center gap-6">
               <div className={`w-12 h-12 rounded-xl ${s.light} flex items-center justify-center text-xl shrink-0`}>
                 {s.icon}
@@ -402,7 +449,11 @@ export default function EmployeeDashboard() {
                 <p className="text-xs text-[#378ADD] mt-1">{s.label}</p>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="col-span-full bg-white rounded-2xl p-8 shadow-lg border border-[#B5D4F4] text-center">
+              <p className="text-[#378ADD] text-sm">No statistics data available</p>
+            </div>
+          )}
         </div>
 
         {/* ── NOTIFICATIONS & ACTIVITY ───────────────────────────── */}
@@ -413,15 +464,19 @@ export default function EmployeeDashboard() {
               <SectionTitle sub="What happened recently">Recent Activity</SectionTitle>
     
               <div className="space-y-4 ">
-                {activities.map((a, i) => (
+                {activities.length > 0 ? activities.map((a, i) => (
                   <div key={i} className="flex items-start gap-4">
-                    <div className={`w-10 h-10 ${a.color} rounded-full flex items-center justify-center text-sm shrink-0`}>{a.icon}</div>
+                    <div className={`w-10 h-10 ${a.color || "bg-blue-100 text-blue-600"} rounded-full flex items-center justify-center text-sm shrink-0`}>{a.icon || "📊"}</div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#042C53] font-medium leading-snug">{a.msg}</p>
-                      <p className="text-sm text-[#378ADD] mt-1">{a.time}</p>
+                      <p className="text-sm text-[#042C53] font-medium leading-snug">{a.msg || "N/A"}</p>
+                      <p className="text-sm text-[#378ADD] mt-1">{a.time || "N/A"}</p>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8">
+                    <p className="text-[#378ADD] text-sm">No recent activities</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -472,31 +527,43 @@ export default function EmployeeDashboard() {
           {/* Performance Chart */}
           <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
             <SectionTitle sub="Average score per month">Performance Trend</SectionTitle>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={performanceData} margin={{ top: 8, right: 16, left: -32, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#B5D4F4" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#378ADD" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#378ADD" }} domain={[60, 100]} />
-                <Tooltip contentStyle={{ fontSize: 13, borderRadius: 12, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }} />
-                <Line type="monotone" dataKey="score" stroke="#185FA5" strokeWidth={3} dot={{ r: 5, fill: "#185FA5" }} activeDot={{ r: 7 }} />
-              </LineChart>
-            </ResponsiveContainer>
+            {performanceData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={performanceData} margin={{ top: 8, right: 16, left: -32, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#B5D4F4" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#378ADD" }} />
+                  <YAxis tick={{ fontSize: 12, fill: "#378ADD" }} domain={[60, 100]} />
+                  <Tooltip contentStyle={{ fontSize: 13, borderRadius: 12, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }} />
+                  <Line type="monotone" dataKey="score" stroke="#185FA5" strokeWidth={3} dot={{ r: 5, fill: "#185FA5" }} activeDot={{ r: 7 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-[#378ADD] text-sm">No performance data available</p>
+              </div>
+            )}
           </div>
 
           {/* Monthly Tests Chart */}
           <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
             <SectionTitle sub="Sent vs Completed">Monthly Test Activity</SectionTitle>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={monthlyTests} margin={{ top: 8, right: 16, left: -32, bottom: 0 }} barSize={12}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#B5D4F4" />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#378ADD" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#378ADD" }} />
-                <Tooltip contentStyle={{ fontSize: 13, borderRadius: 12, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }} />
-                <Bar dataKey="sent" fill="#378ADD" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="completed" fill="#185FA5" radius={[6, 6, 0, 0]} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
-              </BarChart>
-            </ResponsiveContainer>
+            {monthlyTests.length > 0 ? (
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={monthlyTests} margin={{ top: 8, right: 16, left: -32, bottom: 0 }} barSize={12}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#B5D4F4" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#378ADD" }} />
+                  <YAxis tick={{ fontSize: 12, fill: "#378ADD" }} />
+                  <Tooltip contentStyle={{ fontSize: 13, borderRadius: 12, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }} />
+                  <Bar dataKey="sent" fill="#378ADD" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="completed" fill="#185FA5" radius={[6, 6, 0, 0]} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-60 flex items-center justify-center">
+                <p className="text-[#378ADD] text-sm">No monthly test data available</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -509,46 +576,52 @@ export default function EmployeeDashboard() {
             {/* Country Subscriptions */}
             <div className="mb-8">
               <div className="space-y-3">
-                {[
-                  { country: "India", plan: "Pro Annual", credits: "200/250", validTill: "12 May 2025", status: "Active" },
-                  { country: "United States", plan: "Pro Annual", credits: "48/50", validTill: "15 June 2025", status: "Active" },
-                  { country: "United Kingdom", plan: "Pro Annual", credits: "0/0", validTill: "20 July 2025", status: "Active" },
-                ].map((subscription, i) => (
+                {assignedSubscription.length > 0 ? assignedSubscription.map((subscription, i) => (
                   <div key={i} className="flex items-center justify-between p-4 bg-[#F4F9FF] rounded-2xl border border-[#B5D4F4]">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 bg-[#185FA5] text-white rounded-full flex items-center justify-center font-bold">
-                        {subscription.country.charAt(0)}
+                        {subscription.country ? subscription.country.charAt(0) : "N"}
                       </div>
                       <div>
-                        <p className="font-semibold text-[#042C53]">{subscription.country}</p>
-                        <p className="text-sm text-[#378ADD]">{subscription.plan}</p>
+                        <p className="font-semibold text-[#042C53]">{subscription.country || "N/A"}</p>
+                        <p className="text-sm text-[#378ADD]">{subscription.plan || "N/A"}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-[#042C53]">{subscription.credits} credits</p>
-                      <p className="text-xs text-[#378ADD]">Valid till {subscription.validTill}</p>
+                      <p className="text-sm font-medium text-[#042C53]">{subscription.credits || "N/A"} credits</p>
+                      <p className="text-xs text-[#378ADD]">
+                        Valid till {subscription.validTill ? new Date(subscription.validTill).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "N/A"}
+                      </p>
                       <span className={`inline-block mt-1 px-2 py-1 text-xs rounded-full ${
                         subscription.status === "Active" 
                           ? "bg-emerald-100 text-emerald-700" 
                           : "bg-amber-100 text-amber-700"
                       }`}>
-                        {subscription.status}
+                        {subscription.status || "N/A"}
                       </span>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8">
+                    <p className="text-[#378ADD] text-sm">No assigned subscriptions</p>
+                  </div>
+                )}
               </div>
             </div>
             
             {/* Overall Summary */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
               {[
-                { label: "Total Countries", value: "3", icon: "🌍" },
-                { label: "Total Credits", value: "300", icon: "�" },
-                { label: "Used Credits", value: "248", icon: "🔴" },
-                { label: "Remaining", value: "52", icon: "🟢" },
-                { label: "Active Plans", value: "2", icon: "✅" },
-                { label: "Pending Plans", value: "1", icon: "⏳" },
+                // { label: "Total Countries", value: assignedSubscription.length.toString(), icon: "🌍" },
+                { label: "Active Plans", value: assignedSubscription.filter(s => s.status === "Active").length.toString(), icon: "✅" },
+                { label: "Total Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
+                  const [used] = (s.credits || "0/0").split('/');
+                  return sum + parseInt(used || 0);
+                }, 0).toString() : "0", icon: "🎯" },
+                { label: "Remaining Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
+                  const [, remaining] = (s.credits || "0/0").split('/');
+                  return sum + parseInt(remaining || 0);
+                }, 0).toString() : "0", icon: "🟢" },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col gap-2 p-4 bg-[#F4F9FF] rounded-2xl">
                   <p className="text-sm text-[#378ADD] font-medium">{item.icon} {item.label}</p>
@@ -561,20 +634,62 @@ export default function EmployeeDashboard() {
             <div className="mt-8">
               <div className="flex justify-between text-sm text-[#378ADD] mb-3">
                 <span>Total Credit Usage</span>
-                <span className="font-semibold text-[#042C53]">248 / 300 used</span>
+                <span className="font-semibold text-[#042C53]">
+                  {assignedSubscription.length > 0 ? (() => {
+                    const totalUsed = assignedSubscription.reduce((sum, s) => {
+                      const [used] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(used || 0);
+                    }, 0);
+                    const totalCredits = assignedSubscription.reduce((sum, s) => {
+                      const [, remaining] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(remaining || 0);
+                    }, 0);
+                    return `${totalUsed} / ${totalCredits} used`;
+                  })() : "0 / 0 used"}
+                </span>
               </div>
               <div className="h-4 bg-[#E6F1FB] rounded-full overflow-hidden">
-                <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{ width: "82.7%" }} />
+                <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{ 
+                  width: `${assignedSubscription.length > 0 ? (() => {
+                    const totalUsed = assignedSubscription.reduce((sum, s) => {
+                      const [used] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(used || 0);
+                    }, 0);
+                    const totalCredits = assignedSubscription.reduce((sum, s) => {
+                      const [, remaining] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(remaining || 0);
+                    }, 0);
+                    return totalCredits > 0 ? (totalUsed / totalCredits * 100) : 0;
+                  })() : 0}%` 
+                }} />
               </div>
               <div className="flex justify-between text-sm mt-2">
-                <span className="text-[#378ADD]">82.7% used</span>
-                <span className="text-amber-600 font-medium">⚠️ 52 credits remaining</span>
+                <span className="text-[#378ADD]">
+                  {assignedSubscription.length > 0 ? (() => {
+                    const totalUsed = assignedSubscription.reduce((sum, s) => {
+                      const [used] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(used || 0);
+                    }, 0);
+                    const totalCredits = assignedSubscription.reduce((sum, s) => {
+                      const [, remaining] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(remaining || 0);
+                    }, 0);
+                    return totalCredits > 0 ? `${(totalUsed / totalCredits * 100).toFixed(1)}% used` : '0% used';
+                  })() : '0% used'}
+                </span>
+                <span className="text-amber-600 font-medium">
+                  {assignedSubscription.length > 0 ? (() => {
+                    const remainingCredits = assignedSubscription.reduce((sum, s) => {
+                      const [, remaining] = (s.credits || "0/0").split('/');
+                      return sum + parseInt(remaining || 0);
+                    }, 0);
+                    return remainingCredits > 0 ? `⚠️ ${remainingCredits} credits remaining` : '⚠️ No credits remaining';
+                  })() : '⚠️ No credits remaining'}
+                </span>
               </div>
             </div>
-          </div>
-          
+          </div>   
         </div>
-
       </div>
     </div>
   );

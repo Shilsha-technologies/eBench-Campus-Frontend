@@ -1563,8 +1563,6 @@ export default function CandidatesPage() {
             </div>
           </div>
         }
-
-
       </div>
 
       {/* Add Modal */}

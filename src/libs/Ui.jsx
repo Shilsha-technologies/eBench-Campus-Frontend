@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Tooltip } from "react-tooltip";
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 export function Modal({ isOpen, onClose, title, children, size = "md" }) {
@@ -57,7 +58,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }) {
 //     </div>
 //   );
 // }
-export function Table({ columns, data, emptyMessage = "No data found" }) {
+export function Table({ columns, data, emptyMessage = "No data found", headerBg = "bg-gray-50", headerTextColor = "text-gray-500" }) {
   if (!data.length) return (
     <div className="text-center py-16 text-gray-400">
       <div className="text-5xl mb-3">📭</div>
@@ -68,11 +69,11 @@ export function Table({ columns, data, emptyMessage = "No data found" }) {
     <div className="overflow-x-auto rounded-xl border border-gray-100">
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-50 border-b border-gray-100">
+          <tr className={`${headerBg} border-b border-gray-100`}>
             {columns.map((col, i) => (
               <th
                 key={col.key}
-                className={`text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap ${i !== 0 ? "border-l border-gray-200" : ""}`}
+                className={`text-left px-4 py-3 text-xs font-semibold ${headerTextColor} uppercase tracking-wide whitespace-nowrap ${i !== 0 ? "border-l border-gray-200" : ""}`}
               >
                 {col.label}
               </th>
