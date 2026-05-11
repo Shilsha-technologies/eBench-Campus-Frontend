@@ -261,26 +261,7 @@ function Avatar({ initials, size = "md" }) {
 }
 
 
-function recusive(s,index,temp,ans){
-  if(index==s.length || index>s.length){
-    ans.push(temp.slice(0,temp.length));
-    return;
-  }
-  temp.push(s[index])
-  recusive(s,index+1,temp,ans)
-  temp.pop();
-  recusive(s,index+1,temp,ans)
-}
 
-function solution(s){
-  const ans=[]
-  const temp=[]
-  let index=0;
-  recusive(s,index,temp,ans);
-  
-}
-
-solution("()())()")
 
 function StatCard({ stat }) {
   return (
