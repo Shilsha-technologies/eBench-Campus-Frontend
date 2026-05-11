@@ -293,11 +293,11 @@ export default function AdminLogin() {
                                 <div style={{ marginBottom: 6 }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                                         <label style={{ color: "#475569", fontSize: 13, fontWeight: 600, letterSpacing: "0.02em" }}>Password</label>
-                                        <a href="#" onClick={e => e.preventDefault()} style={{ color: "#6366f1", fontSize: 12.5, fontWeight: 500, textDecoration: "none" }}
+                                        <span onClick={() => navigate('/admin/forget-password')}  className=" cursor-pointer" style={{ color: "#6366f1", fontSize: 12.5, fontWeight: 500, textDecoration: "none" }}
                                             onMouseEnter={e => e.currentTarget.style.color = "#4f46e5"}
                                             onMouseLeave={e => e.currentTarget.style.color = "#6366f1"}>
                                             Forgot password?
-                                        </a>
+                                        </span>
                                     </div>
                                     <div style={{ position: "relative" }}>
                                         <input
