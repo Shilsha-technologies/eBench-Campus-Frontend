@@ -158,6 +158,16 @@ export const adminApi = api.injectEndpoints({
         }
       )
     }),
+    getCampusDetails: builder.query({
+      query: (campusId) => ({
+        url: `/admin/vendors/${campusId}/details`,
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: ["Admin"],
+    }),
 
   }),
 });
@@ -172,7 +182,8 @@ export const { useAdminChangePasswordMutation, useGetAllVendorQuery, useActiveIn
   useAddPlanByAdminMutation,
   useUpdatePlanByAdminMutation,
   useLazyGetAllOptionPlanQuery,
-  useSetAddonPriceMutation
+  useSetAddonPriceMutation,
+  useGetCampusDetailsQuery
 } = adminApi;
 
 
