@@ -259,7 +259,7 @@ export default function DashboardPage() {
   console.log("ddlj", data)
 
   // If no data is available, show no data message
-  if (!data || (!vendor && !dashboard_stats)) {
+  if (!data || (!vendor && !dashboard_stats)) { 
     return (
       <div className="p-4 lg:p-3">
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">

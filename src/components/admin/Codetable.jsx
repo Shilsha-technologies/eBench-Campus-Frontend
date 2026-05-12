@@ -7,7 +7,6 @@ const CodeTable = ({ codes, handleCopy }) => {
       </div>
     );
 
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white shadow rounded-lg text-sm md:text-base">
