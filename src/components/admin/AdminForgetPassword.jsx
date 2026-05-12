@@ -92,7 +92,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Mail, KeyRound, Lock, Eye, EyeOff,
   Loader2, AlertCircle, CheckCircle2, ArrowRight,
-  Briefcase, Shield, RefreshCw,
+  Briefcase, Shield, RefreshCw, Users, TrendingUp, Zap,
 } from "lucide-react";
 
 
@@ -102,6 +102,24 @@ import {
   useAdminResetAccessCodeMutation,
   useAdminResetPasswordMutation,
 } from "../../redux/services/authApi";
+
+/* ─────────────────────────────────────────────
+   Floating metric pill (decorative)
+───────────────────────────────────────────── */
+const Pill = ({ icon: Icon, val, label, style }) => (
+    <div style={{
+        position: "absolute", display: "flex", alignItems: "center", gap: 8,
+        background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)",
+        backdropFilter: "blur(16px)", borderRadius: 100, padding: "7px 14px",
+        boxShadow: "0 8px 32px rgba(0,0,0,.3)", ...style,
+    }}>
+        <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(99,102,241,.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Icon size={11} color="#a5b4fc" />
+        </div>
+        <span style={{ color: "rgba(226,232,240,.85)", fontSize: 12.5, fontWeight: 600 }}>{val}</span>
+        <span style={{ color: "rgba(148,163,184,.4)", fontSize: 12 }}>{label}</span>
+    </div>
+);
 
 /* ─────────────────────────────────────────────
    Step Indicator
@@ -241,7 +259,7 @@ const StrengthBar = ({ password }) => {
 /* ─────────────────────────────────────────────
    Main Component
 ───────────────────────────────────────────── */
-export default function ForgotPassword() {
+export default function AdminForgotPassword() {
   const navigate = useNavigate();
 
   // ── RTK Query mutations ──
@@ -421,15 +439,23 @@ export default function ForgotPassword() {
       <div style={{ minHeight:"100vh", width:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", background:"#090a13", fontFamily:"'DM Sans',sans-serif", overflow:"hidden", position:"relative", padding:"24px 16px" }}>
 
         {/* ── Animated background ── */}
-        <div style={{ position:"absolute", inset:0, overflow:"hidden", pointerEvents:"none" }}>
-          <div style={{ position:"absolute", top:"5%",  left:"10%", width:500, height:500, borderRadius:"50%", background:"radial-gradient(circle,rgba(99,102,241,.17) 0%,transparent 70%)", animation:"blobA 16s ease-in-out infinite" }} />
-          <div style={{ position:"absolute", bottom:"8%",right:"8%", width:440, height:440, borderRadius:"50%", background:"radial-gradient(circle,rgba(59,130,246,.13) 0%,transparent 70%)",  animation:"blobB 20s ease-in-out infinite" }} />
-          <div style={{ position:"absolute", top:"50%", left:"52%", width:320, height:320, borderRadius:"50%", background:"radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%)",   animation:"blobC 24s ease-in-out infinite" }} />
-          <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(rgba(99,102,241,.17) 1px,transparent 1px)", backgroundSize:"36px 36px", opacity:.45 }} />
-          <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 85% 85% at 50% 50%,transparent 35%,rgba(9,10,19,.97) 100%)" }} />
-          <div style={{ position:"absolute", top:"50%", left:"50%", width:780,  height:780,  borderRadius:"50%", border:"1px solid rgba(99,102,241,.07)", transform:"translate(-50%,-50%)", animation:"ringR 70s linear infinite" }} />
-          <div style={{ position:"absolute", top:"50%", left:"50%", width:1020, height:1020, borderRadius:"50%", border:"1px solid rgba(99,102,241,.05)", transform:"translate(-50%,-50%)", animation:"ringL 100s linear infinite" }} />
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+            <div style={{ position: "absolute", top: "5%", left: "10%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle,rgba(99,102,241,.17) 0%,transparent 70%)", animation: "blobA 16s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", bottom: "8%", right: "8%", width: 440, height: 440, borderRadius: "50%", background: "radial-gradient(circle,rgba(59,130,246,.13) 0%,transparent 70%)", animation: "blobB 20s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", top: "50%", left: "52%", width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%)", animation: "blobC 24s ease-in-out infinite" }} />
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(99,102,241,.17) 1px,transparent 1px)", backgroundSize: "36px 36px", opacity: .45 }} />
+            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 85% 85% at 50% 50%,transparent 35%,rgba(9,10,19,.97) 100%)" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", width: 780, height: 780, borderRadius: "50%", border: "1px solid rgba(99,102,241,.07)", transform: "translate(-50%,-50%)", animation: "ringR 70s linear infinite" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", width: 1020, height: 1020, borderRadius: "50%", border: "1px solid rgba(99,102,241,.05)", transform: "translate(-50%,-50%)", animation: "ringL 100s linear infinite" }} />
         </div>
+
+        {/* ── Floating metric pills ── */}
+        {mounted && <>
+            <Pill icon={Users} val="100+" label="employees management" style={{ top: "17%", left: "7%", animation: "blobA 14s ease-in-out 2s infinite" }} />
+            <Pill icon={TrendingUp} val="100%" label="subscription management" style={{ top: "26%", right: "6%", animation: "blobB 17s ease-in-out 0s infinite" }} />
+            <Pill icon={Zap} val="340+" label="campus management" style={{ bottom: "20%", left: "6%", animation: "blobC 19s ease-in-out 1s infinite" }} />
+            <Pill icon={Shield} val="99.9%" label="real time system feedback" style={{ bottom: "27%", right: "5%", animation: "blobA 21s ease-in-out 3s infinite" }} />
+        </>}
 
         {/* ── Logo ── */}
         <div className={mounted?"u0":""} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:22, opacity:mounted?undefined:0 }}>
@@ -437,7 +463,7 @@ export default function ForgotPassword() {
             <Briefcase size={18} color="#fff" />
           </div>
           <span style={{ color:"#f1f5f9", fontWeight:700, fontSize:21, letterSpacing:"-0.5px" }}>
-            eBench<span style={{ color:"#818cf8" }}>.ai</span>
+            eBench<span style={{ color:"#818cf8" }}>Campu.ai</span>
           </span>
           <span style={{ color:"rgba(148,163,184,.3)", fontSize:11.5, marginLeft:4, letterSpacing:"0.1em", textTransform:"uppercase", fontWeight:500, alignSelf:"flex-end", marginBottom:2 }}>Admin</span>
         </div>

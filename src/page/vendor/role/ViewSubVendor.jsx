@@ -181,7 +181,7 @@ const EmployeeView = () => {
                         </Card>
 
                         <Card title="Contact">
-                            <Info label="Phone" value={emp.phone} />
+                            <Info label="Phone" value={`+${emp.phone}`} />
                             <Info label="Address" value={emp.sub_vendor_address} />
                             <Info label="Country" value={emp.country} />
                         </Card>

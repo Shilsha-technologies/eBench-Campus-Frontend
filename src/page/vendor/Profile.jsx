@@ -444,19 +444,19 @@
 
 //                         <div>
 //                             <label className="text-sm">Mobile <span className=" text-red-500">*</span>  </label>
-//                             <PhoneInput
-//                                 country="in"
-//                                 disabled={!personalEdit}
-//                                 value={tempVendor.phone}
-//                                 inputStyle={{ width: "100%" }}
-//                                 onChange={(val) =>
-//                                     setTempVendor((p) => ({ ...p, phone: val }))
-//                                 }
-//                                 inputProps={{
-//                                     required: true,
-//                                     name: "phone",
-//                                 }}
-//                             />
+                            // <PhoneInput
+                            //     country="in"
+                            //     disabled={!personalEdit}
+                            //     value={tempVendor.phone}
+                            //     inputStyle={{ width: "100%" }}
+                            //     onChange={(val) =>
+                            //         setTempVendor((p) => ({ ...p, phone: val }))
+                            //     }
+                            //     inputProps={{
+                            //         required: true,
+                            //         name: "phone",
+                            //     }}
+                            // />
 //                         </div>
 
 //                         <Input
@@ -1225,6 +1225,8 @@ import { useGetVendorProfileQuery, useUpdateVendorProfileMutation } from "../../
 import toast from "react-hot-toast";
 import { useAuth } from "../../libs/AuthProvider";
 import { useLocationData } from "../../hooks/useLocationData";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 // --- Mock hooks / components (replace with your actual imports) ---
 const addToast = (msg, type) => console.log(`[${type}] ${msg}`);
@@ -1325,124 +1327,6 @@ const Select = ({ label, required, options = [], error, disable = false, classNa
   </div>
 );
 
-// ─── Phone Input Component ────────────────────────────────────────────────────
-const PhoneInput = ({
-  label,
-  required,
-  error,
-  control,
-  name,
-  countryName = "countryCode",
-  disable = false,
-}) => {
-  const [ccOpen, setCcOpen] = useState(false);
-  const [selectedCC, setSelectedCC] = useState(COUNTRY_CODES[0]);
-
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium text-gray-700">
-        {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
-      </label>
-
-      <div
-        className={`flex rounded-xl border transition-all
-          ${disable ? "bg-gray-50 border-gray-100" : ""}
-          ${error
-            ? "border-red-400 bg-red-50 ring-2 ring-red-100"
-            : disable
-              ? ""
-              : "border-gray-200 bg-white focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100"
-          }`}
-      >
-        {/* Country code dropdown */}
-        <div className="relative">
-          <button
-            type="button"
-            disabled={disable}
-            onClick={() => !disable && setCcOpen((o) => !o)}
-            className={`flex items-center gap-1.5 rounded-l-xl px-3 py-2.5 border-r border-gray-200 text-sm font-medium text-gray-700 h-full whitespace-nowrap transition-colors
-              ${disable ? "bg-gray-50 cursor-default text-gray-400" : "bg-gray-50 hover:bg-gray-100 cursor-pointer"}`}
-          >
-            <span>{selectedCC.flag}</span>
-            <span>{selectedCC.code}</span>
-            {!disable && <span className="text-gray-400 text-xs">▾</span>}
-          </button>
-
-          {ccOpen && !disable && (
-            <div className="absolute z-50 h-32 overflow-y-auto top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg">
-              {COUNTRY_CODES.map((cc) => (
-                <button
-                  key={cc.code + cc.country}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCC(cc);
-                    setCcOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-indigo-50 transition-colors text-left
-                    ${selectedCC.code === cc.code
-                      ? "bg-indigo-50 text-indigo-700 font-medium"
-                      : "text-gray-700"
-                    }`}
-                >
-                  <span>{cc.flag}</span>
-                  <span className="font-mono">{cc.code}</span>
-                  <span className="text-gray-400">{cc.country}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Phone number input */}
-        <Controller
-          name={name}
-          control={control}
-          rules={{
-            required: required ? "Phone number is required" : false,
-            pattern: {
-              value: /^[0-9]{10}$/,
-              message: "Enter a valid phone number (exactly 10 digits)",
-            },
-          }}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="tel"
-              placeholder="9050205060"
-              disabled={disable}
-              className={`flex-1 px-3 py-2.5 text-sm outline-none rounded-r-xl transition-all
-                ${disable ? "bg-gray-50 text-gray-500 cursor-default" : "bg-transparent"}`}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
-                field.onChange(value);
-              }}
-            />
-          )}
-        />
-
-        {/* Hidden country code field */}
-        <Controller
-          name={countryName}
-          control={control}
-          defaultValue={selectedCC.code}
-          render={({ field }) => {
-            if (field.value !== selectedCC.code) {
-              field.onChange(selectedCC.code);
-            }
-            return null;
-          }}
-        />
-      </div>
-
-      {error && (
-        <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
-          <span>⚠</span> {error.message}
-        </span>
-      )}
-    </div>
-  );
-};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function ProfilePage() {
@@ -1474,6 +1358,7 @@ export default function ProfilePage() {
     watch,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -1507,6 +1392,7 @@ export default function ProfilePage() {
         contactEmail: data?.vendor?.email || "",
         contactPhone: campusData.contact_phone || "",
         website: campusData.website || "",
+        countryCode: campusData.country_code || "+91",
       });
 
       // Set initial location data if exists
@@ -1844,14 +1730,43 @@ export default function ProfilePage() {
             />
 
             {/* Phone */}
-            <PhoneInput
-              label="Contact Phone"
-              required
+            <Controller
               name="contactPhone"
-              countryName="countryCode"
               control={control}
-              error={errors.contactPhone}
-              disable={!isEditing}
+              rules={{
+                required: "Phone number is required",
+              }}
+              render={({ field }) => (
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Contact Phone <span className="text-red-500 ml-0.5">*</span>
+                  </label>
+                  <PhoneInput
+                    country="in"
+                    disabled={!isEditing}
+                    value={field.value ? `${watch("countryCode") || "+91"}${field.value}` : ""}
+                    inputStyle={{ width: "100%" }}
+                    onChange={(val, countryData) => {
+                      // Extract local number without country code
+                      const localNumber = val.startsWith(countryData.dialCode) 
+                        ? val.substring(countryData.dialCode.length)
+                        : val;
+                      field.onChange(localNumber);
+                      // Update country code separately with + symbol
+                      setValue("countryCode", `+${countryData.dialCode}`);
+                    }}
+                    inputProps={{
+                      required: true,
+                      name: "contactPhone",
+                    }}
+                  />
+                  {errors.contactPhone && (
+                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
+                      <span>⚠</span> {errors.contactPhone.message}
+                    </span>
+                  )}
+                </div>
+              )}
             />
 
             {/* Website */}
