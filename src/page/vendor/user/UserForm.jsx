@@ -395,14 +395,6 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                             className={`w-full border rounded-lg p-2 text-gray-500 outline-none 
     ${errors.enrollmentYear ? "border-red-500" : "border-gray-300"}`}
                         />
-                        <label
-                            className="absolute left-2 top-2 text-gray-400 text-sm 
-    transition-all peer-focus:-top-2 peer-focus:text-xs 
-    peer-focus:text-[#286a94] peer-valid:-top-2 peer-valid:text-xs bg-white px-1"
-                        >
-                            Month & Year
-                        </label>
-
                         {errors.enrollmentYear && (
                             <p className="text-sm text-red-500 mt-1">
                                 {errors.enrollmentYear.message}

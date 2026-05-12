@@ -257,6 +257,21 @@ export default function DashboardPage() {
   const { vendor, branches, credits_summary, candidates_summary, recent_candidates,recent_activity, dashboard_stats } = data || {};
 
   console.log("ddlj", data)
+
+  // If no data is available, show no data message
+  if (!data || (!vendor && !dashboard_stats)) {
+    return (
+      <div className="p-4 lg:p-3">
+        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="text-6xl mb-4">📊</div>
+          <h2 className="text-xl font-semibold text-gray-600 mb-2">No Data Available</h2>
+          <p className="text-sm text-gray-500 text-center max-w-md">
+            Dashboard data is currently unavailable. Please check back later or contact support if the issue persists.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const totalCandidates = dashboard_stats?.total_candidates??0;
   const testsSent = dashboard_stats?.tests_sent??0;
   const testsCompleted = dashboard_stats?.tests_completed??0;
@@ -346,15 +361,23 @@ export default function DashboardPage() {
             <span className="text-xs text-gray-400">Last 7 days</span>
           </div>
           <div className="divide-y h-85 overflow-auto divide-gray-50">
-            {RECENT_ACTIVITY.map((a, index) => (
-              <div key={index} className="flex items-start gap-3 p-4">
-                <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm flex-shrink-0">{a.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700">{a.message}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{a.time}</p>
+            {RECENT_ACTIVITY && RECENT_ACTIVITY.length > 0 ? (
+              RECENT_ACTIVITY.map((a, index) => (
+                <div key={index} className="flex items-start gap-3 p-4">
+                  <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm flex-shrink-0">{a.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-700">{a.message}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{a.time}</p>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                <div className="text-4xl mb-3">📋</div>
+                <p className="text-sm font-medium">No recent activity</p>
+                <p className="text-xs mt-1">Your activity will appear here</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
