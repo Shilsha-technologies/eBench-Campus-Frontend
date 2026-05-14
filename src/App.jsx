@@ -22,9 +22,6 @@ import { StudentProvider } from "./context/StudentContext";
 const DashboardLayout = lazy(() =>
   import("./components/ui/Layout/DashboardLayout")
 );
-const AdminDashboardLayout = lazy(() =>
-  import("./components/ui/Layout/DashboardLayout").then(module => ({ default: module.AdminDashboardLayout }))
-);
 
 /* =========================
    Lazy Loaded Admin Pages
@@ -40,14 +37,9 @@ const AdminLoginPage = lazy(() => import("./components/admin/Login"));
 const CampusManagement = lazy(() =>
   import("./components/admin/CampusManagement")
 );
-const CampusStudents = lazy(() =>
-  import("./components/admin/CampusStudents")
-);
+
 const CampusDetail = lazy(() =>
   import("./components/admin/CampusDetail")
-);
-const CampusEmployees = lazy(() =>
-  import("./components/admin/CampusEmployees")
 );
 
 /* =========================
@@ -235,53 +227,14 @@ function App() {
                 element={
                   <AuthProvider>
                     <Routes>
-                      {/* ===== Admin Routes ===== */}
-                      <Route
-                        path="/admin/*"
-                        element={
-                          <AppErrorBoundary>
-                            <ProtectedRoute allowedRoles={["admin"]}>
-                              <AdminDashboardLayout />
-                            </ProtectedRoute>
-                          </AppErrorBoundary>
-                        }
-                      >
-                        <Route path="dashboard" element={<AdminDashboard />} />
-                        <Route
-                          path="subscription/user"
-                          element={<AdminSubscription />}
-                        />
-                        <Route
-                          path="subscription/list"
-                          element={<SubscriptionList />}
-                        />
-
-                        <Route
-                          path="campus-management"
-                          element={<CampusManagement />}
-                        />
-                        <Route
-                          path="campus-management/:campusId"
-                          element={<CampusDetail />}
-                        />
-                        <Route
-                          path="campus/:campusId/students"
-                          element={<CampusStudents />}
-                        />
-                        <Route
-                          path="campus/:campusId/employees"
-                          element={<CampusEmployees />}
-                        />
-                      </Route>
-
                       {/* ===== SuperAdmin Routes ===== */}
                       <Route
                         path="/superadmin/*"
                         element={
                           <AppErrorBoundary>
-                            {/* <ProtectedRoute allowedRoles={[""]}> */}
-                            <SuperAdminLayout />
-                            {/* </ProtectedRoute> */}
+                            <ProtectedRoute allowedRoles={["admin"]}>
+                              <SuperAdminLayout />
+                            </ProtectedRoute>
                           </AppErrorBoundary>
                         }
                       >

@@ -1,54 +1,54 @@
-import AdminSidebar from "./Sidebar";
-import AdminHeader from "./Header";
-import { requestPermission } from "../../../redux/services/firebase";
+// import AdminSidebar from "./Sidebar";
+// import AdminHeader from "./Header";
+// import { requestPermission } from "../../../redux/services/firebase";
 
-export const AdminDashboardLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const role=localStorage.getItem('role')
-  if(!localStorage.getItem('token')){
-    if(role==="admin"){
-    window.location.href = '/admin-login';
-    }else{
-    window.location.href = '/';
-    }
-    localStorage.clear()
-    return;
-  }
+// export const AdminDashboardLayout = () => {
+//   const [sidebarOpen, setSidebarOpen] = useState(false);
+//   const role=localStorage.getItem('role')
+//   if(!localStorage.getItem('token')){
+//     if(role==="admin"){
+//     window.location.href = '/admin-login';
+//     }else{
+//     window.location.href = '/';
+//     }
+//     localStorage.clear()
+//     return;
+//   }
 
-  useEffect(() => {
-    if(role !== "admin"){
-    requestPermission();
-    }
-  }, []);
+//   useEffect(() => {
+//     if(role !== "admin"){
+//     requestPermission();
+//     }
+//   }, []);
 
 
-  return (
-    <div className="flex h-screen bg-[#ffff]">
-      {/* Sidebar */}
-      <AdminSidebar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        role={role} // 👈 pass role to Sidebar
-      />
+//   return (
+//     <div className="flex h-screen bg-[#ffff]">
+//       {/* Sidebar */}
+//       <AdminSidebar
+//         sidebarOpen={sidebarOpen}
+//         setSidebarOpen={setSidebarOpen}
+//         role={role} // 👈 pass role to Sidebar
+//       />
 
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+//       {/* Overlay for mobile */}
+//       {sidebarOpen && (
+//         <div
+//           className="fixed inset-0 bg-black/40 z-30 md:hidden"
+//           onClick={() => setSidebarOpen(false)}
+//         />
+//       )}
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <AdminHeader setSidebarOpen={setSidebarOpen} role={role} /> {/* 👈 optional role */}
-        <div className="flex-1 p-4 md:p-0 overflow-auto">
-          <Outlet />
-        </div>
-      </main>
-    </div>
-  );
-};
+//       {/* Main Content */}
+//       <main className="flex-1 flex flex-col overflow-hidden">
+//         <AdminHeader setSidebarOpen={setSidebarOpen} role={role} /> {/* 👈 optional role */}
+//         <div className="flex-1 p-4 md:p-0 overflow-auto">
+//           <Outlet />
+//         </div>
+//       </main>
+//     </div>
+//   );
+// };
 
 
 //=====================
@@ -241,16 +241,16 @@ export function Sidebar({ isOpen, onClose }) {
 
       <aside
         className={`fixed overflow-scroll inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-100 flex flex-col transition-transform duration-300 ${isOpen
-            ? "translate-x-0"
-            : "-translate-x-full lg:translate-x-0"
+          ? "translate-x-0"
+          : "-translate-x-full lg:translate-x-0"
           }`}
       >
         {/* Logo */}
         <div className="p-6 py-5 border-b sticky top-0 bg-white z-20 border-gray-100">
           <div className="flex items-center gap-3">
-            <img 
-              src={eBenchLogo} 
-              alt="eBench Campus" 
+            <img
+              src={eBenchLogo}
+              alt="eBench Campus"
               className="w-14 h-9 rounded-xl object-cover"
             />
             <div>
