@@ -151,12 +151,12 @@ export default function AdminLogin() {
                 return null;
             }
 
-            setTimeout(() => navigate("/admin/dashboard"), 1200);
+            setTimeout(() => navigate("/superadmin/dashboard"), 1200);
             // debugger;
 
         } catch (err) {
             console.error("Login failed:", err);
-            toast.error(err?.data?.details??"Error occurred..")
+            toast.error(err?.data?.details ?? "Error occurred..")
         }
     };
 
@@ -223,7 +223,7 @@ export default function AdminLogin() {
                         <Briefcase size={18} color="#fff" />
                     </div>
                     <span style={{ color: "#f1f5f9", fontWeight: 700, fontSize: 21, letterSpacing: "-0.5px" }}>
-                        eBench<span style={{ color: "linear-gradient(135deg, #426190 0%, #5799db 100%)" }}>.campus</span>
+                        eBench<span style={{ color: "linear-gradient(135deg, #426190 0%, #5799db 100%)" }}>.campu</span>
                     </span>
                     <span style={{ color: "#fff", fontSize: 11.5, marginLeft: 4, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 500, alignSelf: "flex-end", marginBottom: 2 }}>Admin</span>
                 </div>
@@ -249,7 +249,7 @@ export default function AdminLogin() {
                                     <span style={{ color: "#6366f1", fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>Secure Admin Access</span>
                                 </div>
                                 <h1 style={{ color: "#0f172a", fontWeight: 700, fontSize: 22, marginBottom: 5, letterSpacing: "-0.4px" }}>Welcome back, Admin</h1>
-                                <p style={{ color: "#64748b", fontSize: 13.5, lineHeight: 1.55 }}>Sign in to your eBench.campus workspace to continue.</p>
+                                <p style={{ color: "#64748b", fontSize: 13.5, lineHeight: 1.55 }}>Sign in to your eBench.campu workspace to continue.</p>
                             </div>
 
                             {/* Error banner */}
@@ -293,7 +293,7 @@ export default function AdminLogin() {
                                 <div style={{ marginBottom: 6 }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                                         <label style={{ color: "#475569", fontSize: 13, fontWeight: 600, letterSpacing: "0.02em" }}>Password</label>
-                                        <span onClick={() => navigate('/admin/forget-password')}  className=" cursor-pointer" style={{ color: "#6366f1", fontSize: 12.5, fontWeight: 500, textDecoration: "none" }}
+                                        <span onClick={() => navigate('/admin/forget-password')} className=" cursor-pointer" style={{ color: "#6366f1", fontSize: 12.5, fontWeight: 500, textDecoration: "none" }}
                                             onMouseEnter={e => e.currentTarget.style.color = "#4f46e5"}
                                             onMouseLeave={e => e.currentTarget.style.color = "#6366f1"}>
                                             Forgot password?
@@ -386,7 +386,7 @@ export default function AdminLogin() {
                 {/* Brand footer */}
                 <div className={mounted ? "u5" : ""} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 18, opacity: mounted ? undefined : 0 }}>
                     <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(99,102,241,.5)" }} />
-                    <span style={{ color: "rgba(148,163,184,.2)", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}>eBench.ai — Enterprise HRMS &amp; ATS</span>
+                    <span style={{ color: "rgba(148,163,184,.2)", fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}>eBench.campu — Enterprise HRMS &amp; ATS</span>
                     <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(99,102,241,.5)" }} />
                 </div>
 

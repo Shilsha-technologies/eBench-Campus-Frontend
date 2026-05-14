@@ -7,12 +7,13 @@ import {
     useLazyGetAllOptionPlanQuery,
     useSetAddonPriceMutation
 } from "../redux/services/adminApi";
-import { Edit, SquarePen, Trash2 } from "lucide-react";
+import { Edit, SquarePen, Trash2, Search, Globe, CreditCard, Clock, DollarSign, TrendingUp, Plus, Settings, X } from "lucide-react";
 import { useGetCountryCurrencyMutation, useGetCountryDataQuery } from "../redux/services/externalApi";
 import Select from 'react-select'
 import toast from "react-hot-toast";
 import useDebounce from "../libs/useDebounce";
 import PageLoader from "../libs/PageLoader";
+import { T } from "../components/admin/superadmin/SuperAdminDashboard";
 
 
 export default function SubscriptionModule() {
@@ -220,45 +221,134 @@ export default function SubscriptionModule() {
     if (isError) return <p className="p-4">Something went wrong</p>
 
     return (
-        <div className="p-5 pt-3 bg-gray-50 min-h-screen ">
-            <div className="mb-4">
-                <div className="mb-4">
-                    <h1 className="text- text-[#4c82a8] font-medium">Subscription Management (add/edit your subscription plan & its addon subscription price)</h1>
-                    <p className="text-sm mt-1 text-gray-600">Please Select Country to see its subscription plan & credits </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* Header */}
+            <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "space-between", 
+                flexWrap: "wrap", 
+                gap: 12,
+                background: "linear-gradient(135deg,rgba(34,197,94,.1),rgba(16,185,129,.05))",
+                padding: "20px 24px",
+                borderRadius: 16,
+                border: `1px solid ${T.border}`
+            }}>
+                <div>
+                    <h1 style={{ 
+                        color: T.text, 
+                        fontWeight: 800, 
+                        fontSize: 22, 
+                        marginBottom: 4,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10
+                    }}>
+                        <Settings size={24} style={{ color: T.accent }}/>
+                        Subscription Management
+                    </h1>
+                    <p style={{ color: T.textMuted, fontSize: 13 }}>
+                        Add/edit subscription plans and manage addon pricing
+                    </p>
                 </div>
-
-                <Select
-                    className="w-72"
-                    showSearch
-                    options={options}
-                    optionFilterProp="searchLabel"
-                    value={selectedOption}
-                    onChange={setSelectedOption}
-                    isSearchable
-                    filterOption={(option, inputValue) =>
-                        option.data.searchLabel
-                            ?.toLowerCase()
-                            .includes(inputValue.toLowerCase())
-                    }
-                />
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                    <Select
+                        styles={{
+                            control: (provided) => ({
+                                ...provided,
+                                minHeight: "42px",
+                                borderRadius: "10px",
+                                border: `1px solid ${T.border}`,
+                                background: "rgba(34,197,94,.04)",
+                                boxShadow: "none",
+                                "&:hover": {
+                                    border: `1px solid ${T.border}`
+                                }
+                            }),
+                            option: (provided) => ({
+                                ...provided,
+                                padding: "10px 12px"
+                            })
+                        }}
+                        className="w-72"
+                        showSearch
+                        options={options}
+                        optionFilterProp="searchLabel"
+                        value={selectedOption}
+                        onChange={setSelectedOption}
+                        isSearchable
+                        filterOption={(option, inputValue) =>
+                            option.data.searchLabel
+                                ?.toLowerCase()
+                                .includes(inputValue.toLowerCase())
+                        }
+                    />
+                </div>
             </div>
 
             {/* Credit Price Box */}
-            <section className="bg-white shadow rounded p-4 mb-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-sm text-gray-500">
-                            Addon price – Pay {plans?.addon_discount_percent}% off the price and receive full defined credits. you can edit addon price percentage
-                        </p>
-                        <div className="text-2xl text-[#4c82a8] font-semibold">{plans?.addon_discount_percent ?? '—'}%</div>
+            <div style={{
+                background: T.surface,
+                border: `1px solid ${T.border}`,
+                borderRadius: 16,
+                padding: "20px 24px",
+                boxShadow: "0 4px 16px rgba(0,0,0,.04)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 20
+            }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <div style={{ 
+                        width: 48, 
+                        height: 48, 
+                        borderRadius: 12, 
+                        background: `${T.gold}15`, 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center" 
+                    }}>
+                        <DollarSign size={22} style={{ color: T.gold }}/>
                     </div>
-                    <div className="flex gap-2">
-                        <button className="px-3 py-2 bg-[#4c82a8] text-white rounded" onClick={() => [setShowPresetModal(true), setCreditPrice(plans?.addon_discount_percent)]} >
-                            <Edit size={16} color="white" />
-                        </button>
+                    <div>
+                        <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 4 }}>
+                            Addon discount – Pay {plans?.addon_discount_percent}% off the price and receive full defined credits
+                        </p>
+                        <div style={{ fontSize: 28, fontWeight: 800, color: T.text, lineHeight: 1 }}>
+                            {plans?.addon_discount_percent ?? '—'}%
+                        </div>
                     </div>
                 </div>
-            </section>
+                <button 
+                    onClick={() => [setShowPresetModal(true), setCreditPrice(plans?.addon_discount_percent)]}
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "10px 16px",
+                        borderRadius: 10,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        transition: "all .2s",
+                        background: "linear-gradient(135deg,rgb(34,197,94),rgb(22,163,74))",
+                        border: "none",
+                        color: "#fff",
+                        boxShadow: "0 4px 16px rgba(34,197,94,.25)"
+                    }}
+                    onMouseEnter={e => {
+                        e.currentTarget.style.transform = "translateY(-1px)";
+                        e.currentTarget.style.boxShadow = "0 6px 20px rgba(34,197,94,.35)";
+                    }}
+                    onMouseLeave={e => {
+                        e.currentTarget.style.transform = "none";
+                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(34,197,94,.25)";
+                    }}
+                >
+                    <Edit size={16} />
+                    Edit Discount
+                </button>
+            </div>
 
             {/*
                 <div className="mt-4">
@@ -284,51 +374,102 @@ export default function SubscriptionModule() {
 
 
             {/* Plans Table */}
-            <div className="bg-white rounded-lg shadow  ">
-                <div className="overflow-x-auto p-5">
-                    <div className="flex justify-between items-center  mb-5">
-
-                        <label className="flex items-center gap-2 bg-white px-3 py-2 rounded-md shadow shadow-[#dcdedf]">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1111.196 3.094l3.85 3.85a1 1 0 01-1.414 1.414l-3.85-3.85A6 6 0 012 8z" clipRule="evenodd" />
-                            </svg>
+            <div style={{
+                background: T.surface,
+                border: `1px solid ${T.border}`,
+                borderRadius: 18,
+                boxShadow: "0 8px 32px rgba(0,0,0,.08), 0 0 0 1px rgba(255,255,255,.5) inset",
+                overflow: "hidden"
+            }}>
+                <div style={{ height: 3, background: "linear-gradient(90deg,#22c55e,#16a34a,#10b981)", width: "100%" }}/>
+                <div style={{ padding: "20px 24px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+                        <div style={{ position: "relative" }}>
+                            <Search size={14} style={{ 
+                                position: "absolute", 
+                                left: 12, 
+                                top: "50%", 
+                                transform: "translateY(-50%)", 
+                                color: "rgba(100,116,139,.35)", 
+                                pointerEvents: "none" 
+                            }}/>
                             <input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search by plan name"
-                                className="outline-none w-64 placeholder:text-[#286a94]"
+                                style={{
+                                    background: "rgba(34,197,94,.04)",
+                                    border: `1px solid ${T.borderSoft}`,
+                                    borderRadius: 10,
+                                    padding: "8px 12px 8px 36px",
+                                    width: 280,
+                                    fontSize: 13,
+                                    color: T.text,
+                                    outline: "none",
+                                    transition: "all .2s"
+                                }}
+                                onFocus={e => {
+                                    e.target.style.border = `1px solid ${T.border}`;
+                                    e.target.style.background = "rgba(34,197,94,.08)";
+                                }}
+                                onBlur={e => {
+                                    e.target.style.border = `1px solid ${T.borderSoft}`;
+                                    e.target.style.background = "rgba(34,197,94,.04)";
+                                }}
                             />
-                        </label>
+                        </div>
                         <button
                             onClick={handleOpenAdd}
-                            className="bg-[#4c82a8] text-white px-4 py-2 rounded-lg"
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                padding: "10px 16px",
+                                borderRadius: 10,
+                                fontSize: 13,
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                transition: "all .2s",
+                                background: "linear-gradient(135deg,rgb(34,197,94),rgb(22,163,74))",
+                                border: "none",
+                                color: "#fff",
+                                boxShadow: "0 4px 16px rgba(34,197,94,.25)"
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.transform = "translateY(-1px)";
+                                e.currentTarget.style.boxShadow = "0 6px 20px rgba(34,197,94,.35)";
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.transform = "none";
+                                e.currentTarget.style.boxShadow = "0 4px 16px rgba(34,197,94,.25)";
+                            }}
                         >
-                            + Add Plan
+                            <Plus size={16} />
+                            Add Plan
                         </button>
                     </div>
 
-                    <table className="min-w-full shadow mx-auto divide-y divide-gray-300">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Plan Name</th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Duration (days)</th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Credits</th>
-                                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">Price</th>
-                                <th className="px-6 py-3 text-right text-sm font-medium text-gray-500">Actions</th>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                            <tr style={{ borderBottom: `1px solid ${T.borderSoft}`, background: "rgba(255,255,255,.02)" }}>
+                                <th style={{ textAlign: "left", padding: "14px 18px", fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.07em" }}>Plan Name</th>
+                                <th style={{ textAlign: "left", padding: "14px 18px", fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.07em" }}>Duration</th>
+                                <th style={{ textAlign: "left", padding: "14px 18px", fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.07em" }}>Credits</th>
+                                <th style={{ textAlign: "left", padding: "14px 18px", fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.07em" }}>Price</th>
+                                <th style={{ textAlign: "right", padding: "14px 18px", fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.07em" }}>Actions</th>
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white divide-y divide-gray-300">
-
+                        <tbody>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: T.textMuted, fontSize: 13 }}>
                                         Loading...
                                     </td>
                                 </tr>
                             ) : plans?.plans?.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={5} style={{ textAlign: "center", padding: "40px", color: T.textMuted, fontSize: 13 }}>
                                         No subscription plans found
                                     </td>
                                 </tr>
@@ -336,30 +477,104 @@ export default function SubscriptionModule() {
                                 plans?.plans?.map((p, index) => (
                                     <tr
                                         key={p.id}
-                                        className={`text-sm text-gray-600`}
+                                        style={{ borderBottom: `1px solid rgba(255,255,255,.04)`, transition: "background .15s" }}
+                                        onMouseEnter={e => e.currentTarget.style.background = "rgba(34,197,94,.03)"}
+                                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                                     >
-                                        <td className="px-6 py-4 font-medium">{p?.name}</td>
+                                        <td style={{ padding: "16px 18px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                                <div style={{ 
+                                                    width: 36, 
+                                                    height: 36, 
+                                                    borderRadius: 10, 
+                                                    background: `${T.accent}15`, 
+                                                    display: "flex", 
+                                                    alignItems: "center", 
+                                                    justifyContent: "center" 
+                                                }}>
+                                                    <CreditCard size={16} style={{ color: T.accent }}/>
+                                                </div>
+                                                <span style={{ color: T.text, fontWeight: 600, fontSize: 13 }}>
+                                                    {p?.name}
+                                                </span>
+                                            </div>
+                                        </td>
 
-                                        <td className="px-6 py-4">{p?.duration_days} days</td>
+                                        <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <Clock size={13} style={{ color: T.textDim }}/>
+                                                {p?.duration_days} days
+                                            </div>
+                                        </td>
 
-                                        <td className="px-6 py-4">{p?.credits || "-"}</td>
+                                        <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <TrendingUp size={13} style={{ color: T.textDim }}/>
+                                                {p?.credits || "-"}
+                                            </div>
+                                        </td>
 
-                                        <td className="px-6 py-4">{p?.price} {p?.currency}</td>
+                                        <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <DollarSign size={13} style={{ color: T.gold }}/>
+                                                {p?.price} {p?.currency}
+                                            </div>
+                                        </td>
 
-                                        <td className="px-6 py-4 text-end">
-                                            <div className="flex justify-end gap-3 items-center">
+                                        <td style={{ padding: "16px 18px", textAlign: "right" }}>
+                                            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, alignItems: "center" }}>
                                                 <button
                                                     onClick={() => handleOpenEdit(p)}
-                                                    className="text-[#4689b9] hover:underline cursor-pointer text-sm"
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: 6,
+                                                        padding: "6px 12px",
+                                                        borderRadius: 8,
+                                                        fontSize: 12,
+                                                        fontWeight: 600,
+                                                        cursor: "pointer",
+                                                        transition: "all .2s",
+                                                        background: "rgba(34,197,94,.08)",
+                                                        border: `1px solid ${T.accent}30`,
+                                                        color: T.accent
+                                                    }}
+                                                    onMouseEnter={e => {
+                                                        e.currentTarget.style.background = "rgba(34,197,94,.15)";
+                                                    }}
+                                                    onMouseLeave={e => {
+                                                        e.currentTarget.style.background = "rgba(34,197,94,.08)";
+                                                    }}
                                                 >
-                                                    <SquarePen size={16} />
+                                                    <SquarePen size={14} />
+                                                    Edit
                                                 </button>
 
                                                 <button
                                                     onClick={() => openDeletePopup(p)}
-                                                    className="text-red-600 hover:underline cursor-pointer text-sm"
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: 6,
+                                                        padding: "6px 12px",
+                                                        borderRadius: 8,
+                                                        fontSize: 12,
+                                                        fontWeight: 600,
+                                                        cursor: "pointer",
+                                                        transition: "all .2s",
+                                                        background: "rgba(239,68,68,.08)",
+                                                        border: `1px solid rgba(239,68,68,.3)`,
+                                                        color: "#ef4444"
+                                                    }}
+                                                    onMouseEnter={e => {
+                                                        e.currentTarget.style.background = "rgba(239,68,68,.15)";
+                                                    }}
+                                                    onMouseLeave={e => {
+                                                        e.currentTarget.style.background = "rgba(239,68,68,.08)";
+                                                    }}
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={14} />
+                                                    Delete
                                                 </button>
                                             </div>
                                         </td>
@@ -376,20 +591,45 @@ export default function SubscriptionModule() {
             {/* Add/Edit Modal */}
             {showModal && (
                 <Modal onClose={() => setShowModal(false)}>
-                    <div className="bg-white w-full rounded-lg p-6">
-                        <h2 className="text-xl text-[#4c82a8] font-semibold mb-4">
-                            {mode === "add" ? "Add Subscription" : "Edit Subscription"}
-                        </h2>
+                    <div style={{ background: T.surface, width: "100%", borderRadius: 18, padding: "24px", border: `1px solid ${T.border}` }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                            <h2 style={{ fontSize: 20, color: T.text, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                                <CreditCard size={20} style={{ color: T.accent }}/>
+                                {mode === "add" ? "Add Subscription" : "Edit Subscription"}
+                            </h2>
+                            <button 
+                                onClick={() => setShowModal(false)}
+                                style={{
+                                    padding: 6,
+                                    borderRadius: 8,
+                                    background: "transparent",
+                                    border: "none",
+                                    color: T.textMuted,
+                                    cursor: "pointer",
+                                    display: "flex"
+                                }}
+                            >
+                                <X size={18}/>
+                            </button>
+                        </div>
 
-                        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                             {/* Plan Name */}
-                            <div className="flex flex-col">
-                                <label className="  text-sm font-medium text-gray-500  mb-1">Plan Name</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Plan Name</label>
                                 {
                                     selectedOption?.value === null ? (
                                         <input
                                             type="text"
-                                            className="border border-gray-300 p-2 rounded outline-none"
+                                            style={{
+                                                border: `1px solid ${T.border}`,
+                                                padding: "10px 12px",
+                                                borderRadius: 10,
+                                                outline: "none",
+                                                fontSize: 13,
+                                                color: T.text,
+                                                background: "rgba(34,197,94,.02)"
+                                            }}
                                             placeholder="Enter plan name"
                                             value={formData.name}
                                             onChange={(e) =>
@@ -398,7 +638,19 @@ export default function SubscriptionModule() {
                                             required
                                         />
                                     ) : (
-                                        <select name="name" className=" text-gray-500 w-full h-full border border-gray-300 p-2 outline-none"
+                                        <select 
+                                            name="name" 
+                                            style={{
+                                                color: T.text,
+                                                width: "100%",
+                                                height: "100%",
+                                                border: `1px solid ${T.border}`,
+                                                padding: "10px 12px",
+                                                borderRadius: 10,
+                                                outline: "none",
+                                                fontSize: 13,
+                                                background: "rgba(34,197,94,.02)"
+                                            }}
                                             onChange={(e) => {
                                                 const selectedPlan = planOptionbar?.find(
                                                     (item) => item.name === e.target.value
@@ -424,16 +676,22 @@ export default function SubscriptionModule() {
                                         </select>
                                     )
                                 }
-
-
                             </div>
 
                             {/* Duration */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-500  mb-1">Duration (days)</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Duration (days)</label>
                                 <input
                                     type="number"
-                                    className="border border-gray-300 text-gray-500 p-2 rounded outline-none"
+                                    style={{
+                                        border: `1px solid ${T.border}`,
+                                        padding: "10px 12px",
+                                        borderRadius: 10,
+                                        outline: "none",
+                                        fontSize: 13,
+                                        color: T.text,
+                                        background: "rgba(34,197,94,.02)"
+                                    }}
                                     placeholder="Days"
                                     value={formData.duration_days}
                                     onChange={(e) => {
@@ -450,16 +708,19 @@ export default function SubscriptionModule() {
 
 
                             {/* Select Option */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-500  mb-1">Country</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Country</label>
                                 <Select
                                     styles={{
                                         control: (provided) => ({
                                             ...provided,
-                                            height: "42px",
+                                            minHeight: "42px",
+                                            borderRadius: "10px",
+                                            border: `1px solid ${T.border}`,
+                                            background: "rgba(34,197,94,.02)",
+                                            boxShadow: "none"
                                         })
                                     }}
-                                    className=""
                                     showSearch
                                     options={options}
                                     optionFilterProp="searchLabel"
@@ -475,11 +736,19 @@ export default function SubscriptionModule() {
                             </div>
 
                             {/* Currency */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-500  mb-1">Currency</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Currency</label>
                                 <input
                                     type="text"
-                                    className="border border-gray-300 text-gray-500 p-2 rounded outline-none"
+                                    style={{
+                                        border: `1px solid ${T.border}`,
+                                        padding: "10px 12px",
+                                        borderRadius: 10,
+                                        outline: "none",
+                                        fontSize: 13,
+                                        color: T.textMuted,
+                                        background: "rgba(34,197,94,.02)"
+                                    }}
                                     placeholder="Currency"
                                     value={currency}
                                     disabled
@@ -487,11 +756,19 @@ export default function SubscriptionModule() {
                             </div>
 
                             {/* Credits */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-500  mb-1">Credits</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Credits</label>
                                 <input
                                     type="number"
-                                    className="border border-gray-300 p-2 rounded outline-none disabled:text-gray-500"
+                                    style={{
+                                        border: `1px solid ${T.border}`,
+                                        padding: "10px 12px",
+                                        borderRadius: 10,
+                                        outline: "none",
+                                        fontSize: 13,
+                                        color: T.text,
+                                        background: "rgba(34,197,94,.02)"
+                                    }}
                                     placeholder="Credits"
                                     value={formData.credits}
                                     disabled={selectedOption?.value !== null}
@@ -503,11 +780,19 @@ export default function SubscriptionModule() {
                             </div>
 
                             {/* Price */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-500  mb-1">Price</label>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <label style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, marginBottom: 6 }}>Price</label>
                                 <input
                                     type="number"
-                                    className="border border-gray-300 p-2 rounded outline-none"
+                                    style={{
+                                        border: `1px solid ${T.border}`,
+                                        padding: "10px 12px",
+                                        borderRadius: 10,
+                                        outline: "none",
+                                        fontSize: 13,
+                                        color: T.text,
+                                        background: "rgba(34,197,94,.02)"
+                                    }}
                                     placeholder="Price"
                                     value={formData.price}
                                     onChange={(e) =>
@@ -519,18 +804,53 @@ export default function SubscriptionModule() {
 
 
                             {/* Buttons — Full Width Row */}
-                            <div className="col-span-2 flex justify-end text-gray-500  gap-3 mt-4">
+                            <div style={{ gridColumn: "span 2", display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 8 }}>
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 border rounded"
+                                    style={{
+                                        padding: "10px 20px",
+                                        borderRadius: 10,
+                                        fontSize: 13,
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        transition: "all .2s",
+                                        background: "rgba(148,163,184,.1)",
+                                        border: `1px solid rgba(148,163,184,.2)`,
+                                        color: T.textMuted
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.background = "rgba(148,163,184,.2)";
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.background = "rgba(148,163,184,.1)";
+                                    }}
                                 >
                                     Cancel
                                 </button>
 
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-green-600 text-white rounded"
+                                    style={{
+                                        padding: "10px 20px",
+                                        borderRadius: 10,
+                                        fontSize: 13,
+                                        fontWeight: 600,
+                                        cursor: "pointer",
+                                        transition: "all .2s",
+                                        background: "linear-gradient(135deg,rgb(34,197,94),rgb(22,163,74))",
+                                        border: "none",
+                                        color: "#fff",
+                                        boxShadow: "0 4px 16px rgba(34,197,94,.25)"
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.transform = "translateY(-1px)";
+                                        e.currentTarget.style.boxShadow = "0 6px 20px rgba(34,197,94,.35)";
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.transform = "none";
+                                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(34,197,94,.25)";
+                                    }}
                                 >
                                     {mode === "add" ? (addplanLoading ? "Adding" : "Add") : (updateplanLoading ? 'Updating' : "Update")}
                                 </button>
@@ -543,24 +863,75 @@ export default function SubscriptionModule() {
 
             {/* DELETE CONFIRMATION POPUP */}
             {deleteModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg w-[500px] ">
-                        <h2 className="text-xl font-bold mb-3 text-red-500">
-                            Confirm Delete
-                        </h2>
-                        <p className="text-gray-700 mb-6">Are you sure you want to delete this plan?</p>
+                <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ background: T.surface, padding: "24px", borderRadius: 18, width: "480px", border: `1px solid ${T.border}`, boxShadow: "0 20px 60px rgba(0,0,0,.3)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                            <div style={{ 
+                                width: 48, 
+                                height: 48, 
+                                borderRadius: 12, 
+                                background: "rgba(239,68,68,.12)", 
+                                display: "flex", 
+                                alignItems: "center", 
+                                justifyContent: "center" 
+                            }}>
+                                <Trash2 size={24} style={{ color: "#ef4444" }}/>
+                            </div>
+                            <div>
+                                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#ef4444", marginBottom: 4 }}>
+                                    Confirm Delete
+                                </h2>
+                                <p style={{ fontSize: 13, color: T.textMuted }}>This action cannot be undone</p>
+                            </div>
+                        </div>
+                        <p style={{ fontSize: 14, color: T.text, marginBottom: 24, lineHeight: 1.5 }}>Are you sure you want to delete this plan?</p>
 
-                        <div className="flex justify-end gap-3">
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
                             <button
                                 onClick={() => [setDeleteModal(false), setSelectedId(null)]}
-                                className="px-4 py-2 hover:bg-gray-300 bg-gray-200 rounded"
+                                style={{
+                                    padding: "10px 20px",
+                                    borderRadius: 10,
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                    transition: "all .2s",
+                                    background: "rgba(148,163,184,.1)",
+                                    border: `1px solid rgba(148,163,184,.2)`,
+                                    color: T.textMuted
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.background = "rgba(148,163,184,.2)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.background = "rgba(148,163,184,.1)";
+                                }}
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={confirmDelete}
-                                className="px-4 py-2 bg-red-600 text-white rounded"
+                                style={{
+                                    padding: "10px 20px",
+                                    borderRadius: 10,
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                    transition: "all .2s",
+                                    background: "linear-gradient(135deg,#ef4444,#dc2626)",
+                                    border: "none",
+                                    color: "#fff",
+                                    boxShadow: "0 4px 16px rgba(239,68,68,.25)"
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(239,68,68,.35)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.transform = "none";
+                                    e.currentTarget.style.boxShadow = "0 4px 16px rgba(239,68,68,.25)";
+                                }}
                             >
                                 {deletePlanLoading ? 'Deleting..' : 'Delete'}
                             </button>
@@ -571,19 +942,45 @@ export default function SubscriptionModule() {
 
             {showPresetModal && (
                 <Modal onClose={() => setShowPresetModal(false)}>
-                    <div className="p-6 bg-white rounded-lg shadow-lg min-w-[320px]">
-                        <h3 className="text-xl text-[#4c82a8] font-semibold mb-4">
-                            {'Edit Addon Percentage'}
-                        </h3>
+                    <div style={{ padding: "24px", background: T.surface, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,.3)", minWidth: "380px", border: `1px solid ${T.border}` }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                            <h3 style={{ fontSize: 20, color: T.text, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                                <Settings size={20} style={{ color: T.gold }}/>
+                                Edit Addon Percentage
+                            </h3>
+                            <button 
+                                onClick={() => setShowPresetModal(false)}
+                                style={{
+                                    padding: 6,
+                                    borderRadius: 8,
+                                    background: "transparent",
+                                    border: "none",
+                                    color: T.textMuted,
+                                    cursor: "pointer",
+                                    display: "flex"
+                                }}
+                            >
+                                <X size={18}/>
+                            </button>
+                        </div>
 
-                        <div className=" w-full">
-                            <label className="block text-sm font-medium text-gray-700 mt-3 mb-1">
+                        <div style={{ width: "100%" }}>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textMuted, marginTop: 12, marginBottom: 8 }}>
                                 Addon Credit Percentage (%)
                             </label>
 
                             <input
                                 type="text"
-                                className="border border-gray-300 focus:border-blue-500 focus:ring-2 outline-none focus:ring-blue-200 transition-all px-3 py-2 w-full rounded-md"
+                                style={{
+                                    border: `1px solid ${T.border}`,
+                                    padding: "10px 12px",
+                                    borderRadius: 10,
+                                    outline: "none",
+                                    fontSize: 13,
+                                    color: T.text,
+                                    background: "rgba(34,197,94,.02)",
+                                    width: "100%"
+                                }}
                                 value={creditPrice}
                                 onChange={(e) => {
                                     const val = e.target.value;
@@ -611,16 +1008,51 @@ export default function SubscriptionModule() {
                         </div>
 
 
-                        <div className="mt-6 flex gap-3 justify-end">
+                        <div style={{ marginTop: 24, display: "flex", gap: 12, justifyContent: "flex-end" }}>
                             <button
-                                className="px-4 py-2 text-white  bg-gray-400   rounded-md hover:bg-gray-500 transition"
+                                style={{
+                                    padding: "10px 20px",
+                                    borderRadius: 10,
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                    transition: "all .2s",
+                                    background: "rgba(148,163,184,.1)",
+                                    border: `1px solid rgba(148,163,184,.2)`,
+                                    color: T.textMuted
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.background = "rgba(148,163,184,.2)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.background = "rgba(148,163,184,.1)";
+                                }}
                                 onClick={() => setShowPresetModal(false)}
                             >
                                 Cancel
                             </button>
 
                             <button
-                                className="px-6 py-2 bg-[#4c82a8] text-white rounded-md hover:bg-[#4b82c0] transition"
+                                style={{
+                                    padding: "10px 20px",
+                                    borderRadius: 10,
+                                    fontSize: 13,
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                    transition: "all .2s",
+                                    background: "linear-gradient(135deg,rgb(34,197,94),rgb(22,163,74))",
+                                    border: "none",
+                                    color: "#fff",
+                                    boxShadow: "0 4px 16px rgba(34,197,94,.25)"
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(34,197,94,.35)";
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.transform = "none";
+                                    e.currentTarget.style.boxShadow = "0 4px 16px rgba(34,197,94,.25)";
+                                }}
                                 onClick={handleSetCredit}
                             >
                                 {isLoadingSetOnPrice ? 'Saving' : 'Save'}
@@ -652,15 +1084,32 @@ function Modal({ children, onClose }) {
 
     return (
         <div
-            className={`fixed inset-0 flex items-center justify-center z-50
-            bg-black/40 transition-opacity duration-200
-            ${show ? "opacity-100" : "opacity-0"}`}
+            style={{
+                position: "fixed",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 50,
+                background: "rgba(0,0,0,.4)",
+                transition: "opacity 200ms",
+                opacity: show ? 1 : 0
+            }}
             onClick={handleClose}
         >
             {/* Prevent click from closing when clicking inside */}
             <div
-                className={`bg-white rounded-lg shadow max-w-xl w-full transition-all duration-200
-                ${show ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+                style={{
+                    background: T.surface,
+                    borderRadius: 18,
+                    boxShadow: "0 20px 60px rgba(0,0,0,.3)",
+                    maxWidth: "600px",
+                    width: "100%",
+                    transition: "all 200ms",
+                    transform: show ? "scale(1)" : "scale(0.95)",
+                    opacity: show ? 1 : 0,
+                    border: `1px solid ${T.border}`
+                }}
                 onClick={(e) => e.stopPropagation()}
             >
                 {children}

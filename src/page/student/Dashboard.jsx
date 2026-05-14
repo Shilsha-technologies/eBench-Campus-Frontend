@@ -70,7 +70,7 @@ export default function StudentDashboard() {
     email: "aryan.mehta@gmail.com",
     phone: "+91 9876543210",
     gender: "Male",
-    college: "IIT Bombay",
+    college: "Bombay",
     degree: "B.Tech",
     branch: "Computer Science",
     year: "3rd Year",
