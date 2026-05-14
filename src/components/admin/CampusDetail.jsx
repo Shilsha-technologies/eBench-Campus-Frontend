@@ -741,7 +741,7 @@ function OverviewTab({ vendor }) {
               label="Website"
               value={
                 <a href={vendor.website} target="_blank" rel="noreferrer"
-                  className="text-blue-600 hover:underline break-all">
+                  className="text-green-600 hover:underline break-all">
                   {vendor.website}
                 </a>
               }
@@ -830,12 +830,14 @@ function StudentsTab({ candidates }) {
           placeholder="Search students by name, email, phone…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 placeholder-gray-400"
+          className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-300 placeholder-gray-400"
         />
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+      <div className="bg-white border border-green-50 rounded-xl overflow-hidden" style={{
+        boxShadow: "0 4px 16px rgba(34,197,94,.06)"
+      }}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -982,14 +984,14 @@ export default function VendorDetailPage() {
   const stats      = vendorData?.statistics || {};
 
   const onBack = () => {
-    navigate("/admin/campus-management");
+    navigate(-1);
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-500">Loading vendor details...</p>
         </div>
       </div>
@@ -1004,7 +1006,7 @@ export default function VendorDetailPage() {
           <p className="text-gray-500 mb-4">The requested vendor does not exist.</p>
           <button
             onClick={onBack}
-            className="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 cursor-pointer bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
           >
             Back to Vendors
           </button>
@@ -1029,11 +1031,15 @@ export default function VendorDetailPage() {
         </button>
 
         {/* ── Vendor Header Card ── */}
-        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden mb-6 shadow-sm">
+        <div className="bg-white border border-green-100/15 rounded-2xl overflow-hidden mb-6 shadow-lg" style={{
+          boxShadow: "0 8px 32px rgba(0,0,0,.08), 0 0 0 1px rgba(255,255,255,.5) inset"
+        }}>
+          {/* Green gradient top strip */}
+          <div className="h-1.5 bg-gradient-to-r from-green-500 via-green-600 to-emerald-500 w-full"></div>
           {/* Top strip */}
-          <div className="flex flex-wrap items-center gap-4 px-6 py-5 border-b border-gray-100">
+          <div className="flex flex-wrap items-center gap-4 px-6 py-5 border-b border-green-50">
             {/* Logo / initials */}
-            <div className="w-14 h-14 rounded-xl bg-blue-200 text-blue-700 flex items-center justify-center text-xl font-bold shrink-0">
+            <div className="w-14 h-14 rounded-xl bg-green-200 text-green-700 flex items-center justify-center text-xl font-bold shrink-0">
               {getInitials(vendor.campus_name || vendor.name || "Vendor")}
             </div>
             <div className="flex-1 min-w-0">
@@ -1050,7 +1056,7 @@ export default function VendorDetailPage() {
           </div>
 
           {/* Stats grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-gray-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-green-50">
             {[
               { label: "Total students",  value: stats.totalCandidates || 0,  icon: "👥" },
               { label: "Tests sent",      value: stats.totalTestSent || 0,     icon: "📤" },
@@ -1071,7 +1077,7 @@ export default function VendorDetailPage() {
         </div>
 
         {/* ── Tabs ── */}
-        <div className="border-b border-gray-200 mb-6">
+        <div className="border-b border-green-100/30 mb-6">
           <div className="flex gap-1 -mb-px overflow-x-auto">
             {TABS.map((tab) => {
               const counts = {
@@ -1084,7 +1090,7 @@ export default function VendorDetailPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                     activeTab === tab.key
-                      ? "border-blue-600 text-blue-600"
+                      ? "border-green-600 text-green-600"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >

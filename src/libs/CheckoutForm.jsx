@@ -11,6 +11,12 @@ const validateEmail = async (email, checkout) => {
   return { isValid, message: !isValid ? updateResult.error.message : null };
 }
 
+// You are given an array of integers nums. Return the
+//  length of the longest subarray of nums which is either 
+//  strictly increasing or strictly decreasing.
+
+ 
+
 const EmailInput = ({ checkout, email, setEmail, error, setError }) => {
   const handleBlur = async () => {
     if (!email) {
@@ -23,10 +29,12 @@ const EmailInput = ({ checkout, email, setEmail, error, setError }) => {
     }
   };
 
+
   const handleChange = (e) => {
     setError(null);
     setEmail(e.target.value);
   };
+
 
   return (
     <>
@@ -45,6 +53,8 @@ const EmailInput = ({ checkout, email, setEmail, error, setError }) => {
     </>
   );
 };
+
+
 
 const CheckoutForm = () => {
   const [email, setEmail] = useState('');

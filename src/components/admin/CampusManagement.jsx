@@ -47,7 +47,7 @@ export default function CampusManagement() {
       label: "Campus Name",
       render: (value, row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#286a94] text-white flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ fontFamily: "Syne, sans-serif" }}>
+          <div className="w-8 h-8 rounded-full bg-[#28ba5e] text-white flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ fontFamily: "Syne, sans-serif" }}>
             {getInitials(value || 'Unknown')}
           </div>
           <div className="min-w-0 flex-1">
@@ -157,7 +157,7 @@ export default function CampusManagement() {
             </button>
           )}
           <button
-            onClick={() => navigate(`/admin/campus-management/${row.id}`)}
+            onClick={() => navigate(`/superadmin/campuses/${row.id}`)}
             className={`p-2 rounded-lg cursor-pointer transition-colors ${
               row.is_disabled 
                 ? 'bg-red-50 text-red-600 hover:bg-red-100' 
@@ -217,12 +217,12 @@ export default function CampusManagement() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8fafc] text-[#1e293b] overflow-hidden font-sans">
+    <div className="flex flex-col min-h-screen bg-[#f8fafb] text-[#1e293b] overflow-hidden font-sans">
       {/* ── Top bar ─────────────────────────────────────────── */}
-      <div className="px-6 py-4 bg-grey-200 border-b border-[#e2e8f0] bg- flex-shrink-0">
+      <div className="px-6 py-4 bg-grey-200 border-b border-[rgba(40,186,94,.15)] bg- flex-shrink-0">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="font-bold text-[22px] text-[#286a94] tracking-tight" style={{ fontFamily: "Syne, sans-serif" }}>
+            <h1 className=" font-extrabold text-[22px] text-[#28ba5e] tracking-tight" style={{ fontFamily: "Syne, sans-serif" }}>
               Campus Management
             </h1>
             <p className="text-xs text-[#64748b] mt-0.5">
@@ -238,16 +238,16 @@ export default function CampusManagement() {
           <StatCard label="Inactive" value={data?.inactiveCampuses || 0} accent="#64748b" />
           <StatCard label="Total Students" value={data?.totalStudents || 0} accent="#10b981" />
           <StatCard label="Tests Sent" value={data?.testsSent || 0} accent="#f59e0b" />
-          <StatCard label="Avg. Score" value={`${data?.averageScore || 0}%`} accent="#3b82f6" />
+          <StatCard label="Avg. Score" value={`${data?.averageScore || 0}%`} accent="#28ba5e" />
         </div>
       </div>
 
       {/* ── Main layout ──────────────────────────────────────── */}
       <div className="flex-1 overflow-auto">
         {/* Search + filters */}
-        <div className="px-6 py-3  border-[#e2e8f0] bg-[#f8fafc] flex gap-2 flex-shrink-0">
+        <div className="px-6 py-3  border-[rgba(40,186,94,.15)] bg-[#f8fafb] flex gap-2 flex-shrink-0">
           <input
-            className="flex-1 bg-white border border-[#e2e8f0] text-[#1e293b] rounded-lg px-3 py-2 text-sm outline-none focus:border-[rgba(59,130,246,0.4)] placeholder:text-[#64748b] transition-colors"
+            className="flex-1 bg-white border border-[rgba(40,186,94,.15)] text-[#1e293b] rounded-lg px-3 py-2 text-sm outline-none focus:border-[rgba(40,186,94,0.4)] placeholder:text-[#64748b] transition-colors"
             placeholder="Search campuses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -259,8 +259,8 @@ export default function CampusManagement() {
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
                 statusFilter === s
-                  ? "bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.3)]"
-                  : "bg-transparent text-[#64748b] border-[#e2e8f0] hover:bg-white hover:text-[#1e293b]"
+                  ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
+                  : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:bg-white hover:text-[#1e293b]"
               }`}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -279,28 +279,28 @@ export default function CampusManagement() {
               <div className="text-red-500">Error loading campuses: {error?.message || 'Unknown error'}</div>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="bg-white rounded-2xl border border-[rgba(40,186,94,.15)] shadow-sm">
               <Table
                 columns={columns}
                 data={filtered}
                 emptyMessage="No campuses match your search"
-                headerBg="bg-[#286a94]"
+                headerBg="bg-[#28ba5e]"
                 headerTextColor="text-white"
               />
               {/* Pagination */}
                       {
                         filtered?.length > 0 &&
                         <div className="p-4 flex items-center justify-between">
-                          <div className="text-xs text-[#286a94]">
+                          <div className="text-xs text-[#28ba5e]">
                             Showing {Math.min((page - 1) * pageSize + 1, total)}-
                             {Math.min(page * pageSize, total)} of {total} users
                           </div>
               
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-[#286a94]">Rows</span>
+                              <span className="text-sm text-[#28ba5e]">Rows</span>
                               <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}
-                                className="px-2 py-1 rounded-md text-xs outline-none   border border-[#286a94] text-[#286a94] bg-white">
+                                className="px-2 py-1 rounded-md text-xs outline-none   border border-[#28ba5e] text-[#28ba5e] bg-white">
                                 {[10, 20, 50].map((s) => <option key={s} value={s}>{s}</option>)}
                               </select>
                             </div>
@@ -378,7 +378,7 @@ export default function CampusManagement() {
                   disabled={signLoading}
                   className={`px-4 py-2.5 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
                     selectedCampus.is_disabled 
-                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      ? 'bg-[#28ba5e] hover:bg-[#1e9e4f] text-white' 
                       : 'bg-red-600 hover:bg-red-700 text-white'
                   } ${signLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
@@ -423,7 +423,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
   return (
     <div className="flex flex-col h-full overflow-hidden animate-[slideIn_0.25s_ease]">
       {/* Header */}
-      <div className="px-6 py-4 bg-white border-b border-[#e2e8f0] flex-shrink-0">
+      <div className="px-6 py-4 bg-white border-b border-[rgba(40,186,94,.15)] flex-shrink-0">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <Avatar name={campus.name} color={campus.avatarColor} size={48} />
@@ -444,7 +444,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
           </div>
           <button
             onClick={onClose}
-            className="px-2.5 py-1.5 rounded-lg text-sm text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#1e293b] transition-all"
+            className="px-2.5 py-1.5 rounded-lg text-sm text-[#64748b] border border-[rgba(40,186,94,.15)] hover:bg-[#f8fafb] hover:text-[#1e293b] transition-all"
           >
             ✕
           </button>
@@ -458,7 +458,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
               onClick={() => setTab(t.id)}
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold border-b-2 transition-all ${
                 tab === t.id
-                  ? "text-[#3b82f6] border-[#3b82f6] bg-[rgba(59,130,246,0.05)]"
+                  ? "text-[#28ba5e] border-[#28ba5e] bg-[rgba(40,186,94,0.05)]"
                   : "text-[#64748b] border-transparent hover:text-[#1e293b]"
               }`}
             >
@@ -486,7 +486,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
             ].map(([k, v, isStatus]) => (
               <div
                 key={k}
-                className="flex justify-between items-center px-4 py-2.5 bg-[#f8fafc] rounded-lg border border-[#e2e8f0]"
+                className="flex justify-between items-center px-4 py-2.5 bg-[#f8fafb] rounded-lg border border-[rgba(40,186,94,.15)]"
               >
                 <span className="text-xs text-[#64748b] font-medium">{k}</span>
                 {isStatus ? (
@@ -510,8 +510,8 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
                   onClick={() => setStudentFilter(s)}
                   className={`px-3 py-1 rounded-full border text-xs font-medium transition-all ${
                     studentFilter === s
-                      ? "bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.3)]"
-                      : "bg-transparent text-[#64748b] border-[#e2e8f0] hover:text-[#1e293b]"
+                      ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
+                      : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:text-[#1e293b]"
                   }`}
                 >
                   {s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -521,7 +521,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
 
             {/* Search */}
             <input
-              className="w-full mb-3 bg-white border border-[#e2e8f0] text-[#1e293b] rounded-lg px-3 py-2 text-sm outline-none focus:border-[rgba(59,130,246,0.4)] placeholder:text-[#64748b] transition-colors"
+              className="w-full mb-3 bg-white border border-[rgba(40,186,94,.15)] text-[#1e293b] rounded-lg px-3 py-2 text-sm outline-none focus:border-[rgba(40,186,94,0.4)] placeholder:text-[#64748b] transition-colors"
               placeholder="Search by name, email or branch..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -531,7 +531,7 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
             <div className="mb-3">
               <button
                 onClick={onViewStudents}
-                className="w-full px-4 py-2 bg-[#3b82f6] text-white rounded-lg text-sm font-medium hover:bg-[#2563eb] transition-all"
+                className="w-full px-4 py-2 bg-[#28ba5e] text-white rounded-lg text-sm font-medium hover:bg-[#1e9e4f] transition-all"
               >
                 View All Students ({allStudents.length})
               </button>
@@ -557,23 +557,23 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
         {/* ── Statistics ── */}
         {tab === "stats" && (
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e2e8f0]">
-              <div className="text-2xl font-bold text-[#3b82f6]">{campus.totalStudents}</div>
+            <div className="bg-[#f8fafb] p-4 rounded-lg border border-[rgba(40,186,94,.15)]">
+              <div className="text-2xl font-bold text-[#28ba5e]">{campus.totalStudents}</div>
               <div className="text-xs text-[#64748b]">Total Students</div>
             </div>
-            <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e2e8f0]">
+            <div className="bg-[#f8fafb] p-4 rounded-lg border border-[rgba(40,186,94,.15)]">
               <div className="text-2xl font-bold text-[#10b981]">
                 {allStudents.filter(s => s.status === "placed").length}
               </div>
               <div className="text-xs text-[#64748b]">Placed Students</div>
             </div>
-            <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e2e8f0]">
+            <div className="bg-[#f8fafb] p-4 rounded-lg border border-[rgba(40,186,94,.15)]">
               <div className="text-2xl font-bold text-[#f59e0b]">
                 {allStudents.filter(s => s.testCompleted).length}
               </div>
               <div className="text-xs text-[#64748b]">Tests Completed</div>
             </div>
-            <div className="bg-[#f8fafc] p-4 rounded-lg border border-[#e2e8f0]">
+            <div className="bg-[#f8fafb] p-4 rounded-lg border border-[rgba(40,186,94,.15)]">
               <div className="text-2xl font-bold text-[#8b5cf6]">
                 {allStudents.reduce((acc, s) => acc + (s.testScore || 0), 0) / allStudents.filter(s => s.testCompleted).length || 0}%
               </div>
@@ -589,9 +589,9 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
 // ── Sub-components ────────────────────────────────────────────
 function StudentRow({ student: s }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[#e2e8f0] rounded-xl">
+    <div className="flex items-center gap-3 px-4 py-3 bg-white border border-[rgba(40,186,94,.15)] rounded-xl">
       {/* Monogram */}
-      <div className="w-9 h-9 rounded-full bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-xs font-bold text-[#64748b] flex-shrink-0" style={{ fontFamily: "Syne, sans-serif" }}>
+      <div className="w-9 h-9 rounded-full bg-[#f8fafb] border border-[rgba(40,186,94,.15)] flex items-center justify-center text-xs font-bold text-[#64748b] flex-shrink-0" style={{ fontFamily: "Syne, sans-serif" }}>
         {getInitials(s.name)}
       </div>
 
@@ -627,7 +627,7 @@ function CampusCard({ campus, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="rounded-xl p-4 cursor-pointer transition-all duration-150 bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:bg-[#f8fafc] hover:shadow-md"
+      className="rounded-xl p-4 cursor-pointer transition-all duration-150 bg-white border border-[rgba(40,186,94,.15)] hover:border-[rgba(40,186,94,.3)] hover:bg-[#f8fafb] hover:shadow-md"
     >
       <div className="flex gap-3 items-start">
         <Avatar name={campus.name} color={campus.avatarColor} size={40} />
@@ -658,7 +658,7 @@ function CampusCard({ campus, onClick }) {
 
 function Chip({ children, color }) {
   const map = {
-    blue: "bg-[rgba(59,130,246,0.1)] text-[#3b82f6] border-[rgba(59,130,246,0.2)]",
+    blue: "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.2)]",
     green: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
     amber: "bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border-[rgba(245,158,11,0.2)]",
   };
@@ -671,7 +671,7 @@ function Chip({ children, color }) {
 
 function StatCard({ label, value, accent }) {
   return (
-    <div className="flex-1 min-w-[110px] bg-white border border-[#e2e8f0] rounded-xl px-5 py-4 flex flex-col gap-1.5">
+    <div className="flex-1 min-w-[110px] bg-white border border-[rgba(40,186,94,.15)] rounded-xl px-5 py-4 flex flex-col gap-1.5">
       <span className="text-[11px] text-[#64748b] uppercase tracking-widest font-semibold">
         {label}
       </span>
@@ -687,7 +687,7 @@ function StatCard({ label, value, accent }) {
 
 // ── Avatar and Status Components ───────────────────────────────
 const COLOR_MAP = {
-  blue: { bg: "rgba(59,130,246,0.1)", text: "#3b82f6", border: "rgba(59,130,246,0.2)" },
+  blue: { bg: "rgba(40,186,94,0.1)", text: "#28ba5e", border: "rgba(40,186,94,0.2)" },
   green: { bg: "rgba(16,185,129,0.1)", text: "#10b981", border: "rgba(16,185,129,0.2)" },
   purple: { bg: "rgba(139,92,246,0.1)", text: "#8b5cf6", border: "rgba(139,92,246,0.2)" },
   amber: { bg: "rgba(245,158,11,0.1)", text: "#f59e0b", border: "rgba(245,158,11,0.2)" },
@@ -717,11 +717,11 @@ export function Avatar({ name, color = "blue", size = 36 }) {
 }
 
 const STATUS_STYLES = {
-  active: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
+  active: "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.2)]",
   inactive: "bg-[rgba(100,116,139,0.1)] text-[#64748b] border-[rgba(100,116,139,0.2)]",
-  placed: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
+  placed: "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.2)]",
   pending: "bg-[rgba(245,158,11,0.1)] text-[#f59e0b] border-[rgba(245,158,11,0.2)]",
-  subscribed: "bg-[rgba(16,185,129,0.1)] text-[#10b981] border-[rgba(16,185,129,0.2)]",
+  subscribed: "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.2)]",
   'not-subscribed': "bg-[rgba(100,116,139,0.1)] text-[#64748b] border-[rgba(100,116,139,0.2)]",
 };
 
