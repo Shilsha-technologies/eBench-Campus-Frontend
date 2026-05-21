@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(true);
       
       let userData = user;
-      console.log("userData--check",userData);
+      // console.log("userData--check",userData);
       
       // Fallback to localStorage if Redux user is not available
       if (!userData) {
@@ -190,6 +190,20 @@ export const AuthProvider = ({ children }) => {
     role,
     isLoggedIn
   };
+
+  function fields(nums){
+    let posCount=0,negCount=0;
+    for(let i of nums){
+      if(i==0){
+        continue;
+      }else if(i>0){
+        posCount++;
+      }else{
+        negCount++
+      }
+    }
+    return Math.max(posCount,negCount);
+  }
 
   return (
     <AuthContext.Provider value={value}>

@@ -3,6 +3,7 @@ export default function ProgressBar({ value, label, color = "indigo", showLabel 
     indigo: "bg-indigo-500", emerald: "bg-emerald-500",
     amber: "bg-amber-500", rose: "bg-rose-500",
   };
+
   return (
     <div className="w-full">
       {showLabel && (

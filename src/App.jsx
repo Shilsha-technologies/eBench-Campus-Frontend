@@ -14,6 +14,8 @@ import { AuthProvider } from "./libs/AuthProvider";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
+import CodeArena from "./page/coding/code";
+import AssessmentManagement from "./page/admin/Assessment";
 // import StudentTestButton from "./components/test/StudentTestButton";
 
 /* =========================
@@ -183,6 +185,12 @@ function App() {
                   <LandingPage />
                 }
               />
+              <Route
+                path="/code"
+                element={
+                  <CodeArena />
+                }
+              />
               <Route path="/res" element={<IntroAnalysis />} />
               <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
               <Route path="/admin-login" element={<AdminLoginPage />} />
@@ -243,6 +251,7 @@ function App() {
                         <Route path="campuses" element={<CampusManagement />} />
                         <Route path="campuses/:campusId" element={<CampusDetail />} />
                         <Route path="subscription" element={<SubscriptionList />} />
+                        <Route path="Assesement" element={<AssessmentManagement />} />
                         <Route path="system" element={<SuperAdminDashboard />} />
                         <Route path="database" element={<SuperAdminDashboard />} />
                         <Route path="logs" element={<SuperAdminDashboard />} />

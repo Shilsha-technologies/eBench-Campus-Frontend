@@ -54,12 +54,12 @@ const superAdminNavItems = [
     description: "Manage subscription plans"
 
   },
-  // { 
-  //   id: "system", 
-  //   label: "System", 
-  //   icon: Server,
-  //   description: "System configuration"
-  // },
+  { 
+    id: "Assesement", 
+    label: "Assessment Management", 
+    icon: Server,
+    description: "manage assessment test"
+  },
   // { 
   //   id: "database", 
   //   label: "Database", 
