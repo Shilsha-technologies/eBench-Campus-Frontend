@@ -48,46 +48,47 @@ export default function CreateAccount() {
   const onSubmit = async (data) => {
     if(data?.module=="student"){
       // Set mock student credentials for testing
-      const mockStudentData = {
-        access_token: "mock_student_token_" + Date.now(),
-        module: "student",
-        role: "student",
-        name: data.email ? data.email.split('@')[0] : "Student User",
-        email: data.email || "student@gmail.com",
-        vendor_id: "student_" + Date.now(),
-        plan_name: "Free",
-        is_subscribed: false,
-        profile_complete_percentage: 80,
-        last_login: new Date().toISOString(),
-        remaining_credits: 5
-      };
+      // const mockStudentData = {
+      //   access_token: "mock_student_token_" + Date.now(),
+      //   module: "student",
+      //   role: "student",
+      //   name: data.email ? data.email.split('@')[0] : "Student User",
+      //   email: data.email || "student@gmail.com",
+      //   vendor_id: "student_" + Date.now(),
+      //   plan_name: "Free",
+      //   is_subscribed: false,
+      //   profile_complete_percentage: 80,
+      //   last_login: new Date().toISOString(),
+      //   remaining_credits: 5
+      // };
 
-      dispatch(
-        setCredentials({
-          token: mockStudentData.access_token,
-          module: mockStudentData.module,
-          user: mockStudentData.role,
-          detail: {
-            name: mockStudentData.name,
-            email: mockStudentData.email,
-            id: mockStudentData.vendor_id,
-            planName: mockStudentData.plan_name,
-            status: mockStudentData.is_subscribed,
-            profile_complete_percentage: mockStudentData.profile_complete_percentage,
-            last_login: mockStudentData.last_login,
-            remaining_credits: mockStudentData.remaining_credits
-          },
-        })
-      );
+      // dispatch(
+      //   setCredentials({
+      //     token: mockStudentData.access_token,
+      //     module: mockStudentData.module,
+      //     user: mockStudentData.role,
+      //     detail: {
+      //       name: mockStudentData.name,
+      //       email: mockStudentData.email,
+      //       id: mockStudentData.vendor_id,
+      //       planName: mockStudentData.plan_name,
+      //       status: mockStudentData.is_subscribed,
+      //       profile_complete_percentage: mockStudentData.profile_complete_percentage,
+      //       last_login: mockStudentData.last_login,
+      //       remaining_credits: mockStudentData.remaining_credits
+      //     },
+      //   })
+      // );
       
-      toast.success("Student Login Success!");
-      setTimeout(() => {
-        navigate("/student/dashboard");
-      }, 500);
-      return;
+      // toast.success("Student Login Success!");
+      // setTimeout(() => {
+      //   navigate("/student/dashboard");
+      // }, 500);
+      // return;
     }
     try {
       const result = await login(data).unwrap();
+      // debugger;
       if (result?.access_token) {
         dispatch(
           setCredentials({
@@ -128,6 +129,7 @@ export default function CreateAccount() {
       toast.error(err?.data?.detail ?? "Internal Server Error");
     }
   };
+
 
   return (
     <div
@@ -237,8 +239,10 @@ export default function CreateAccount() {
               ))}
             </div>
 
+            
             <div style={{ fontSize: 12, color: "#6B84A0" }}>© 2026 eBench</div>
           </div>
+         
 
           {/* ── RIGHT PANEL ── */}
           <div
