@@ -14,7 +14,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-r from-blue-300 to-blue-400 p-4">
+    <div className="h-screen flex items-center justify-center bg-linear-to-r from-blue-300 to-blue-400 p-4">
       <div className="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-10 max-w-md w-full text-center text-white">
         <h1 className="text-3xl font-bold mb-4">😢 Oops! Something went wrong</h1>
         <p className="mb-6 text-base">

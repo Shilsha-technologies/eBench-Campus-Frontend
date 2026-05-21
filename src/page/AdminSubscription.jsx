@@ -7,7 +7,7 @@ import {
     useLazyGetAllOptionPlanQuery,
     useSetAddonPriceMutation
 } from "../redux/services/adminApi";
-import { Edit, SquarePen, Trash2, Search, Globe, CreditCard, Clock, DollarSign, TrendingUp, Plus, Settings, X } from "lucide-react";
+import { Edit, SquarePen, Trash2, Search, Globe, CreditCard, Clock, DollarSign, TrendingUp, Plus, Settings, X, Infinity } from "lucide-react";
 import { useGetCountryCurrencyMutation, useGetCountryDataQuery } from "../redux/services/externalApi";
 import Select from 'react-select'
 import toast from "react-hot-toast";

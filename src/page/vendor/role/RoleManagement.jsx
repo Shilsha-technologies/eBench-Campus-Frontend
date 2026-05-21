@@ -355,7 +355,7 @@ const RoleManagement = () => {
 
                             setOpenId(openId === u.id ? null : u.id);
                           }}
-                          className="p-2 rounded-full hover:bg-gray-100 transition duration-200"
+                          className="p-2 rounded-full cursor-pointer hover:bg-gray-100 transition duration-200"
                         >
                           <MoreVertical size={18} />
                         </button>
@@ -382,7 +382,7 @@ const RoleManagement = () => {
                                   navigate(`/vendor/employee/view?id=${u.id}`);
                                   setOpenId(null);
                                 }}
-                                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700
+                                className="flex items-center cursor-pointer gap-3 w-full px-4 py-2 text-sm text-gray-700
                      hover:bg-gray-50 transition duration-150"
                               >
                                 <Eye size={16} className="text-blue-500" />
@@ -396,7 +396,7 @@ const RoleManagement = () => {
                                   setConfirmStatusModal(true);
                                   setOpenId(null);
                                 }}
-                                className="flex items-center gap-3 w-full px-4 py-2 text-sm
+                                className="flex items-center cursor-pointer gap-3 w-full px-4 py-2 text-sm
                      hover:bg-gray-50 transition duration-150"
                               >
                                 {u.active ? (
@@ -418,7 +418,7 @@ const RoleManagement = () => {
                                   setSelectedUser(u)
                                   setOpenId(null);
                                 }}
-                                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700
+                                className="flex items-center cursor-pointer gap-3 w-full px-4 py-2 text-sm text-gray-700
                                hover:bg-gray-50 transition duration-150"
                               >
                                 <KeyRound size={16} className="text-blue-500" />
@@ -833,7 +833,7 @@ const RoleManagement = () => {
                 )}
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-lg bg-blue-600 text-white"
+                  className="px-6 py-2 rounded-lg cursor-pointer bg-blue-600 text-white"
                 >
                   {assignisLoading ? 'Loading' : 'Assign Permission'}
                 </button>
