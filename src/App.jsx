@@ -16,7 +16,6 @@ import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
 // import CodeArena from "./page/coding/code";
 import AssessmentManagement from "./page/admin/Assessment";
-// import StudentTestButton from "./components/test/StudentTestButton";
 
 /* =========================
   Lazy Loaded Layout
@@ -163,11 +162,10 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+
   return (
     <Provider store={store}>
       <BrowserRouter>
-        {/* Development testing button - placed inside Router */}
-        {/* <StudentTestButton /> */}
         <AppErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>

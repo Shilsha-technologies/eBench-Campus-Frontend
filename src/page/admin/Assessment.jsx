@@ -1,21 +1,21 @@
+import { Pencil, Trash } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 // ─── Default Data ────────────────────────────────────────────────────────────
 
 const LEVEL_ICONS = { 1: "🎙", 2: "📝", 3: "🎥" };
 const LEVEL_COLORS = {
-  1: { ring: "ring-violet-400", bg: "bg-violet-50", icon: "bg-violet-600", badge: "bg-violet-100 text-violet-700", dot: "bg-violet-500", label: "text-violet-700" },
-  2: { ring: "ring-sky-400", bg: "bg-sky-50", icon: "bg-sky-600", badge: "bg-sky-100 text-sky-700", dot: "bg-sky-500", label: "text-sky-700" },
-  3: { ring: "ring-amber-400", bg: "bg-amber-50", icon: "bg-amber-500", badge: "bg-amber-100 text-amber-700", dot: "bg-amber-500", label: "text-amber-700" },
+  1: { ring: "ring-green-400", bg: "bg-green-50", icon: "bg-green-600", badge: "bg-green-100 text-green-700", dot: "bg-green-500", label: "text-green-700" },
+  2: { ring: "ring-emerald-400", bg: "bg-emerald-50", icon: "bg-emerald-600", badge: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500", label: "text-emerald-700" },
+  3: { ring: "ring-teal-400", bg: "bg-teal-50", icon: "bg-teal-500", badge: "bg-teal-100 text-teal-700", dot: "bg-teal-500", label: "text-teal-700" },
 };
 
 const DIFF_META = {
-  Easy:   { color: "emerald", bg: "bg-emerald-50",  ring: "ring-emerald-400", badge: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-400", text: "text-emerald-700" },
-  Medium: { color: "amber",   bg: "bg-amber-50",    ring: "ring-amber-400",   badge: "bg-amber-100 text-amber-700",   dot: "bg-amber-400",   text: "text-amber-700"   },
-  Hard:   { color: "rose",    bg: "bg-rose-50",     ring: "ring-rose-400",    badge: "bg-rose-100 text-rose-700",     dot: "bg-rose-400",    text: "text-rose-700"    },
+  Easy: { color: "emerald", bg: "bg-emerald-50", ring: "ring-emerald-400", badge: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-400", text: "text-emerald-700" },
+  Medium: { color: "amber", bg: "bg-amber-50", ring: "ring-amber-400", badge: "bg-amber-100 text-amber-700", dot: "bg-amber-400", text: "text-amber-700" },
+  Hard: { color: "rose", bg: "bg-rose-50", ring: "ring-rose-400", badge: "bg-rose-100 text-rose-700", dot: "bg-rose-400", text: "text-rose-700" },
 };
 
-const TOPICS = ["HTML","CSS","JavaScript","React","Node.js","Aptitude","DBMS","OOPs","OS","Python","SQL","DSA","System Design","Git"];
 
 const makeDiff = (label, questions, time, topics) => ({
   id: crypto.randomUUID(),
@@ -37,9 +37,9 @@ const makeLevel = (num, name, desc, duration) => ({
   duration,
   active: true,
   difficulties: [
-    makeDiff("Easy",   10, 15, ["HTML","CSS","Aptitude"]),
-    makeDiff("Medium", 20, 30, ["JavaScript","React","OOPs"]),
-    makeDiff("Hard",   15, 25, ["Node.js","DBMS","OS"]),
+    makeDiff("Easy", 10, 15, ["HTML", "CSS", "Aptitude"]),
+    makeDiff("Medium", 20, 30, ["JavaScript", "React", "OOPs"]),
+    makeDiff("Hard", 15, 25, ["Node.js", "DBMS", "OS"]),
   ],
 });
 
@@ -57,8 +57,8 @@ const Toggle = ({ checked, onChange }) => (
     role="switch"
     aria-checked={checked}
     onClick={() => onChange(!checked)}
-    className={`relative w-10 h-[22px] rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 flex-shrink-0
-      ${checked ? "bg-indigo-600" : "bg-slate-200"}`}
+    className={`relative w-10 h-[22px] rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500 flex-shrink-0
+      ${checked ? "bg-green-600" : "bg-slate-200"}`}
   >
     <span className={`absolute top-[2px] left-[2px] w-[18px] h-[18px] bg-white rounded-full shadow transition-transform duration-200 ${checked ? "translate-x-[18px]" : ""}`} />
   </button>
@@ -74,8 +74,8 @@ const Pill = ({ children, active, onClick }) => (
     onClick={onClick}
     className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all duration-150 select-none
       ${active
-        ? "bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-200"
-        : "bg-white border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-600"}`}
+        ? "bg-green-600 border-green-600 text-white shadow-sm shadow-green-200"
+        : "bg-white border-slate-200 text-slate-500 hover:border-green-300 hover:text-green-600"}`}
   >{children}</button>
 );
 
@@ -89,7 +89,7 @@ const Field = ({ label, note, children }) => (
   </div>
 );
 
-const SliderField = ({ label, note, min, max, step, value, onChange, unit = "", color = "indigo" }) => (
+const SliderField = ({ label, note, min, max, step, value, onChange, unit = "", color = "green" }) => (
   <Field label={label} note={note}>
     <div className="flex items-center gap-3">
       <input
@@ -112,11 +112,11 @@ const ToggleRow = ({ label, sub, checked, onChange, campusOnly, isCampus }) => {
       <div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-slate-700 font-medium">{label}</span>
-          {campusOnly && <Badge className="bg-indigo-100 text-indigo-700">Campus only</Badge>}
+          {campusOnly && <Badge className="bg-green-100 text-green-700">Campus only</Badge>}
         </div>
         {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
       </div>
-      <Toggle checked={!disabled && checked} onChange={disabled ? () => {} : onChange} />
+      <Toggle checked={!disabled && checked} onChange={disabled ? () => { } : onChange} />
     </div>
   );
 };
@@ -133,7 +133,7 @@ const ConfirmDialog = ({ open, title, body, onConfirm, onCancel, danger = true }
         <p className="text-sm text-slate-500 mb-6">{body}</p>
         <div className="flex gap-3 justify-end">
           <button onClick={onCancel} className="px-4 py-2 text-sm text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors font-medium">Cancel</button>
-          <button onClick={onConfirm} className={`px-4 py-2 text-sm text-white rounded-xl font-medium transition-colors ${danger ? "bg-rose-500 hover:bg-rose-600" : "bg-indigo-600 hover:bg-indigo-700"}`}>Confirm</button>
+          <button onClick={onConfirm} className={`px-4 py-2 text-sm text-white rounded-xl font-medium transition-colors ${danger ? "bg-rose-500 hover:bg-rose-600" : "bg-green-600 hover:bg-green-700"}`}>Confirm</button>
         </div>
       </div>
     </div>
@@ -173,7 +173,7 @@ const DiffModal = ({ diff, levelNum, isCampus, onSave, onClose }) => {
 
           {/* Questions & Time */}
           <div className="grid grid-cols-2 gap-5">
-            <SliderField label="Total Questions" min={5} max={60} step={5} value={d.questions} onChange={v => set("questions", v)} color="indigo" />
+            <SliderField label="Total Questions" min={5} max={60} step={5} value={d.questions} onChange={v => set("questions", v)} color="green" />
             <SliderField label="Time Limit" min={5} max={120} step={5} value={d.time} onChange={v => set("time", v)} unit=" min" color="sky" />
           </div>
 
@@ -192,18 +192,10 @@ const DiffModal = ({ diff, levelNum, isCampus, onSave, onClose }) => {
             />
           </div>
 
-          {/* Topics */}
-          <Field label="Topics Covered">
-            <div className="flex flex-wrap gap-2">
-              {TOPICS.map(t => (
-                <Pill key={t} active={d.topics.includes(t)} onClick={() => toggleTopic(t)}>{t}</Pill>
-              ))}
-            </div>
-            {d.topics.length === 0 && <p className="text-xs text-rose-400 mt-2">Select at least one topic.</p>}
-          </Field>
+
 
           {/* Summary card */}
-          <div className={`rounded-2xl border-2 ${m.ring} ${m.bg} p-4`}>
+          <div className={`rounded-2xl border border-gray-200 ${m.ring} ${m.bg} p-4`}>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Summary</div>
             <div className="grid grid-cols-3 gap-3 text-center">
               {[
@@ -222,11 +214,11 @@ const DiffModal = ({ diff, levelNum, isCampus, onSave, onClose }) => {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-100 flex gap-3 justify-end">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm text-slate-500 bg-slate-100 hover:bg-slate-200 font-medium transition-colors">Discard</button>
+          <button onClick={onClose} className="px-5 cursor-pointer py-2.5 rounded-xl text-sm text-slate-500 bg-slate-100 hover:bg-slate-200 font-medium transition-colors">Discard</button>
           <button
             onClick={() => { if (d.topics.length > 0) onSave(d); }}
             disabled={d.topics.length === 0}
-            className="px-6 py-2.5 rounded-xl text-sm text-white bg-indigo-600 hover:bg-indigo-700 font-semibold transition-colors shadow-md shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 cursor-pointer py-2.5 rounded-xl text-sm text-white bg-green-600 hover:bg-green-700 font-semibold transition-colors shadow-md shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >Save Changes</button>
         </div>
       </div>
@@ -254,7 +246,7 @@ const LevelModal = ({ level, onSave, onClose, isNew }) => {
               value={l.name}
               onChange={e => set("name", e.target.value)}
               placeholder="e.g. Technical Screening"
-              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700"
+              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-400 text-slate-700"
             />
           </Field>
           <Field label="Description">
@@ -262,7 +254,7 @@ const LevelModal = ({ level, onSave, onClose, isNew }) => {
               value={l.desc}
               onChange={e => set("desc", e.target.value)}
               rows={2}
-              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700 resize-none"
+              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-400 text-slate-700 resize-none"
             />
           </Field>
           <Field label="Estimated Duration">
@@ -270,7 +262,7 @@ const LevelModal = ({ level, onSave, onClose, isNew }) => {
               value={l.duration}
               onChange={e => set("duration", e.target.value)}
               placeholder="e.g. 30–45 min"
-              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700"
+              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-400 text-slate-700"
             />
           </Field>
           <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
@@ -286,7 +278,7 @@ const LevelModal = ({ level, onSave, onClose, isNew }) => {
           <button
             onClick={() => { if (l.name.trim()) onSave(l); }}
             disabled={!l.name.trim()}
-            className="px-6 py-2.5 rounded-xl text-sm text-white bg-indigo-600 hover:bg-indigo-700 font-semibold transition-colors shadow-md shadow-indigo-200 disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl text-sm text-white bg-green-600 hover:bg-green-700 font-semibold transition-colors shadow-md shadow-green-200 disabled:opacity-50"
           >{isNew ? "Create Level" : "Save"}</button>
         </div>
       </div>
@@ -294,52 +286,73 @@ const LevelModal = ({ level, onSave, onClose, isNew }) => {
   );
 };
 
-// ─── Difficulty Card (in table row) ──────────────────────────────────────────
+// ─── Difficulty Row (in table format) ──────────────────────────────────────────
 
 const DiffRow = ({ diff, onEdit, onDelete, isCampus }) => {
   const m = DIFF_META[diff.label];
   return (
-    <div className={`group flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl border border-slate-100 bg-white hover:border-slate-200 hover:shadow-sm transition-all duration-200`}>
-      <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${m.dot}`} />
-        <div className="flex-shrink-0">
+    <tr className="group hover:bg-slate-50/60 transition-colors duration-150 border-b border-slate-100 last:border-0">
+      {/* Difficulty */}
+      <td className="py-4 px-4 align-middle">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${m.dot}`} />
           <Badge className={m.badge}>{diff.label}</Badge>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 flex-1 min-w-0 text-sm">
-          <div>
-            <div className="text-xs text-slate-400">Questions</div>
-            <div className="font-semibold text-slate-800">{diff.questions}</div>
-          </div>
-          <div>
-            <div className="text-xs text-slate-400">Time</div>
-            <div className="font-semibold text-slate-800">{diff.time} min</div>
-          </div>
-          <div className="col-span-2">
-            <div className="text-xs text-slate-400 mb-1">Topics</div>
-            <div className="flex flex-wrap gap-1">
-              {diff.topics.slice(0, 4).map(t => (
-                <span key={t} className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{t}</span>
-              ))}
-              {diff.topics.length > 4 && <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">+{diff.topics.length - 4}</span>}
-            </div>
-          </div>
-        </div>
-      </div>
+      </td>
 
-      {/* Flags */}
-      <div className="flex flex-wrap gap-1.5 sm:w-auto">
-        {diff.randomize && <Badge className="bg-violet-100 text-violet-700">Randomize</Badge>}
-        {diff.negativeMarking && <Badge className="bg-rose-100 text-rose-700">−ve Mark</Badge>}
-        {diff.sectionTimer && <Badge className="bg-sky-100 text-sky-700">Sec. Timer</Badge>}
-        {diff.codingRound && isCampus && <Badge className="bg-indigo-100 text-indigo-700">Coding</Badge>}
-      </div>
+      {/* Questions */}
+      <td className="py-4 px-4 align-middle text-sm font-semibold text-slate-700 tabular-nums">
+        {diff.questions}
+      </td>
+
+      {/* Time Limit */}
+      <td className="py-4 px-4 align-middle text-sm font-semibold text-slate-700 tabular-nums">
+        {diff.time} min
+      </td>
+
+      {/* Topics */}
+      <td className="py-4 px-4 align-middle">
+        <div className="flex flex-wrap gap-1 max-w-xs sm:max-w-sm">
+          {diff.topics.slice(0, 4).map(t => (
+            <span key={t} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">{t}</span>
+          ))}
+          {diff.topics.length > 4 && (
+            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">+{diff.topics.length - 4}</span>
+          )}
+        </div>
+      </td>
+
+      {/* Rules & Flags */}
+      <td className="py-4 px-4 align-middle">
+        <div className="flex flex-wrap gap-1.5">
+          {diff.randomize && <Badge className="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/10">Randomize</Badge>}
+          {diff.negativeMarking && <Badge className="bg-rose-50 text-rose-700 ring-1 ring-rose-600/10">−ve Mark</Badge>}
+          {diff.sectionTimer && <Badge className="bg-sky-50 text-sky-700 ring-1 ring-sky-600/10">Sec. Timer</Badge>}
+          {diff.codingRound && isCampus && <Badge className="bg-green-50 text-green-700 ring-1 ring-green-600/10">Coding</Badge>}
+          {!diff.randomize && !diff.negativeMarking && !diff.sectionTimer && (!diff.codingRound || !isCampus) && (
+            <span className="text-xs text-slate-400 font-normal italic">Default settings</span>
+          )}
+        </div>
+      </td>
 
       {/* Actions */}
-      <div className="flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
-        <button onClick={onEdit} className="px-3 py-1.5 text-xs font-medium rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">Edit</button>
-        <button onClick={onDelete} className="px-3 py-1.5 text-xs font-medium rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors">Delete</button>
-      </div>
-    </div>
+      <td className="py-4 px-4 align-middle text-right">
+        <div className="flex items-center justify-end gap-2 opacity-100  transition-opacity duration-150">
+          <button
+            onClick={onEdit}
+            className="px-3 py-1.5 text-xs cursor-pointer font-semibold rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            onClick={onDelete}
+            className="px-3 py-1.5 text-xs cursor-pointer font-semibold rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 };
 
@@ -351,84 +364,100 @@ const LevelCard = ({ level, isCampus, expanded, onToggle, onEditLevel, onDeleteL
   const maxTime = level.difficulties.reduce((m, d) => Math.max(m, d.time), 0);
 
   return (
-    <div className={`rounded-3xl border-2 transition-all duration-300 ${expanded ? `${c.ring} shadow-lg` : "border-slate-100 hover:border-slate-200 hover:shadow-sm"}`}>
+    <div className={`rounded-3xl border border-gray-200 shadow-md bg-white transition-all duration-300 ${expanded ? `${c.ring} shadow-lg` : "border-slate-100 hover:border-slate-200 hover:shadow-sm"}`}>
 
       {/* Level header */}
       <div
         className={`flex items-center gap-4 p-5 cursor-pointer select-none ${expanded ? c.bg : "bg-white"} rounded-3xl transition-colors duration-200`}
         onClick={onToggle}
       >
-        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 shadow-sm ${expanded ? c.icon + " shadow-md" : "bg-slate-100"}`}>
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-sm ${expanded ? c.icon + " shadow-md" : "bg-slate-100"}`}>
           {LEVEL_ICONS[level.num] || "📋"}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center flex-wrap gap-2">
-            <h3 className="font-bold text-slate-900 text-base truncate">{level.name}</h3>
+            <h3 className="font-bold text-green-900 text-base truncate">{level.name}</h3>
             {!level.active && <Badge className="bg-slate-100 text-slate-500">Inactive</Badge>}
           </div>
           <p className="text-sm text-slate-400 mt-0.5 truncate">{level.desc}</p>
         </div>
 
-        <div className="hidden sm:flex items-center gap-5 text-center flex-shrink-0">
+        <div className="hidden sm:flex items-center gap-5 text-center shrink-0">
           <div>
-            <div className="font-bold text-slate-800">{level.difficulties.length}</div>
+            <div className="font-bold text-green-800">{level.difficulties.length}</div>
             <div className="text-xs text-slate-400">Difficulties</div>
           </div>
           <div>
-            <div className="font-bold text-slate-800">{totalQ}</div>
+            <div className="font-bold text-green-800">{totalQ}</div>
             <div className="text-xs text-slate-400">Total Qs</div>
           </div>
           <div>
-            <div className="font-bold text-slate-800">{maxTime}m</div>
+            <div className="font-bold text-green-800">{maxTime}m</div>
             <div className="text-xs text-slate-400">Max Time</div>
           </div>
           <div>
-            <div className="font-bold text-slate-800">{level.duration}</div>
+            <div className="font-bold text-green-800">{level.duration}</div>
             <div className="text-xs text-slate-400">Duration</div>
           </div>
         </div>
 
         {/* Level actions */}
-        <div className="flex items-center gap-2 flex-shrink-0" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
           <button
             onClick={onEditLevel}
-            className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-all text-sm"
-          >✎</button>
+            className="w-8 h-8 cursor-pointer rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-green-600 hover:border-green-300 transition-all text-sm"
+          ><Pencil size={14} /></button>
           <button
             onClick={onDeleteLevel}
-            className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-all text-sm"
-          >🗑</button>
-          <div className={`w-6 h-6 flex items-center justify-center text-slate-400 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}>▾</div>
+            className="w-8 h-8 cursor-pointer rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-all text-sm"
+          ><Trash size={16} color="red"  /></button>
         </div>
       </div>
 
       {/* Expanded: difficulties */}
       {expanded && (
-        <div className="px-5 pb-5 space-y-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Difficulty Levels</span>
+        <div className="px-5 pb-5 space-y-4">
+          <div className="flex items-center justify-between mt-4 mb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Difficulty Configurations</span>
             <button
               onClick={onAddDiff}
-              className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-colors"
+              className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-green-600 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-xl transition-colors"
             >
               <span className="text-base leading-none">+</span> Add Difficulty
             </button>
           </div>
-          {level.difficulties.length === 0 && (
+          {level.difficulties.length === 0 ? (
             <div className="py-10 text-center text-sm text-slate-400 border-2 border-dashed border-slate-100 rounded-2xl">
               No difficulty levels yet. Add one to get started.
             </div>
+          ) : (
+            <div className="overflow-x-auto border border-slate-100 rounded-2xl bg-white shadow-sm">
+              <table className="w-full text-left border-collapse min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50/75">
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Difficulty</th>
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Questions</th>
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Time</th>
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Topics</th>
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Rules & Flags</th>
+                    <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100/50">
+                  {level.difficulties.map(diff => (
+                    <DiffRow
+                      key={diff.id}
+                      diff={diff}
+                      isCampus={isCampus}
+                      onEdit={() => onEditDiff(diff)}
+                      onDelete={() => onDeleteDiff(diff.id)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
-          {level.difficulties.map(diff => (
-            <DiffRow
-              key={diff.id}
-              diff={diff}
-              isCampus={isCampus}
-              onEdit={() => onEditDiff(diff)}
-              onDelete={() => onDeleteDiff(diff.id)}
-            />
-          ))}
         </div>
       )}
     </div>
@@ -438,7 +467,7 @@ const LevelCard = ({ level, isCampus, expanded, onToggle, onEditLevel, onDeleteL
 // ─── New Difficulty Modal ─────────────────────────────────────────────────────
 
 const NewDiffModal = ({ levelNum, existing, onSave, onClose, isCampus }) => {
-  const available = ["Easy","Medium","Hard"].filter(l => !existing.includes(l));
+  const available = ["Easy", "Medium", "Hard"].filter(l => !existing.includes(l));
   const [label, setLabel] = useState(available[0] || "Easy");
   const blank = makeDiff(label, 10, 20, []);
 
@@ -455,11 +484,11 @@ export default function AssessmentManagement() {
 
   // Modals
   const [editLevelModal, setEditLevelModal] = useState(null);   // level obj or null
-  const [newLevelModal, setNewLevelModal]   = useState(false);
-  const [editDiffModal, setEditDiffModal]   = useState(null);   // { levelId, diff }
-  const [addDiffModal, setAddDiffModal]     = useState(null);   // levelId
-  const [confirmDel, setConfirmDel]         = useState(null);   // { type, id, levelId? }
-  const [toast, setToast]                   = useState(null);
+  const [newLevelModal, setNewLevelModal] = useState(false);
+  const [editDiffModal, setEditDiffModal] = useState(null);   // { levelId, diff }
+  const [addDiffModal, setAddDiffModal] = useState(null);   // levelId
+  const [confirmDel, setConfirmDel] = useState(null);   // { type, id, levelId? }
+  const [toast, setToast] = useState(null);
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -526,12 +555,12 @@ export default function AssessmentManagement() {
     <div className="min-h-screen bg-[#f5f6fa] font-sans">
       {/* ── Page header ── */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+        <div className="max-w-[98%] mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-indigo-200">A</div>
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-green-200">A</div>
             <div>
-              <h1 className="font-bold text-slate-900 text-lg leading-tight">Assessment Management</h1>
-              <p className="text-xs text-slate-400">Configure levels, difficulties & rules</p>
+              <h1 className="font-bold text-green-900 text-lg leading-tight">Assessment Management</h1>
+              <p className="text-xs text-gray-400">Configure levels, difficulties & rules</p>
             </div>
           </div>
 
@@ -547,12 +576,12 @@ export default function AssessmentManagement() {
             <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2">
               <span className="text-xs font-semibold text-slate-500">Campus Mode</span>
               <Toggle checked={isCampus} onChange={setIsCampus} />
-              {isCampus && <Badge className="bg-indigo-100 text-indigo-700">ON</Badge>}
+              {isCampus && <Badge className="bg-green-100 text-green-700">ON</Badge>}
             </div>
 
             <button
               onClick={() => setNewLevelModal(true)}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-semibold px-4 py-2.5 rounded-2xl shadow-md shadow-indigo-200 transition-all duration-200"
+              className="flex items-center cursor-pointer gap-2 bg-green-600 hover:bg-green-700 active:scale-95 text-white text-sm font-semibold px-4 py-2.5 rounded-2xl shadow-md shadow-green-200 transition-all duration-200"
             >
               <span className="text-base leading-none">+</span> Add Level
             </button>
@@ -561,15 +590,15 @@ export default function AssessmentManagement() {
       </div>
 
       {/* ── Body ── */}
-      <div className="max-w-5xl mx-auto px-6 py-8 space-y-4">
+      <div className="max-w-[99%]  mx-auto px-6 py-8 space-y-4">
 
         {/* Campus mode banner */}
         {isCampus && (
-          <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200 rounded-2xl px-5 py-3">
+          <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-2xl px-5 py-3">
             <span className="text-2xl">🏫</span>
             <div>
-              <div className="text-sm font-semibold text-indigo-800">Campus Mode Active</div>
-              <div className="text-xs text-indigo-500">Coding Round option is now available in difficulty settings.</div>
+              <div className="text-sm font-semibold text-green-800">Campus Mode Active</div>
+              <div className="text-xs text-green-500">Coding Round option is now available in difficulty settings.</div>
             </div>
           </div>
         )}
@@ -579,7 +608,7 @@ export default function AssessmentManagement() {
             <div className="text-5xl mb-4">📋</div>
             <div className="font-semibold text-slate-600 mb-2">No assessment levels yet</div>
             <div className="text-sm text-slate-400 mb-6">Create your first level to start configuring assessments.</div>
-            <button onClick={() => setNewLevelModal(true)} className="bg-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-2xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+            <button onClick={() => setNewLevelModal(true)} className="bg-green-600 text-white text-sm font-semibold px-6 py-3 rounded-2xl hover:bg-green-700 transition-colors shadow-md shadow-green-200">
               + Add First Level
             </button>
           </div>
@@ -624,7 +653,7 @@ export default function AssessmentManagement() {
       {addDiffModal && (() => {
         const lv = levels.find(l => l.id === addDiffModal);
         const existingLabels = lv?.difficulties.map(d => d.label) || [];
-        const available = ["Easy","Medium","Hard"].filter(x => !existingLabels.includes(x));
+        const available = ["Easy", "Medium", "Hard"].filter(x => !existingLabels.includes(x));
         if (available.length === 0) {
           setAddDiffModal(null);
           showToast("All 3 difficulty levels already added.", "warn");
