@@ -346,21 +346,30 @@ const OtpVerification = () => {
         }
       } else {
         const result = await verifyOtp({ email, otp: finalOtp }).unwrap();
-        if (result?.status) { 
+        debugger;
+        if (result?.status) {
           dispatch(setCredentials({
             token: result?.access_token,
             module: result?.module,
-            user: result.role,
-            detail: { name: result?.name, email: result?.email, id: result?.vendor_id,
-               planName: result?.plan_name,
+            user: result?.module == "student" ? result?.module : result.role,
+            detail: {
+              name: result?.name, email: result?.email, id: result?.vendor_id,
+              planName: result?.plan_name,
               status: result?.is_subscribed,
-              profile_complete_percentage:result?.profile_complete_percentage || 0,
-              last_login:result?.last_login,
-              remaining_credits:result?.remaining_credits || 0
-             },
+              profile_complete_percentage: result?.profile_complete_percentage || 0,
+              last_login: result?.last_login,
+              remaining_credits: result?.remaining_credits || 0
+            },
           }));
           toast.success("OTP Verified Successfully!");
-          setTimeout(() => navigate("/vendor/dashboard"), 800);
+          setTimeout(() => {
+            // Navigate based on module/role
+            if (result?.module === "student") {
+              navigate("/student/dashboard");
+            } else {
+              navigate("/vendor/dashboard");
+            }
+          }, 800);
         }
       }
     } catch (err) {
@@ -606,7 +615,7 @@ const OtpVerification = () => {
               {/* Paste hint */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                 <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
-                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#94B8D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="#94B8D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <span style={{ fontSize: 12, color: "#94B8D8" }}>You can paste your OTP directly</span>
               </div>
@@ -686,8 +695,8 @@ const OtpVerification = () => {
                 ) : (
                   <>
                     <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
-                      <path d="M1 4v6h6M23 20v-6h-6" stroke="#2B7FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="#2B7FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M1 4v6h6M23 20v-6h-6" stroke="#2B7FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="#2B7FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     Resend OTP
                   </>
