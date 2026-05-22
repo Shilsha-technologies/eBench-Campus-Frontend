@@ -46,7 +46,7 @@ export default function CreateAccount() {
 
 
   const onSubmit = async (data) => {
-    if(data?.module=="student"){
+    if (data?.module == "student") {
       // Set mock student credentials for testing
       // const mockStudentData = {
       //   access_token: "mock_student_token_" + Date.now(),
@@ -79,7 +79,7 @@ export default function CreateAccount() {
       //     },
       //   })
       // );
-      
+
       // toast.success("Student Login Success!");
       // setTimeout(() => {
       //   navigate("/student/dashboard");
@@ -88,22 +88,21 @@ export default function CreateAccount() {
     }
     try {
       const result = await login(data).unwrap();
-      // debugger;
       if (result?.access_token) {
         dispatch(
           setCredentials({
             token: result?.access_token,
             module: result?.module,
-            user: result.role,
+            user: result?.module == "student" ? result?.module : result.role,
             detail: {
               name: result?.name,
               email: result?.email,
               id: result?.vendor_id,
               planName: result?.plan_name,
               status: result?.is_subscribed,
-              profile_complete_percentage:result?.profile_complete_percentage || 0,
-              last_login:result?.last_login,
-              remaining_credits:result?.remaining_credits || 0
+              profile_complete_percentage: result?.profile_complete_percentage || 0,
+              last_login: result?.last_login,
+              remaining_credits: result?.remaining_credits || 0
             },
           })
         );
@@ -239,10 +238,10 @@ export default function CreateAccount() {
               ))}
             </div>
 
-            
+
             <div style={{ fontSize: 12, color: "#6B84A0" }}>© 2026 eBench</div>
           </div>
-         
+
 
           {/* ── RIGHT PANEL ── */}
           <div
@@ -434,7 +433,7 @@ export default function CreateAccount() {
                 )}
                 {watchedModule && (
                   <p style={{ color: "#6B84A0", fontSize: 12, marginTop: 4 }}>
-                    {watchedModule === "campus" 
+                    {watchedModule === "campus"
                       ? "Use your work email (e.g., vishal@company.com)"
                       : "Use your personal email (e.g., personal@gmail.com)"
                     }
