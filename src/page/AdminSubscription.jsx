@@ -17,6 +17,7 @@ import { T } from "../components/admin/superadmin/SuperAdminDashboard";
 
 
 export default function SubscriptionModule() {
+    
     const [pageNumber, setPageNumber] = useState(1)
     const [size, setSize] = useState(10)
     const { data: countryList } = useGetCountryDataQuery();
@@ -34,6 +35,7 @@ export default function SubscriptionModule() {
         id: null,
         country: ''
     });
+
     const [search, setSearch] = useState('')
     const [mode, setMode] = useState("add");
     const [currency, setCurrency] = useState("USD")

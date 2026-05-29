@@ -3,20 +3,23 @@ import { useState } from "react";
 // Icons (inline SVG)
 const Icon = ({ name, cls = "w-5 h-5" }) => {
   const icons = {
-    credits: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-    plus: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>,
-    test: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>,
-    gift: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M20 12v10H4V12M2 7h20v5H2zM12 22V7m0-5a2.5 2.5 0 00-2.5 2.5c0 1.38 1.12 2.5 2.5 2.5m0-5a2.5 2.5 0 012.5 2.5C14.5 8.88 13.38 10 12 10"/></svg>,
-    copy: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>,
-    close: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>,
+    credits: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    plus: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
+    test: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+    gift: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M20 12v10H4V12M2 7h20v5H2zM12 22V7m0-5a2.5 2.5 0 00-2.5 2.5c0 1.38 1.12 2.5 2.5 2.5m0-5a2.5 2.5 0 012.5 2.5C14.5 8.88 13.38 10 12 10" /></svg>,
+    copy: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>,
+    close: <svg className={cls} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
   };
   return icons[name] || null;
 };
+
 
 // Card component
 function Card({ children, className = "" }) {
   return <div className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm ${className}`}>{children}</div>;
 }
+
+
 
 // Stat Card component
 function StatCard({ label, value, icon, color }) {
@@ -26,6 +29,10 @@ function StatCard({ label, value, icon, color }) {
     red: "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400",
     amber: "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400",
   };
+
+
+
+
   return (
     <Card className="p-5 flex items-center gap-4">
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${colors[color]}`}>
@@ -109,13 +116,12 @@ export default function CreditsPage() {
           {creditHistory.map(h => (
             <div key={h.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30">
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                  h.type === "used" 
-                    ? "bg-red-50 dark:bg-red-900/20 text-red-500" 
-                    : h.type === "referral" 
-                    ? "bg-amber-50 dark:bg-amber-900/20 text-amber-500" 
-                    : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500"
-                }`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${h.type === "used"
+                    ? "bg-red-50 dark:bg-red-900/20 text-red-500"
+                    : h.type === "referral"
+                      ? "bg-amber-50 dark:bg-amber-900/20 text-amber-500"
+                      : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500"
+                  }`}>
                   {h.type === "used" ? <Icon name="test" cls="w-4 h-4" /> : h.type === "referral" ? <Icon name="gift" cls="w-4 h-4" /> : <Icon name="plus" cls="w-4 h-4" />}
                 </div>
                 <div>
@@ -140,11 +146,10 @@ export default function CreditsPage() {
             { amount: 10, price: "₹349", label: "Pro" },
           ].map(pack => (
             <button key={pack.amount} onClick={() => handleBuy(pack.amount)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all hover:border-violet-400 ${
-                pack.highlight 
-                  ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20" 
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all hover:border-violet-400 ${pack.highlight
+                  ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
                   : "border-slate-200 dark:border-slate-600"
-              }`}>
+                }`}>
               <div className="flex items-center gap-2 text-left">
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{pack.amount} Credits — {pack.label}</span>
                 {pack.highlight && <span className="text-xs bg-violet-100 dark:bg-violet-800 text-violet-700 dark:text-violet-300 px-2 py-0.5 rounded-full font-semibold">Best Value</span>}

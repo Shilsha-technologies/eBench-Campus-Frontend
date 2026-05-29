@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 const Success = () => {
   const navigate = useNavigate();
 
+
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white shadow-lg rounded-xl max-w-md w-full p-8 text-center">
@@ -22,6 +25,7 @@ const Success = () => {
             />
           </svg>
         </div>
+        
 
         <h1 className="text-2xl font-bold text-gray-800 mb-2">
           Payment Successful

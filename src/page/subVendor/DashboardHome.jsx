@@ -293,7 +293,9 @@ export default function EmployeeDashboard() {
   const { data, isLoading, isError } = useSubvendorDashboardApiQuery();
   
   // console.log("dashboard-details", data);
-  
+//    nums = [1,1,1,2,2,3], k = 2
+
+// Output: [1,1,2,2,3]
   // Loading state
   if (isLoading) {
     return (

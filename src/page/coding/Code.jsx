@@ -757,11 +757,10 @@ const ToggleSwitch = ({ checked, onChange, id }) => (
 const LevelCard = ({ level, icon, title, desc, duration, active, complete, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex-1 min-w-0 text-left p-4 rounded-2xl border-2 transition-all duration-200 group ${
-      active
-        ? "border-indigo-500 bg-indigo-50 shadow-lg shadow-indigo-100"
-        : "border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md hover:shadow-slate-100"
-    }`}
+    className={`flex-1 min-w-0 text-left p-4 rounded-2xl border-2 transition-all duration-200 group ${active
+      ? "border-indigo-500 bg-indigo-50 shadow-lg shadow-indigo-100"
+      : "border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md hover:shadow-slate-100"
+      }`}
   >
     <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 text-xl transition-transform duration-200 group-hover:scale-110 ${active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"}`}>
       {icon}
@@ -807,9 +806,9 @@ const QuestionCard = ({ q, onDelete }) => (
   <div className="flex items-start gap-3 p-4 bg-white rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all duration-200 group">
     <div className="mt-1 cursor-grab text-slate-300 group-hover:text-slate-400">
       <svg width="14" height="18" viewBox="0 0 14 18" fill="currentColor">
-        <circle cx="4" cy="4" r="1.5"/><circle cx="10" cy="4" r="1.5"/>
-        <circle cx="4" cy="9" r="1.5"/><circle cx="10" cy="9" r="1.5"/>
-        <circle cx="4" cy="14" r="1.5"/><circle cx="10" cy="14" r="1.5"/>
+        <circle cx="4" cy="4" r="1.5" /><circle cx="10" cy="4" r="1.5" />
+        <circle cx="4" cy="9" r="1.5" /><circle cx="10" cy="9" r="1.5" />
+        <circle cx="4" cy="14" r="1.5" /><circle cx="10" cy="14" r="1.5" />
       </svg>
     </div>
     <div className="flex-1 min-w-0">
@@ -834,8 +833,13 @@ const FormRow = ({ label, children, htmlFor }) => (
   </div>
 );
 
-export default function SendTestLinkModal() {
-  const [open, setOpen] = useState(false);
+
+
+export default function SendTestLinkModal({ isOpen, onClose, onSend }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isOpen !== undefined ? isOpen : internalOpen;
+  const setOpen = onClose ? (val) => { if (!val) onClose(); } : setInternalOpen;
+
   const [activeLevel, setActiveLevel] = useState(1);
   const [selectedDifficulties, setSelectedDifficulties] = useState(["Medium"]);
   const [selectedTopics, setSelectedTopics] = useState(["HTML", "CSS", "JavaScript", "React"]);
@@ -875,10 +879,28 @@ export default function SendTestLinkModal() {
 
   const deleteQuestion = (id) => setQuestions(prev => prev.filter(q => q.id !== id));
 
-  const handleSend = () => {
-    setSending(true);
-    setTimeout(() => { setSending(false); setSent(true); setTimeout(() => setSent(false), 3000); }, 2000);
+  const handleSend = async () => {
+    if (onSend) {
+      setSending(true);
+      try {
+        await onSend(activeLevel);
+        setSent(true);
+        setTimeout(() => {
+          setSent(false);
+          if (onClose) onClose();
+          else setOpen(false);
+        }, 1500);
+      } catch (err) {
+        // Error is handled by the caller
+      } finally {
+        setSending(false);
+      }
+    } else {
+      setSending(true);
+      setTimeout(() => { setSending(false); setSent(true); setTimeout(() => setSent(false), 3000); }, 2000);
+    }
   };
+
 
   const handleCopy = () => {
     setCopied(true);
@@ -886,9 +908,9 @@ export default function SendTestLinkModal() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 flex items-center justify-center p-6 font-sans">
+    <div className="min-h-scr   een bg-linear-to-br from-slate-50 via-indigo-50/30 to-slate-100 flex items-center justify-center p-6 font-sans">
       {/* Trigger */}
-      {!open && (
+      {!open && isOpen === undefined && (
         <div className="text-center">
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-5 py-3 shadow-sm mb-4">
@@ -908,6 +930,7 @@ export default function SendTestLinkModal() {
           <div className="mt-4 text-xs text-slate-400">Click to open the assessment configuration modal</div>
         </div>
       )}
+      
 
       {/* Modal */}
       {open && (
@@ -935,31 +958,6 @@ export default function SendTestLinkModal() {
 
             {/* ── Scrollable body ── */}
             <div className="overflow-y-auto flex-1 px-7 py-6 space-y-6">
-
-              {/* Candidate Info */}
-              <div className="bg-white rounded-2xl border border-slate-100 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200">
-                  {candidate.avatar}
-                </div>
-                <div className="flex-1 min-w-0 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1">
-                  <div className="col-span-2 sm:col-span-1">
-                    <div className="font-bold text-slate-900 text-base">{candidate.name}</div>
-                    <div className="text-xs text-slate-400">{candidate.email}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400 mb-0.5">Role</div>
-                    <div className="text-sm font-medium text-slate-700">{candidate.role}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400 mb-0.5">Experience</div>
-                    <div className="text-sm font-medium text-slate-700">{candidate.experience}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-400 mb-0.5">Status</div>
-                    <span className="inline-flex text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">{candidate.status}</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Level Selector */}
               <div>
@@ -1130,69 +1128,6 @@ export default function SendTestLinkModal() {
                 </div>
               )}
 
-              {/* ── Email & Link ── */}
-              <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-5">
-                <SectionLabel>Email & Link Configuration</SectionLabel>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Candidate Email</label>
-                    <input
-                      type="email"
-                      defaultValue={candidate.email}
-                      className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Link Expiry</label>
-                    <input
-                      type="date"
-                      value={expiry}
-                      onChange={e => setExpiry(e.target.value)}
-                      className="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-700"
-                    />
-                  </div>
-                </div>
-
-                <FormRow label="Auto Reminder (24h before expiry)" htmlFor="t-reminder">
-                  <ToggleSwitch checked={toggles.autoReminder} onChange={v => setToggle("autoReminder", v)} id="t-reminder" />
-                </FormRow>
-
-                {/* Email preview */}
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Email Preview</div>
-                  <div className="bg-white rounded-xl border border-slate-100 p-4">
-                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">H</div>
-                      <div>
-                        <div className="text-xs font-semibold text-slate-700">HirePlatform Assessment</div>
-                        <div className="text-xs text-slate-400">noreply@hire.io → {candidate.email}</div>
-                      </div>
-                    </div>
-                    <div className="text-sm text-slate-700 leading-relaxed">
-                      Hi <span className="font-semibold">{candidate.name.split(" ")[0]}</span>, 👋<br />
-                      <span className="text-slate-500">You've been shortlisted for the <strong>{candidate.role}</strong> position. Please complete your assessment by <strong>{expiry}</strong>.</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Test link */}
-                <div>
-                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Secure Test Link</div>
-                  <div className="flex gap-2">
-                    <div className="flex-1 min-w-0 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-500 font-mono truncate">
-                      {testLink}
-                    </div>
-                    <button
-                      onClick={handleCopy}
-                      className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${copied ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
-                    >
-                      {copied ? "✓ Copied!" : "Copy"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             {/* ── Footer ── */}
@@ -1212,17 +1147,16 @@ export default function SendTestLinkModal() {
                 <button
                   onClick={handleSend}
                   disabled={sending}
-                  className={`relative px-6 py-2.5 rounded-2xl text-sm font-semibold text-white transition-all duration-300 min-w-[140px] overflow-hidden shadow-lg ${
-                    sent
-                      ? "bg-emerald-500 shadow-emerald-200"
-                      : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 active:scale-95 shadow-indigo-300"
-                  } ${sending ? "opacity-80 cursor-not-allowed" : ""}`}
+                  className={`relative px-6 py-2.5 rounded-2xl text-sm font-semibold text-white transition-all duration-300 min-w-[140px] overflow-hidden shadow-lg ${sent
+                    ? "bg-emerald-500 shadow-emerald-200"
+                    : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 active:scale-95 shadow-indigo-300"
+                    } ${sending ? "opacity-80 cursor-not-allowed" : ""}`}
                 >
                   {sending ? (
                     <span className="flex items-center gap-2 justify-center">
                       <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z"/>
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
                       </svg>
                       Sending…
                     </span>

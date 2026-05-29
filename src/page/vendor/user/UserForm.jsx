@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -5,10 +6,9 @@ import PhoneInput from "react-phone-input-2";
 import Select from "react-select";
 import { motion } from 'framer-motion'
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
-import { X } from "lucide-react";
+import { ClockFading, X } from "lucide-react";
 import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery } from "../../../redux/services/vendorApi";
 
-// ✅ Validation Schema  
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").max(30),
     lastName: yup.string().required("Last Name is required").max(30),
@@ -22,17 +22,6 @@ const validationSchema = yup.object().shape({
     mobileNumber: yup
         .string()
         .required("Mobile number is required"),
-
-    // 🎓 CAMPUS FIELDS
-    // universityName: yup.string().when([], {
-    //     is: () => moduleType === "campus",
-    //     then: (schema) => schema.required("University is required"),
-    // }),
-
-    // collegeName: yup.string().when([], {
-    //     is: () => moduleType === "campus",
-    //     then: (schema) => schema.required("College is required"),
-    // }),
 
     degree: yup.string().when([], {
         then: (schema) => schema.required("Degree is required"),
@@ -56,11 +45,37 @@ const validationSchema = yup.object().shape({
     department: yup.string().when([], {
         then: (schema) => schema.required("Department required"),
     }),
+    skills: yup.array().of(yup.string()).when([], {
+        then: (schema) => schema.min(1, "Skills required").required("Skills required"),
+    }),
 });
 
 const moduleType = localStorage.getItem('module')
 
 export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
+    const [skills, setSkills] = useState([]);
+    const [skillInput, setSkillInput] = useState("");
+
+    const addSkill = (e) => {
+        if (e) e.preventDefault();
+        const trimmed = skillInput.trim();
+        if (trimmed && !skills.includes(trimmed)) {
+            setSkills([...skills, trimmed]);
+            setSkillInput("");
+        }
+    };
+
+    const removeSkill = (skillToRemove) => {
+        setSkills(skills.filter((s) => s !== skillToRemove));
+    };
+
+    const handleSkillKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addSkill();
+        }
+    };
+
     const {
         register,
         control,
@@ -73,7 +88,21 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         mode: "onBlur",
     });
 
-    console.log("idvrnfitSddming", isVendorAdding)
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        register("skills");
+    }, [register]);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            setValue("skills", skills);
+            return;
+        }
+        setValue("skills", skills, { shouldValidate: true });
+    }, [skills, setValue]);
+
     const countryCode = watch("countryCode") || "in";
     const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
     // const 
@@ -100,8 +129,9 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
 
     const handleFormSubmit = (data) => {
-        // console.log("koko", data)
-        // debugger;
+        console.log("koko", data)
+        console.log("data ", skills, skillInput)
+        debugger;
         const payload = {
             first_name: data.firstName,
             last_name: data.lastName,
@@ -119,7 +149,8 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
             cgpa: data.cgpa,
             roll_number: data.rollNumber,
             department: data.department,
-            is_persuing: data?.isPursuing
+            is_persuing: data?.isPursuing,
+            skills: skills
         };
 
         onSubmit(payload, false);
@@ -478,6 +509,45 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                         {errors.rollNumber && <p className="text-sm text-red-500 mt-1">{errors.rollNumber.message}</p>}
                     </div>
 
+                    {/* Skills */}
+                    <div className="col-span-2  md:col-span-2 space-y-1.5">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Skills
+                        </label>
+
+                        <div className="flex gap-2 max-w-md">
+                            <input
+                                placeholder="Type skill (e.g. React) and click '+'"
+                                value={skillInput}
+                                onChange={(e) => setSkillInput(e.target.value)}
+                                onKeyDown={handleSkillKeyDown}
+                                className="flex-1 border border-gray-300 rounded-lg p-2 outline-none text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                            />
+                            <button
+                                type="button"
+                                onClick={addSkill}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all active:scale-95 cursor-pointer shadow-sm"
+                            >
+                                +
+                            </button>
+                        </div>
+                        {errors.skills && <p className="text-sm text-red-500 mt-1">{errors.skills.message}</p>}
+                        <div className="flex gap-2 mb-2 flex-wrap">
+                            {skills.map((s) => (
+                                <span key={s} className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold border border-blue-200 shadow-sm animate-fade-in">
+                                    {s}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeSkill(s)}
+                                        className="hover:text-red-500 font-bold cursor-pointer transition-colors"
+                                    >
+                                        ✕
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
 
 
 
@@ -495,13 +565,5 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         </motion.div>
     );
 }
-
-// export const countryOptions =() => {
-//     console.log("fff",countryData)
-
-//     return countryData?.data?.length > 0
-//     ? countryData.data.map((item) =>   item?.name)
-//     : null;
-// }
 
 

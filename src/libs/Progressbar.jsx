@@ -4,6 +4,7 @@ export default function ProgressBar({ value, label, color = "indigo", showLabel 
     amber: "bg-amber-500", rose: "bg-rose-500",
   };
 
+
   return (
     <div className="w-full">
       {showLabel && (

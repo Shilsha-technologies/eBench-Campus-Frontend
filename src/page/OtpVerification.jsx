@@ -346,7 +346,6 @@ const OtpVerification = () => {
         }
       } else {
         const result = await verifyOtp({ email, otp: finalOtp }).unwrap();
-        debugger;
         if (result?.status) {
           dispatch(setCredentials({
             token: result?.access_token,
