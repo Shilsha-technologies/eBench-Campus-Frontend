@@ -14,7 +14,7 @@ import { AuthProvider } from "./libs/AuthProvider";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
-// import CodeArena from "./page/coding/code";
+import CodingAssessment from "./page/coding/CodingAssessment";
 import AssessmentManagement from "./page/admin/Assessment";
 
 /* =========================
@@ -183,12 +183,12 @@ function App() {
                   <LandingPage />
                 }
               />
-              {/* <Route
+              <Route
                 path="/code"
                 element={
-                  <CodeArena />
+                  <CodingAssessment />
                 }
-              /> */}
+              />
               <Route path="/res" element={<IntroAnalysis />} />
               <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
               <Route path="/admin-login" element={<AdminLoginPage />} />

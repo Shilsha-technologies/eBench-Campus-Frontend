@@ -3,7 +3,7 @@ import { api } from './api';
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getProfile: builder.query({
-      query: ({id,token}) => {
+      query: ({ id, token }) => {
         // console.log("Fetching profile for ID:", token);
         return {
           url: `/candidate/details?candidate_id=${id}`,
@@ -27,18 +27,21 @@ export const userApi = api.injectEndpoints({
         // no credentials here either
       }),
     }),
-    startTest:builder.mutation({
+    startTest: builder.mutation({
       query: () => ({
-        url: `/candidate/begin_test`,
-        method: "POST",
-        // no credentials here either
+        url: `/candidate/test/questions`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // credentials handled by base query (include)
       }),
     }),
-    uploadTest:builder.mutation({
-      query:(data) => ({
-        url:`/candidate/upload_test`,
-        method:"POST",
-        body:data
+    uploadTest: builder.mutation({
+      query: (data) => ({
+        url: `/candidate/upload_test`,
+        method: "POST",
+        body: data
       })
     })
   }),

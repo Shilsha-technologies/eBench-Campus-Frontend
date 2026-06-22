@@ -383,7 +383,7 @@ import { Pagination } from '../user/UserManagement'
 //==========================
 
 // ResultsPage.jsx
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Modal, StatCard, Table, Badge } from "../../../libs/Ui";
 import { useResultManagementDataQuery } from "../../../redux/services/vendorApi";
 import { useResultManagementDetailBySubVendorQuery } from "../../../redux/services/subvendorApi";
@@ -440,9 +440,9 @@ export default function ResultsPage() {
     limit: pageSize,
     page,
     search: debouncedQuery,
-    country:filterNationality,
-    minScore:minCgpa,
-    maxScore:maxCgpa,
+    country: filterNationality,
+    minScore: minCgpa,
+    maxScore: maxCgpa,
     fromDate,
     toDate,
     statusFilter,
@@ -450,16 +450,16 @@ export default function ResultsPage() {
     limit: pageSize,
     page,
     search: debouncedQuery,
-    country:filterNationality,
-    minScore:minCgpa,
-    maxScore:maxCgpa,
+    country: filterNationality,
+    minScore: minCgpa,
+    maxScore: maxCgpa,
     fromDate,
     toDate,
     statusFilter,
   });
 
 
-  console.log("filer",filterNationality)
+  // console.log("filer",filterNationality)
   // Process backend data to add status field
   const candidates = data?.results?.map(result => {
     const scorePercentage = Number(result.final_score * 100);
@@ -482,7 +482,7 @@ export default function ResultsPage() {
   }) || [];
 
   // Use data directly from backend - no frontend filtering
-  console.log("filtered", candidates)
+  // console.log("filtered", candidates)
   const filtered = candidates;
 
   const stats = {
@@ -493,7 +493,7 @@ export default function ResultsPage() {
     avgScore: data?.average_score_percent || 0,
   };
 
-  const navigate=useNavigate()
+  const navigate = useNavigate()
   // console.log("ddlj",data)
 
   const columns = [
@@ -531,19 +531,19 @@ export default function ResultsPage() {
     },
     {
       key: "actions", label: "Actions", render: (_, row) => (
-        <button onClick={() => navigate(`/vendor/results/view?resultId=${row?.result_id}&candidateId=${row?.candidate_id}`)}  className="text-xs flex justify-center items-center w-full cursor-pointer text-indigo-600 hover:underline font-medium">
+        <button onClick={() => navigate(`/vendor/results/view?resultId=${row?.result_id}&candidateId=${row?.candidate_id}`)} className="text-xs flex justify-center items-center w-full cursor-pointer text-indigo-600 hover:underline font-medium">
           <Eye size={18} />
         </button>
       )
     },
   ];
 
+
   const total = data?.total ?? 0;
 
   useEffect(() => {
     setPage(1);
   }, [debouncedQuery, filterNationality, pageSize, fromDate, toDate, minCgpa, maxCgpa]);
-
 
 
   return (

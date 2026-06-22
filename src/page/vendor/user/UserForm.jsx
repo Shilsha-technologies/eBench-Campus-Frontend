@@ -129,9 +129,8 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
 
     const handleFormSubmit = (data) => {
-        console.log("koko", data)
-        console.log("data ", skills, skillInput)
-        debugger;
+        // console.log("koko", data)
+        // console.log("data ", skills, skillInput)
         const payload = {
             first_name: data.firstName,
             last_name: data.lastName,

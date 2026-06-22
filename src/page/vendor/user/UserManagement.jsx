@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { Eye, Download } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SendTestLinkModal from "../../coding/Code";
+import LevelDifficultyPopup from "../../coding/Code";
 
 export default function CandidatesPage() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function CandidatesPage() {
   // ── Bulk selection ──────────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState([]);
   const [bulkMode, setBulkMode] = useState(false);
-
+  const [showPopup, setShowPopup] = useState(false);
 
 
   const { data: ownerDropdownData } = role === "sub_vendor" ? { dropdown: [] } : useGetCandidateOwnerDropdownQuery();
@@ -282,29 +283,11 @@ export default function CandidatesPage() {
 
   const handleBulkSendTest = () => {
     if (!selectedIds.length) return;
-    setShowSendTestModal(true);
+    // setShowSendTestModal(true);
+    setShowPopup(true)
   };
 
-  const handleSendTestWithLevel = async (level) => {
-    try {
-      const result = await sendTestLinkToUser({
-        candidate_ids: selectedIds,
-        level: level,
-      }).unwrap();
 
-      if (result?.status) {
-        setTimeout(() => {
-          toast.success(`Test link sent successfully`);
-        }, 200);
-        setSelectedIds([]);
-        setShowSendTestModal(false);
-      }
-    } catch (err) {
-      console.log("error", err);
-      toast.error(err?.data?.message ?? "Failed to send link");
-      throw err;
-    }
-  };
 
   const handleDownloadReference = async () => {
     setIsDownloading(true);
@@ -581,7 +564,7 @@ export default function CandidatesPage() {
             disabled={isDownloading}
           >
             <Download size={16} />
-            {isDownloading ? 'Downloading...' : 'reference CSV File'}
+            {isDownloading ? 'Downloading...' : 'Reference CSV File'}
           </button>
         </div>
 
@@ -799,10 +782,48 @@ export default function CandidatesPage() {
       )}
 
       {/* Send Test Link Modal */}
-      <SendTestLinkModal
+      {/* <SendTestLinkModal
         isOpen={showSendTestModal}
         onClose={() => setShowSendTestModal(false)}
         onSend={handleSendTestWithLevel}
+      /> */}
+      {/* <SendTestLinkModal /> */}
+      <LevelDifficultyPopup
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        onConfirm={async ({ level, difficulty, closePopup }) => {
+          // use the selected level + difficulty objects here
+          // console.log(closePopup, "closePopup")
+          const data = {
+            candidate_ids: selectedIds,
+            level_id: level?._id,
+            difficulty_diff_id: difficulty?._id,
+          }
+          // handleSendTestWithLevel(data, closePopup)
+          try {
+            const result = await sendTestLinkToUser(data).unwrap();
+            // console.log(result, "result");
+            if (result?.data) {
+              setTimeout(() => {
+                toast.success(`Test link sent successfully`);
+              }, 200);
+              setSelectedIds([]);
+              setBulkMode(!bulkMode)
+              closePopup();
+            }
+
+            if (result?.error) {
+              toast.error(result?.error?.data?.message ?? "Failed to send link");
+              return;
+            }
+            // console.log("resss", result);
+
+          } catch (err) {
+            toast.error(err?.data?.message ?? "Failed to send link");
+            throw err;
+          }
+          // console.log(data, "hello-print");
+        }}
       />
 
       {/* ACTIVATE INACTIVATE FUNCTIONALITY FOR CANDIDATES */}

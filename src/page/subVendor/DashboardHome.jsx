@@ -6,8 +6,8 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 // const DashboardContent = () => {
 //   const navigate=useNavigate()
 
-  // const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
-  // console.log("dashaboard-details",data);
+// const {data,isLoading,isError} = useSubvendorDashboardApiQuery()
+// console.log("dashaboard-details",data);
 
 //   const recentCredits = data?.credits_summary?.plans;
 //   const recentUsers = data?.recent_candidates;
@@ -26,7 +26,7 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 
 //   return (
 //     <div className="min-h-screen bg-[#fafafa] p-6 pt-5 font-inter text-gray-800">
-      
+
 //             {/* ---------------------- STATS CARDS ---------------------- */}
 //             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
 //               {statsCards.map((card, index) => (
@@ -38,7 +38,7 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                 </motion.div>
 //               ))}
 //             </section>
-      
+
 //             <motion.div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-10">
 //               <div className="flex justify-between">
 //                 <div className="text-xl font-semibold text-[#286a94] mb-4">Recently Assigned Subscription</div>
@@ -94,8 +94,8 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                 </table>
 //               </div>
 //             </motion.div>
-      
-      
+
+
 //             {/* ---------------------- RECENT USERS TABLE ---------------------- */}
 //             <motion.div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
 //               <div className="flex justify-between">
@@ -103,9 +103,9 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                 <button
 //                   onClick={() => navigate('/subvendor/user-management')}
 //                   className=" text-sm  px-4 rounded-md bg-[#286a94] hover:bg-[#357ba7] cursor-pointer text-white border-none h-7">View All</button>
-      
+
 //               </div>
-      
+
 //               <div className="overflow-x-auto">
 //                 <table className="min-w-full text-left border-collapse">
 //                   <thead className="bg-gray-50 text-gray-500 text-sm">
@@ -143,12 +143,12 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                       </tr>
 //                     )}
 //                   </tbody>
-      
+
 //                 </table>
 //               </div>
 //             </motion.div>
-      
-      
+
+
 //             {/* ---------------------- BAR GRAPH ---------------------- */}
 //             <section className="flex justify-between mt-10">
 //               <motion.div className="bg-white w-full lg:w-[49%] border border-gray-200 rounded-2xl p-6 shadow-sm mb-10">
@@ -168,9 +168,9 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                     </ResponsiveContainer>
 //                   </div>:<div className=" text-sm">N/A</div>
 //                 }
-      
+
 //               </motion.div>
-      
+
 //               {/* ---------------------- LINE GRAPH ---------------------- */}
 //               <motion.div className="bg-white w-full lg:w-[49%] border border-gray-200 rounded-2xl p-6 shadow-sm mb-10">
 //                 <h3 className=" font-semibold text-[#286a94] mb-4">New Users Growth</h3>
@@ -189,10 +189,10 @@ import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi
 //                   </div>:<div className=" text-sm">N/A</div>
 //                 }
 //               </motion.div>
-      
-      
+
+
 //             </section>
-      
+
 //     </div>
 //   );
 // };
@@ -230,18 +230,19 @@ const statColors = {
 
 
 const quickActions = [
-  { label: "View Candidate", icon: "👥", color: "bg-blue-600 hover:bg-blue-700", textColor: "text-white",to:'/subvendor/user-management' },
-  { label: "View Results", icon: "📊", color: "bg-emerald-600 hover:bg-emerald-700", textColor: "text-white",to:'/subvendor/result-management' },
-  { label: "View Profile", icon: "📅", color: "bg-rose-600 hover:bg-rose-700", textColor: "text-white",to:'/subvendor/profile' },
+  { label: "View Candidate", icon: "👥", color: "bg-blue-600 hover:bg-blue-700", textColor: "text-white", to: '/subvendor/user-management' },
+  { label: "View Results", icon: "📊", color: "bg-emerald-600 hover:bg-emerald-700", textColor: "text-white", to: '/subvendor/result-management' },
+  { label: "View Profile", icon: "📅", color: "bg-rose-600 hover:bg-rose-700", textColor: "text-white", to: '/subvendor/profile' },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 function useDateTime() {
   const [dt, setDt] = useState(new Date());
 
-  useEffect(() => { 
-    const id = setInterval(() => setDt(new Date()), 1000); 
-    return () => clearInterval(id); }, []);
+  useEffect(() => {
+    const id = setInterval(() => setDt(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
   return dt;
 }
 
@@ -291,12 +292,8 @@ export default function EmployeeDashboard() {
   const dt = useDateTime();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useSubvendorDashboardApiQuery();
-  
-  // console.log("dashboard-details", data);
-//    nums = [1,1,1,2,2,3], k = 2
 
-// Output: [1,1,2,2,3]
-  // Loading state
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-[#F4F9FF] to-[#E6F1FB] font-sans flex items-center justify-center">
@@ -307,7 +304,7 @@ export default function EmployeeDashboard() {
       </div>
     );
   }
-  
+
   // Error state
   if (isError || !data) {
     return (
@@ -322,10 +319,10 @@ export default function EmployeeDashboard() {
       </div>
     );
   }
-  
+
   // Extract data from API - completely dynamic with N/A fallbacks
   const employee = data.employee || {};
-  
+
   // Transform API stats to match our component structure
   const stats = data.stats ? data.stats.map(stat => ({
     label: stat.label || "N/A",
@@ -334,7 +331,7 @@ export default function EmployeeDashboard() {
     color: statColors[stat.label]?.color || "from-blue-500 to-blue-600",
     light: statColors[stat.label]?.light || "bg-blue-50 text-blue-600"
   })) : [];
-  
+
   const performanceData = data.performanceData || [];
   const monthlyTests = data.monthlyTests || [];
   const activities = data.activities || [];
@@ -445,7 +442,7 @@ export default function EmployeeDashboard() {
           <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
             <div className="border-[#B5D4F4]">
               <SectionTitle sub="What happened recently">Recent Activity</SectionTitle>
-    
+
               <div className="space-y-4 ">
                 {activities.length > 0 ? activities.map((a, i) => (
                   <div key={i} className="flex items-start gap-4">
@@ -575,11 +572,10 @@ export default function EmployeeDashboard() {
                       <p className="text-xs text-[#378ADD]">
                         Valid till {subscription.validTill ? new Date(subscription.validTill).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "N/A"}
                       </p>
-                      <span className={`inline-block mt-1 px-2 py-1 text-xs rounded-full ${
-                        subscription.status === "Active" 
-                          ? "bg-emerald-100 text-emerald-700" 
-                          : "bg-amber-100 text-amber-700"
-                      }`}>
+                      <span className={`inline-block mt-1 px-2 py-1 text-xs rounded-full ${subscription.status === "Active"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-amber-100 text-amber-700"
+                        }`}>
                         {subscription.status || "N/A"}
                       </span>
                     </div>
@@ -591,20 +587,24 @@ export default function EmployeeDashboard() {
                 )}
               </div>
             </div>
-            
+
             {/* Overall Summary */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
               {[
                 // { label: "Total Countries", value: assignedSubscription.length.toString(), icon: "🌍" },
                 { label: "Active Plans", value: assignedSubscription.filter(s => s.status === "Active").length.toString(), icon: "✅" },
-                { label: "Total Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
-                  const [used] = (s.credits || "0/0").split('/');
-                  return sum + parseInt(used || 0);
-                }, 0).toString() : "0", icon: "🎯" },
-                { label: "Remaining Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
-                  const [, remaining] = (s.credits || "0/0").split('/');
-                  return sum + parseInt(remaining || 0);
-                }, 0).toString() : "0", icon: "🟢" },
+                {
+                  label: "Total Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
+                    const [used] = (s.credits || "0/0").split('/');
+                    return sum + parseInt(used || 0);
+                  }, 0).toString() : "0", icon: "🎯"
+                },
+                {
+                  label: "Remaining Credits", value: assignedSubscription.length > 0 ? assignedSubscription.reduce((sum, s) => {
+                    const [, remaining] = (s.credits || "0/0").split('/');
+                    return sum + parseInt(remaining || 0);
+                  }, 0).toString() : "0", icon: "🟢"
+                },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col gap-2 p-4 bg-[#F4F9FF] rounded-2xl">
                   <p className="text-sm text-[#378ADD] font-medium">{item.icon} {item.label}</p>
@@ -612,7 +612,7 @@ export default function EmployeeDashboard() {
                 </div>
               ))}
             </div>
-            
+
             {/* Overall Progress */}
             <div className="mt-8">
               <div className="flex justify-between text-sm text-[#378ADD] mb-3">
@@ -632,7 +632,7 @@ export default function EmployeeDashboard() {
                 </span>
               </div>
               <div className="h-4 bg-[#E6F1FB] rounded-full overflow-hidden">
-                <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{ 
+                <div className="progress-bar h-full rounded-full bg-linear-to-r from-[#185FA5] to-[#378ADD]" style={{
                   width: `${assignedSubscription.length > 0 ? (() => {
                     const totalUsed = assignedSubscription.reduce((sum, s) => {
                       const [used] = (s.credits || "0/0").split('/');
@@ -643,7 +643,7 @@ export default function EmployeeDashboard() {
                       return sum + parseInt(remaining || 0);
                     }, 0);
                     return totalCredits > 0 ? (totalUsed / totalCredits * 100) : 0;
-                  })() : 0}%` 
+                  })() : 0}%`
                 }} />
               </div>
               <div className="flex justify-between text-sm mt-2">
@@ -671,7 +671,7 @@ export default function EmployeeDashboard() {
                 </span>
               </div>
             </div>
-          </div>   
+          </div>
         </div>
       </div>
     </div>
