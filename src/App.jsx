@@ -16,6 +16,7 @@ import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
 import CodingAssessment from "./page/coding/CodingAssessment";
 import AssessmentManagement from "./page/admin/Assessment";
+import CodingTest from "./page/coding/CodingTest";
 
 /* =========================
   Lazy Loaded Layout
@@ -181,6 +182,12 @@ function App() {
                 path="/"
                 element={
                   <LandingPage />
+                }
+              />
+              <Route
+                path="/code-test"
+                element={
+                  <CodingTest />
                 }
               />
               <Route

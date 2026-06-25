@@ -107,7 +107,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "./Header";
-import { useCookiesGenerateQuery, useLazyGetProfileQuery, useStartTestMutation, useVerifyUserOtpMutation } from '../redux/services/userApi';
+import { useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
 import toast from 'react-hot-toast';
 
 // export default function ProfilePage() {
@@ -381,7 +381,8 @@ export default function ProfilePage() {
     const [otp, setOtp] = useState("");
 
     const [verifyOtp] = useVerifyUserOtpMutation();
-    const [verifyTest, { isLoading: isVerifyTest }] = useStartTestMutation()
+    // Loading state for starting the test
+    const [beginLoader, setBeginLoader] = useState(false);
 
     const {
         data: cookieData,
@@ -400,7 +401,7 @@ export default function ProfilePage() {
         }
     ] = useLazyGetProfileQuery();
 
-    // console.log("candidateData", candidateData);
+    console.log("candidateData--000", candidateData);
     const CANDIDATE = candidateData?.candidate;
 
     const TEST = candidateData?.test;
@@ -514,24 +515,20 @@ export default function ProfilePage() {
 
 
     async function startHandler() {
-        try {
-            const result = await verifyTest()
-            console.log("rew", result);
-            debugger;
-            if (result?.error) {
-                return toast.error(result?.error?.error ?? "Failed to fetch")
-            }
-            if (result?.data?.status) {
-                if (result?.data?.level_id == "LEVEL_001") {
-                    navigate("/record", { state: { data: token } })
-                } else if (result?.data?.level_id == "LEVEL_002") {
-                    setTimeout(() => {
-                        navigate("/code")
-                    }, 200)
-                }
-            }
-        } catch (err) {
-            toast.error(err?.data?.message ?? "Internal Server Error")
+        console.log("bajjj", candidateData)
+        // Show loader while processing navigation
+        setBeginLoader(true);
+        if (candidateData?.level_id == "LEVEL_001") {
+            setTimeout(() => {
+                navigate("/record", { state: { data: token } })
+                setBeginLoader(false)
+            }, 2000)
+        }
+        if (candidateData?.level_id == "LEVEL_002") {
+            setTimeout(() => {
+                navigate("/code");
+                setBeginLoader(false)
+            }, 2000)
         }
     }
 
@@ -690,20 +687,28 @@ export default function ProfilePage() {
                                     </p>
                                 </label>
 
+
                                 <button
                                     onClick={startHandler}
+                                    disabled={!agreed || beginLoader}
                                     className="w-full py-2.5 rounded-lg text-[14px] font-semibold flex items-center justify-center gap-2 transition-all disabled:cursor-not-allowed"
                                     style={agreed ? { background: lv.accent, color: "#fff", cursor: "pointer" } : { background: "#f1f5f9", color: "#94a3b8" }}
                                 >
-
-                                    <>
-                                        Begin test
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    {beginLoader ? (
+                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                         </svg>
-                                    </>
-
+                                    ) : (
+                                        <>
+                                            Begin test
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                            </svg>
+                                        </>
+                                    )}
                                 </button>
+
 
                                 <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                                     Need help?{" "}

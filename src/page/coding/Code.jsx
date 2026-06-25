@@ -125,7 +125,7 @@ function EmptyState() {
  *  onClose      – () => void
  *  onConfirm    – (payload: { level, difficulty }) => void
  */
-export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm }) {
+export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoading }) {
   const [selectedLevelId, setSelectedLevelId] = useState(null);
   const [selectedDiffId, setSelectedDiffId] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -324,7 +324,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm }) {
           <div className="flex gap-2 flex-shrink-0">
             <button
               onClick={handleClose}
-              className="px-4 py-2 text-[13px] font-medium text-gray-600 rounded-lg
+              className="px-4 py-2 cursor-pointer text-[13px] font-medium text-gray-600 rounded-lg
                 border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
             >
               Cancel
@@ -332,12 +332,12 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm }) {
             <button
               onClick={handleConfirm}
               disabled={!selectedDiff}
-              className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-all duration-150
+              className={`px-4 py-2 cursor-pointer text-[13px] font-medium rounded-lg transition-all duration-150
                 ${selectedDiff
                   ? "bg-violet-600 text-white hover:bg-violet-700 shadow-sm shadow-violet-200 active:scale-[0.98]"
                   : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
             >
-              Confirm selection
+              {isLoading ? "Sending..." : "Confirm selection"}
             </button>
           </div>
         </div>

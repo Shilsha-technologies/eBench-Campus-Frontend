@@ -27,7 +27,17 @@ export const userApi = api.injectEndpoints({
         // no credentials here either
       }),
     }),
-    startTest: builder.mutation({
+    startTest: builder.query({
+      query: () => ({
+        url: `/candidate/test/questions`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // credentials handled by base query (include)
+      }),
+    }),
+    getAllQuestions: builder.query({
       query: () => ({
         url: `/candidate/test/questions`,
         method: "GET",
@@ -41,8 +51,36 @@ export const userApi = api.injectEndpoints({
       query: (data) => ({
         url: `/candidate/upload_test`,
         method: "POST",
-        body: data
-      })
+        body: data,
+      }),
+    }),
+    submitMcqAnswers: builder.mutation({
+      query: (data) => ({
+        url: `/candidate/test/submit-mcq`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }),
+    }),
+    submitScenarioAnswer: builder.mutation({
+      query: (data) => ({
+        url: `/candidate/scenario/submit`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }),
+    }),
+    submitCoding: builder.mutation({
+      query: (data) => ({
+        url: `/candidate/coding/submit`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: data,
+      }),
     })
   }),
 });
@@ -51,9 +89,11 @@ export const {
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useUpdateProfileMutation,
-  useStartTestMutation,
+  useStartTestQuery,
   useVerifyUserOtpMutation,
   useCookiesGenerateQuery,
-
-  useUploadTestMutation
+  useGetAllQuestionsQuery,
+  useSubmitScenarioAnswerMutation,
+  useSubmitMcqAnswersMutation,
+  useSubmitCodingMutation
 } = userApi;

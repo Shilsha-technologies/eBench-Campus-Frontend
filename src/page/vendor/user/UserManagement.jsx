@@ -715,7 +715,7 @@ export default function CandidatesPage() {
             <button
               onClick={handleBulkSendTest}
               disabled={isTestWorking || selectedIds.length === 0}
-              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors shadow-sm
+              className={`text-xs cursor-pointer px-3 py-1.5 rounded-lg font-medium transition-colors shadow-sm
     ${isTestWorking || selectedIds.length === 0
                   ? "bg-indigo-300 cursor-not-allowed"
                   : "bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -824,6 +824,7 @@ export default function CandidatesPage() {
           }
           // console.log(data, "hello-print");
         }}
+        isLoading={isTestWorking}
       />
 
       {/* ACTIVATE INACTIVATE FUNCTIONALITY FOR CANDIDATES */}

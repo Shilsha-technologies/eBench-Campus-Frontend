@@ -716,7 +716,8 @@
 
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useStartTestMutation } from "../../redux/services/userApi";
+import { useStartTestQuery } from "../../redux/services/userApi";
+// import { useStartTestMutation } from "../../redux/services/userApi";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -847,14 +848,16 @@ export default function ExamPortal() {
     const [modal, setModal] = useState(null); // null | "nextSection" | "submit" | "submitted"
     const [toast, setToast] = useState(null);
     const [lastSaved, setLastSaved] = useState(null);
+    const { data, isLoading, isError } = useStartTestQuery();
+
     const codeRef = useRef({});
     const timerRef = useRef({});
-    const [startTest] = useStartTestMutation();
+    // const [startTest] = useStartTestMutation();
+
+    console.log("vvv", data);
 
 
-    useEffect(() => {
-        startTest();
-    }, [])
+
 
     const {
         currentSection, currentQ, answers, code,
