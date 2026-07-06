@@ -401,13 +401,14 @@ export default function ProfilePage() {
         }
     ] = useLazyGetProfileQuery();
 
-    console.log("candidateData--000", candidateData);
-    const CANDIDATE = candidateData?.candidate;
 
-    const TEST = candidateData?.test;
+    // console.log("candidateData--000", candidateData);
+    const CANDIDATE = candidateData?.candidate || { name: "fjdkjf", age: "32", phone: "9876543210" };
+
+    const TEST = candidateData?.test || { levelName: "MERN", title: "Introduction Test", subtitle: "Self Introduction", icon: "fi-fi-rr-user", accentColor: "#286a94", accentBackground: "#f0f7fd", totalQuestions: 10, totalMarks: "N/A", cutoffPercentage: 80, isAiInterview: false };
 
     const lv = {
-        key: candidateData?.level_id,
+        key: candidateData?.level_id || '1',
         bc: TEST?.levelName,
         title: TEST?.title,
         sub: TEST?.subtitle,
@@ -466,6 +467,26 @@ export default function ProfilePage() {
     }, [cookieData?.verified, candidate_id, token]);
 
 
+
+    async function startHandler() {
+        // console.log("bajjj", candidateData)
+
+        // Show loader while processing navigation
+        setBeginLoader(true);
+        if (candidateData?.level_id == "LEVEL_001") {
+            setTimeout(() => {
+                navigate("/record", { state: { data: token } })
+                setBeginLoader(false)
+            }, 2000)
+        }
+        if (candidateData?.level_id == "LEVEL_002") {
+            setTimeout(() => {
+                navigate("/code-test");
+                setBeginLoader(false)
+            }, 2000)
+        }
+    }
+
     // ⏳ Loader
     if (dataLoading || isLoading) {
         return <FullScreenLoader />;
@@ -511,25 +532,6 @@ export default function ProfilePage() {
                 </motion.div>
             </div>
         );
-    }
-
-
-    async function startHandler() {
-        console.log("bajjj", candidateData)
-        // Show loader while processing navigation
-        setBeginLoader(true);
-        if (candidateData?.level_id == "LEVEL_001") {
-            setTimeout(() => {
-                navigate("/record", { state: { data: token } })
-                setBeginLoader(false)
-            }, 2000)
-        }
-        if (candidateData?.level_id == "LEVEL_002") {
-            setTimeout(() => {
-                navigate("/code");
-                setBeginLoader(false)
-            }, 2000)
-        }
     }
 
 

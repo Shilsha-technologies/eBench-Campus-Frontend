@@ -81,6 +81,20 @@ export const userApi = api.injectEndpoints({
         headers: { "Content-Type": "application/json" },
         body: data,
       }),
+    }),
+    runCodingStatus: builder.query({
+      query: ({ submission_id }) => ({
+        url: `/candidate/coding/run-status`,
+        method: 'GET',
+        params: { submission_id },
+      }),
+    }),
+    runCoding: builder.mutation({
+      query: (data) => ({
+        url: `/candidate/coding/run`,
+        method: 'POST',
+        body: data,
+      }),
     })
   }),
 });
@@ -95,5 +109,8 @@ export const {
   useGetAllQuestionsQuery,
   useSubmitScenarioAnswerMutation,
   useSubmitMcqAnswersMutation,
-  useSubmitCodingMutation
+  useSubmitCodingMutation,
+  useRunCodingStatusQuery,
+  useRunCodingMutation,
+  useLazyRunCodingStatusQuery
 } = userApi;

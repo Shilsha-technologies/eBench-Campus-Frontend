@@ -1,6 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGetLevelsQuery, useGetDifficultiesByLevelQuery } from "../../redux/services/vendorApi";
 import { X, Tag, Clock, BookOpen, Code2, FileText, Layers, ChevronRight, AlertCircle } from "lucide-react";
+import Select from "react-select";
+
+// ─── Technical Skills list ───────────────────────────────────────────────────
+const technicalSkills = [
+  { value: "java", label: "Java" },
+  { value: "cpp", label: "C++" },
+  { value: "nodeJS", label: "NodeJS" },
+  { value: "react", label: "React" },
+  { value: "python", label: "Python" },
+  { value: "javascript", label: "JavaScript" },
+  { value: "typescript", label: "TypeScript" },
+  { value: "golang", label: "Go" },
+  { value: "csharp", label: "C#" },
+  { value: "ruby", label: "Ruby" },
+  { value: "php", label: "PHP" },
+  { value: "sql", label: "SQL" }
+];
 
 // ─── Label helpers ────────────────────────────────────────────────────────────
 const LABEL_STYLES = {
@@ -128,6 +145,7 @@ function EmptyState() {
 export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoading }) {
   const [selectedLevelId, setSelectedLevelId] = useState(null);
   const [selectedDiffId, setSelectedDiffId] = useState(null);
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const [visible, setVisible] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
 
@@ -171,6 +189,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
       setAnimatingOut(false);
       setSelectedLevelId(null);
       setSelectedDiffId(null);
+      setSelectedSkills([]);
       onClose?.();
     }, 200);
   }, [onClose]);
@@ -193,7 +212,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
 
   function handleConfirm() {
     if (!selectedDiff) return;
-    onConfirm?.({ level: selectedLevel, difficulty: selectedDiff, closePopup: handleClose });
+    onConfirm?.({ level: selectedLevel, difficulty: selectedDiff, skills: selectedSkills, closePopup: handleClose });
     // handleClose();
   }
 
@@ -291,16 +310,60 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
           ) : difficulties.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {difficulties.map((diff, i) => (
-                <DifficultyCard
-                  key={diff._id}
-                  diff={diff}
-                  selected={selectedDiffId === diff._id}
-                  onClick={() => setSelectedDiffId(diff._id)}
-                  animDelay={i * 60}
+            <div>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                  Select Technical Skills
+                </label>
+                <Select
+                  isMulti
+                  options={technicalSkills}
+                  value={selectedSkills}
+                  onChange={setSelectedSkills}
+                  placeholder="Choose skills (e.g. Java, C++, NodeJS...)"
+                  className="text-sm"
+                  classNamePrefix="react-select"
+                  isClearable
+                  styles={{
+                    control: (base, state) => ({
+                      ...base,
+                      borderColor: state.isFocused ? '#8b5cf6' : '#e5e7eb',
+                      boxShadow: state.isFocused ? '0 0 0 2px rgba(139, 92, 246, 0.2)' : 'none',
+                      '&:hover': {
+                        borderColor: state.isFocused ? '#8b5cf6' : '#c084fc',
+                      },
+                      borderRadius: '0.75rem',
+                      padding: '2px 4px',
+                      outline: 'none',
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isSelected
+                        ? '#8b5cf6'
+                        : state.isFocused
+                          ? '#f3e8ff'
+                          : 'white',
+                      color: state.isSelected ? 'white' : '#374151',
+                      '&:active': {
+                        backgroundColor: '#8b5cf6',
+                      },
+                    }),
+                  }}
                 />
-              ))}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {difficulties.map((diff, i) => (
+                  <DifficultyCard
+                    key={diff._id}
+                    diff={diff}
+                    selected={selectedDiffId === diff._id}
+                    onClick={() => setSelectedDiffId(diff._id)}
+                    animDelay={i * 60}
+                  />
+                ))}
+              </div>
+
             </div>
           )}
         </div>
@@ -313,7 +376,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
               <span>
                 Selected:{" "}
                 <span className="font-medium text-gray-800">
-                  {selectedLevel?.name} · {selectedDiff.difficulty_name}
+                  {selectedLevel?.name} · {selectedDiff.difficulty_name}{selectedSkills && selectedSkills.length > 0 ? ` · ${selectedSkills.map(s => s.label).join(", ")}` : ""}
                 </span>
               </span>
             ) : (
@@ -331,9 +394,9 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
             </button>
             <button
               onClick={handleConfirm}
-              disabled={!selectedDiff}
+              disabled={!selectedDiff || !selectedSkills || selectedSkills.length === 0}
               className={`px-4 py-2 cursor-pointer text-[13px] font-medium rounded-lg transition-all duration-150
-                ${selectedDiff
+                ${(selectedDiff && selectedSkills && selectedSkills.length > 0)
                   ? "bg-violet-600 text-white hover:bg-violet-700 shadow-sm shadow-violet-200 active:scale-[0.98]"
                   : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
             >

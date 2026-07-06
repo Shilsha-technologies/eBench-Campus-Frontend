@@ -791,15 +791,18 @@ export default function CandidatesPage() {
       <LevelDifficultyPopup
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
-        onConfirm={async ({ level, difficulty, closePopup }) => {
+        onConfirm={async ({ level, difficulty, closePopup, skills }) => {
           // use the selected level + difficulty objects here
           // console.log(closePopup, "closePopup")
           const data = {
             candidate_ids: selectedIds,
             level_id: level?._id,
             difficulty_diff_id: difficulty?._id,
+            skills: skills?.map((s) => s.value),
           }
           // handleSendTestWithLevel(data, closePopup)
+          // console.log("prabhu-suno", data);
+          // debugger;
           try {
             const result = await sendTestLinkToUser(data).unwrap();
             // console.log(result, "result");
