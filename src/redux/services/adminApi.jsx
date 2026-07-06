@@ -2,6 +2,82 @@ import { api } from './api';
 
 export const adminApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    // Toggle level active status
+    toggleLevelStatus: builder.mutation({
+      query: ({ levelId, is_active }) => ({
+        url: `/admin/test-config/levels/${levelId}/status`,
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: { is_active },
+      }),
+    }),
+    // Toggle difficulty active status
+    toggleDifficultyStatus: builder.mutation({
+      query: ({ levelId, diffId, is_active }) => ({
+        url: `/admin/test-config/levels/${levelId}/difficulties/${diffId}/status`,
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: { is_active },
+      }),
+    }),
+    editTestConfigLevel: builder.mutation({
+      query: ({ levelId, data }) => ({
+        url: `/admin/test-config/levels/${levelId}`,
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: data,
+      }),
+    }),
+    // Delete test config level
+    deleteTestConfigLevel: builder.mutation({
+      query: ({ levelId }) => ({
+        url: `/admin/test-config/levels/${levelId}`,
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+    }),
+    addTestConfigLevel: builder.mutation({
+      query: (data) => ({
+        url: `/admin/test-config/levels`,
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: data,
+      }),
+    }),
+    // Add difficulty to a level
+    addDifficulty: builder.mutation({
+      query: ({ levelId, data }) => ({
+        url: `/admin/test-config/levels/${levelId}/difficulties`,
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: data,
+      }),
+    }),
+    // Edit difficulty of a level
+    editDifficulty: builder.mutation({
+      query: ({ levelId, diffId, data }) => ({
+        url: `/admin/test-config/levels/${levelId}/difficulties/${diffId}`,
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: data,
+      }),
+    }),
+    // Delete difficulty from a level
+    deleteDifficulty: builder.mutation({
+      query: ({ levelId, diffId }) => ({
+        url: `/admin/test-config/levels/${levelId}/difficulties/${diffId}`,
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+    }),
+    // Get test config levels
+    getTestConfig: builder.query({
+      query: () => ({
+        url: `/admin/test-config`,
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+    }),
     getAllVendor: builder.query({
       query: ({ search, status, page, limit }) => (
         {
@@ -183,7 +259,16 @@ export const { useAdminChangePasswordMutation, useGetAllVendorQuery, useActiveIn
   useUpdatePlanByAdminMutation,
   useLazyGetAllOptionPlanQuery,
   useSetAddonPriceMutation,
-  useGetCampusDetailsQuery
+  useGetCampusDetailsQuery,
+  useAddTestConfigLevelMutation,
+  useGetTestConfigQuery,
+  useEditTestConfigLevelMutation,
+  useDeleteTestConfigLevelMutation,
+  useAddDifficultyMutation,
+  useEditDifficultyMutation,
+  useToggleLevelStatusMutation,
+  useToggleDifficultyStatusMutation,
+
 } = adminApi;
 
 

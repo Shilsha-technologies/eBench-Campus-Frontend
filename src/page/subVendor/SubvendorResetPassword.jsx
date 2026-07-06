@@ -17,7 +17,7 @@ const StudentResetPassword = () => {
     useSubVendorResetPasswordMutation();
 
   const [showPass, setShowPass] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(0);           
   const navigate=useNavigate()
   
   const {
@@ -176,7 +176,7 @@ const StudentResetPassword = () => {
                     minLength: {
                       value: 8,
                       message: "Minimum 8 characters required",
-                    },
+                    },     
                   })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                 />

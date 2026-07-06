@@ -4,7 +4,7 @@ export const vendorApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllUserByVendor: builder.query({
       query: ({
-        page, 
+        page,
         pageSize,
         search,
         filterNationality,
@@ -75,7 +75,7 @@ export const vendorApi = api.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
       }),
-      invalidatesTags: ['Vendor','vendorDashboard'],
+      invalidatesTags: ['Vendor', 'vendorDashboard'],
     }),
     importCampusVendor: builder.mutation({
       query: (vendor) => ({
@@ -86,12 +86,12 @@ export const vendorApi = api.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
       }),
-      invalidatesTags: ['Vendor','vendorDashboard'],
+      invalidatesTags: ['Vendor', 'vendorDashboard'],
     }),
     sendTestLinkToUser: builder.mutation({
       query: (data) => (
         {
-          url: '/vendor/send_candidate_test',
+          url: '/campus/send-test',
           method: "POST",
           body: data,
           headers: {
@@ -99,7 +99,7 @@ export const vendorApi = api.injectEndpoints({
           }
         }
       ),
-      invalidatesTags: ['Vendor','vendorDashboard'],
+      invalidatesTags: ['Vendor', 'vendorDashboard'],
     }),
     activeInactiveCandidate: builder.mutation({
       query: (data) => (
@@ -112,7 +112,7 @@ export const vendorApi = api.injectEndpoints({
           }
         }
       ),
-      invalidatesTags: ['Vendor','vendorDashboard'],
+      invalidatesTags: ['Vendor', 'vendorDashboard'],
     }),
     getVendorProfile: builder.query({
       query: () => ({
@@ -235,7 +235,7 @@ export const vendorApi = api.injectEndpoints({
         },
         method: "GET",
       }),
-      providesTags:["vendorDashboard"]
+      providesTags: ["vendorDashboard"]
     }),
     resultManagementData: builder.query({
       query: (
@@ -441,6 +441,27 @@ export const vendorApi = api.injectEndpoints({
       }),
       providesTags: ["Vendor"],
     }),
+    getLevels: builder.query({
+      query: () => ({
+        url: "/campus/levels",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: ["Levels"],
+    }),
+
+    getDifficultiesByLevel: builder.query({
+      query: (levelId) => ({
+        url: `/campus/levels/${levelId}/difficulties`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: (result, error, levelId) => [{ type: "Difficulties", id: levelId }],
+    }),
   }),
 });
 
@@ -451,5 +472,6 @@ export const { useAddonCreditsCheckoutMutation, useChangePasswordMutation, useGe
   useUpdateBranchDetailsMutation, useGetSubscriptionDetailQuery, useLazyGetSubscriptionDetailQuery,
   useSelectVendorSubscriptionMutation, useViewSubscriptionListQuery, useVendorDashboardApiQuery,
   useResultManagementDataQuery, useViewResultByUserIdQuery, useDownloadCandidateResultMutation,
-  useLogoutMutation, useAddCampusVendorMutation, useImportCampusVendorMutation, useActiveInactiveCandidateMutation, useGetCandidateByIdQuery, useGetCandidateOwnerDropdownQuery
+  useLogoutMutation, useAddCampusVendorMutation, useImportCampusVendorMutation, useActiveInactiveCandidateMutation, useGetCandidateByIdQuery, useGetCandidateOwnerDropdownQuery,
+  useGetLevelsQuery, useGetDifficultiesByLevelQuery
 } = vendorApi;

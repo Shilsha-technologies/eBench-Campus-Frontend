@@ -9,9 +9,9 @@ export default function Dashboard() {
   // Simulating fetch from API
   const { data, isLoading, isError } = useAdminDashboardQuery();
 
-  if (isLoading) return <PageLoader/>
+  if (isLoading) return <PageLoader />
 
-  if(isError){
+  if (isError) {
     return <>Something went wrong</>
   }
   const { overview, vendors, subscription_plans, activity } = data;

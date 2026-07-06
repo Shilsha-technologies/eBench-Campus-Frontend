@@ -11,7 +11,7 @@ import Footer from '../components/landing/Footer';
 import ContactPage from '../components/landing/ContactUs';
 
 const LandingPage = () => {
-    const nav = () => { window.scrollTo(0, 0); };
+  const nav = () => { window.scrollTo(0, 0); };
 
   return (
     <div className="bg-[#F7FBFF] min-h-screen font-[DM_Sans,system-ui,sans-serif]">
@@ -22,7 +22,7 @@ const LandingPage = () => {
       <Features />
       <UserSegments nav={nav} />
       <FreeTrial nav={nav} />
-      <ContactPage/>
+      <ContactPage />
       <Testimonials />
       <Footer nav={nav} />
     </div>

@@ -67,24 +67,24 @@ export const SubvendorApi = api.injectEndpoints({
     getAllCandidatesBySubVendor: builder.query({
       query: (
         {
-           page,
-        pageSize,
-        search,
-        filterNationality,
-        filterResidence,
-        status,
-        university,
-        degree,
-        min_cgpa,
-        max_cgpa,
-        fromDate,
-        toDate,
-        sortBy,
-        sortOrder,
+          page,
+          pageSize,
+          search,
+          filterNationality,
+          filterResidence,
+          status,
+          university,
+          degree,
+          min_cgpa,
+          max_cgpa,
+          fromDate,
+          toDate,
+          sortBy,
+          sortOrder,
         }
       ) => ({
-         url: `/subvendor/candidates`,
-         params: {
+        url: `/subvendor/candidates`,
+        params: {
           search,
           nationality: filterNationality,
           country: filterResidence,
@@ -121,7 +121,7 @@ export const SubvendorApi = api.injectEndpoints({
           }
         }
       ),
-      invalidatesTags:["Candidates"]
+      invalidatesTags: ["Candidates"]
 
     }),
     resultManagementDetailBySubVendor: builder.query({
@@ -212,20 +212,20 @@ export const SubvendorApi = api.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         }
       }),
-      invalidatesTags: ['Subvendor','subvendorDashboard','Candidates'],
+      invalidatesTags: ['Subvendor', 'subvendorDashboard', 'Candidates'],
     }),
-    subVendorLogout:builder.mutation({
-      query:() =>({
-        url:`/subvendor/logout`,
-        method:"POST",
-        headers:{
-          Authorization:`Bearer ${localStorage.getItem('token')}`
+    subVendorLogout: builder.mutation({
+      query: () => ({
+        url: `/subvendor/logout`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
     })
   })
 })
 
-export const { useSubvendorDashboardApiQuery, useDeleteCandidateByCandidateIdbySubVendorMutation, useResultManagementDetailBySubVendorQuery,useViewResultByUserIdBySubVendorQuery, useEmployeeLoginMutation,useSendTestLinkToCandidatesMutation, useImportCandidateBySubVendorMutation, useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery,
-  useSubVendorChangePasswordMutation, useSubVendorResetPasswordMutation,useSubVendorLogoutMutation,useSubVendorResetPasswordApproveMutation,
-  useGetOrganisationDetailQuery,useSubvendorProfileQuery,useGetCandidateByIdBySubVendorQuery,useActivateInactivateUserBySubVendorMutation } = SubvendorApi
+export const { useSubvendorDashboardApiQuery, useDeleteCandidateByCandidateIdbySubVendorMutation, useResultManagementDetailBySubVendorQuery, useViewResultByUserIdBySubVendorQuery, useEmployeeLoginMutation, useSendTestLinkToCandidatesMutation, useImportCandidateBySubVendorMutation, useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery,
+  useSubVendorChangePasswordMutation, useSubVendorResetPasswordMutation, useSubVendorLogoutMutation, useSubVendorResetPasswordApproveMutation,
+  useGetOrganisationDetailQuery, useSubvendorProfileQuery, useGetCandidateByIdBySubVendorQuery, useActivateInactivateUserBySubVendorMutation } = SubvendorApi

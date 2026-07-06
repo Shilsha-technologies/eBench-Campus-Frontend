@@ -34,7 +34,7 @@ export default function  CreateAccount() {
     try {
       const formData = { ...vendorData };
 
-      const result = await login(formData).unwrap();
+      const result = await login(formData).unwrap(); 
       // console.log("rrees",result);
       dispatch(setCredentials({ token: result?.access_token,module:result?.module, user: result.role, detail: { name: result?.name, email: result?.email, id: result?.vendor_id,planName: result?.plan_name,status : result?.is_subscribed } }));
       // console.log("Login successful!");
@@ -203,7 +203,7 @@ export default function  CreateAccount() {
                   </Link>
                 </div>
               </div>
-
+              
               {/* Submit Button */}
               <button
                 type="submit"
