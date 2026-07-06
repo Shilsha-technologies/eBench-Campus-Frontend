@@ -112,5 +112,6 @@ export const {
   useSubmitCodingMutation,
   useRunCodingStatusQuery,
   useRunCodingMutation,
-  useLazyRunCodingStatusQuery
+  useLazyRunCodingStatusQuery,
+  useUploadTestMutation
 } = userApi;
