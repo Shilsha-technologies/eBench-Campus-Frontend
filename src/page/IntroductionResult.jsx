@@ -13,7 +13,7 @@
 //     const candidateId = searchParams.get("candidateId");
 //     const resultId = searchParams.get("resultId");
 //     const role = localStorage.getItem('role')
-    // const { data, isLoading } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId, resultId }) : useViewResultByUserIdQuery({ candidateId, resultId })
+// const { data, isLoading } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId, resultId }) : useViewResultByUserIdQuery({ candidateId, resultId })
 
 
 //     const navigate = useNavigate()
@@ -268,7 +268,7 @@
 //         );
 //     };
 
-    
+
 //     return (
 //         <>
 //             {/* <div className='pb-4 font-semibold text-xl text-[#2559b3] '>Candidate Result Details :-</div> */}
@@ -514,88 +514,88 @@ import { useSearchParams } from "react-router-dom";
 import Loader from "../libs/Loader";
 
 // ─── Sample data (replace with your API response) ───────────────────────────
-const CANDIDATE_DATA = {
-  result_id: 13,
-  final_score: 0.62,
-  created_at: "2026-05-12T10:11:35.756715",
-  eye_contact: 1.0,
-  blink_score: 0.3247,
-  posture_score: 0.8933,
-  smile_score: 0.0,
-  audio_confidence: 1.0,
-  prosody_pitch_mean: 1318.7478,
-  prosody_pitch_std: 945.7172,
-  prosody_energy_mean: 16.8062,
-  prosody_energy_std: 13.4302,
-  filler_density: 0.0,
-  lexical_ttr: 0.757576,
-  sentiment: 0.5833,
-  semantic_score: 0.6,
-  answer_quality: 0.6,
-  speech_rate_wpm: 220.0,
-  gaze_score: 0.0,
-  nod_score: 0.3247,
-  transcript:
-    "mera naam Khushi Hai Bihar se hun aur Maine MBA karaya NIT college se aur Maine internship karaen University se aur abhi main shirshak Technologies ke sath kam kar rahi hun aur main",
-  detected_language: "Hindi",
-  first_name: "Khushi",
-  last_name: "Doe",
-  email: "wolim14458@ellbit.com",
-  mobile: "9876543210",
-  country_of_residence: "India",
-  metrics_json: {
-    recommendation: {
-      scores: { clarity: 0.632, overall: 0.62, confidence: 0.75, communication: 0.601 },
-      recommendation: "internship_ready",
-      confidence_level: "medium",
-    },
-    feedback: {
-      candidate: {
-        strengths: [
-          "Maintained high eye contact with a score of 1.0",
-          "No filler words used",
-          "High audio confidence of 1.0",
-          "Good posture with a score of 0.8933",
-        ],
-        areas_to_improve: [
-          "Blink score of 0.32 could be improved for a more natural interaction",
-          "Smile score of 0.0 indicates a lack of facial expressions",
-          "Gaze score of 0.0 suggests limited engagement with the audience",
-          "Speech rate of 220 wpm is higher than the ideal range of 110–160",
-          "Semantic score of 0.6 could be improved for stronger relevance",
-        ],
-        tips: [
-          "Record yourself and review your interactions to identify areas for improvement",
-          "Practice in front of a mirror to become more aware of your facial expressions",
-          "Join a public speaking group or take a course to improve your communication skills",
-        ],
-      },
-      vendor: {
-        key_strengths: ["High eye contact", "Good audio confidence", "No filler words"],
-        critical_issues: ["Low smile score", "Low gaze score", "Low nod score"],
-        training_focus: ["Body language", "Clarity and fluency"],
-        skill_assessment: { confidence: "Good", communication: "Fair", technical_clarity: "Fair" },
-        hire_recommendation: "Internship ready",
-      },
-    },
-    audio: {
-      fillers: { total: 0, density: 0.0 },
-      prosody: {
-        pitch_mean: 1318.748,
-        pitch_std: 945.717,
-        energy_mean: 16.806,
-        energy_std: 13.43,
-      },
-      speech_rate_wpm: 220.0,
-    },
-    visual: {
-      nods: { nods: 0, nod_score: 0.3247, nod_rate_per_min: 0.0 },
-      gaze_score: { left_frac: 0.0, gaze_score: 0.0, right_frac: 1.0, center_frac: 0.0 },
-      landmarks_count: 66,
-    },
-    _debug: { duration_seconds: 43.02, num_frames_extracted: 66 },
-  },
-};
+// const CANDIDATE_DATA = {
+//   result_id: 13,
+//   final_score: 0.62,
+//   created_at: "2026-05-12T10:11:35.756715",
+//   eye_contact: 1.0,
+//   blink_score: 0.3247,
+//   posture_score: 0.8933,
+//   smile_score: 0.0,
+//   audio_confidence: 1.0,
+//   prosody_pitch_mean: 1318.7478,
+//   prosody_pitch_std: 945.7172,
+//   prosody_energy_mean: 16.8062,
+//   prosody_energy_std: 13.4302,
+//   filler_density: 0.0,
+//   lexical_ttr: 0.757576,
+//   sentiment: 0.5833,
+//   semantic_score: 0.6,
+//   answer_quality: 0.6,
+//   speech_rate_wpm: 220.0,
+//   gaze_score: 0.0,
+//   nod_score: 0.3247,
+//   transcript:
+//     "mera naam Khushi Hai Bihar se hun aur Maine MBA karaya NIT college se aur Maine internship karaen University se aur abhi main shirshak Technologies ke sath kam kar rahi hun aur main",
+//   detected_language: "Hindi",
+//   first_name: "Khushi",
+//   last_name: "Doe",
+//   email: "wolim14458@ellbit.com",
+//   mobile: "9876543210",
+//   country_of_residence: "India",
+//   metrics_json: {
+//     recommendation: {
+//       scores: { clarity: 0.632, overall: 0.62, confidence: 0.75, communication: 0.601 },
+//       recommendation: "internship_ready",
+//       confidence_level: "medium",
+//     },
+//     feedback: {
+//       candidate: {
+//         strengths: [
+//           "Maintained high eye contact with a score of 1.0",
+//           "No filler words used",
+//           "High audio confidence of 1.0",
+//           "Good posture with a score of 0.8933",
+//         ],
+//         areas_to_improve: [
+//           "Blink score of 0.32 could be improved for a more natural interaction",
+//           "Smile score of 0.0 indicates a lack of facial expressions",
+//           "Gaze score of 0.0 suggests limited engagement with the audience",
+//           "Speech rate of 220 wpm is higher than the ideal range of 110–160",
+//           "Semantic score of 0.6 could be improved for stronger relevance",
+//         ],
+//         tips: [
+//           "Record yourself and review your interactions to identify areas for improvement",
+//           "Practice in front of a mirror to become more aware of your facial expressions",
+//           "Join a public speaking group or take a course to improve your communication skills",
+//         ],
+//       },
+//       vendor: {
+//         key_strengths: ["High eye contact", "Good audio confidence", "No filler words"],
+//         critical_issues: ["Low smile score", "Low gaze score", "Low nod score"],
+//         training_focus: ["Body language", "Clarity and fluency"],
+//         skill_assessment: { confidence: "Good", communication: "Fair", technical_clarity: "Fair" },
+//         hire_recommendation: "Internship ready",
+//       },
+//     },
+//     audio: {
+//       fillers: { total: 0, density: 0.0 },
+//       prosody: {
+//         pitch_mean: 1318.748,
+//         pitch_std: 945.717,
+//         energy_mean: 16.806,
+//         energy_std: 13.43,
+//       },
+//       speech_rate_wpm: 220.0,
+//     },
+//     visual: {
+//       nods: { nods: 0, nod_score: 0.3247, nod_rate_per_min: 0.0 },
+//       gaze_score: { left_frac: 0.0, gaze_score: 0.0, right_frac: 1.0, center_frac: 0.0 },
+//       landmarks_count: 66,
+//     },
+//     _debug: { duration_seconds: 43.02, num_frames_extracted: 66 },
+//   },
+// };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const pct = (v) => `${Math.round(v * 100)}%`;
@@ -724,13 +724,14 @@ function InfoRow({ label, value, valueClass = "" }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CandidateDetailView() {
-    const [searchParams] = useSearchParams();
-    const candidateId = searchParams.get("candidateId");
-    const resultId = searchParams.get("resultId");
-    const role = localStorage.getItem('role')
-    const { data, isLoading } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId, resultId }) : useViewResultByUserIdQuery({ candidateId, resultId })
-    
-  const { metrics_json: m } = data || {};
+  const [searchParams] = useSearchParams();
+  const candidateId = searchParams.get("candidateId");
+  const role = localStorage.getItem('role')
+  const { data, isLoading } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
+
+  console.log("fff", data)
+  const result = data?.results?.[0]?.details || {};
+  const m = result.metrics_json || {};
   const rec = m?.recommendation;
   const feedback = m?.feedback;
   const vendor = feedback?.vendor;
@@ -747,8 +748,8 @@ export default function CandidateDetailView() {
     if (v >= 0.5) return "bg-amber-400";
     return "bg-red-400";
   };
-  if(isLoading){
-    return <Loader/>
+  if (isLoading) {
+    return <Loader />
   }
 
 
@@ -782,43 +783,43 @@ export default function CandidateDetailView() {
           <div className="text-right shrink-0">
             <div className="text-xs text-gray-400 mb-0.5">Session date</div>
             <div className="text-sm font-medium text-gray-800">{formatDate(data.created_at)}</div>
-            <div className="text-xs text-gray-400 mt-1">
+            {/* <div className="text-xs text-gray-400 mt-1">
               {fmt(m._debug.duration_seconds, 0)}s · {m.visual.landmarks_count} frames
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* ── Overall performance ── */}
         <SectionCard title="Overall performance">
           <div className="flex items-center gap-6 flex-wrap">
-            <CircleScore value={data.final_score} />
+            <CircleScore value={result?.final_score} />
             <div className="flex-1 min-w-48">
               <ScoreBar label="Confidence" value={rec?.scores?.confidence} color={barColor(rec?.scores?.confidence)} />
               <ScoreBar label="Communication" value={rec?.scores?.communication} color={barColor(rec?.scores?.communication)} />
               <ScoreBar label="Clarity" value={rec?.scores?.clarity} color={barColor(rec?.scores?.clarity)} />
-              <ScoreBar label="Semantic quality" value={data?.semantic_score} color={barColor(data?.semantic_score)} />
+              <ScoreBar label="Semantic quality" value={result?.semantic_score} color={barColor(result?.semantic_score)} />
             </div>
           </div>
         </SectionCard>
 
         {/* ── Key metrics grid ── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-          <MetricCard icon="👁" label="Eye contact" value={pct(data.eye_contact)} valueColor={scoreColor(data.eye_contact)} sub="Excellent" />
-          <MetricCard icon="😊" label="Smile score" value={pct(data.smile_score)} valueColor={scoreColor(data.smile_score)} sub="Needs work" />
-          <MetricCard icon="🧍" label="Posture" value={pct(data.posture_score)} valueColor={scoreColor(data.posture_score)} sub="Good" />
-          <MetricCard icon="🎙" label="Audio confidence" value={pct(data.audio_confidence)} valueColor={scoreColor(data.audio_confidence)} sub="Excellent" />
-          <MetricCard icon="⚡" label="Speech rate" value={`${Math.round(data.speech_rate_wpm)} wpm`} valueColor="text-amber-600" sub="Ideal: 110–160" />
-          <MetricCard icon="🤐" label="Filler words" value={m.audio.fillers.total} valueColor="text-green-600" sub="Excellent" />
+          <MetricCard icon="👁" label="Eye contact" value={pct(result?.eye_contact)} valueColor={scoreColor(result?.eye_contact)} sub="Excellent" />
+          <MetricCard icon="😊" label="Smile score" value={pct(result?.smile_score)} valueColor={scoreColor(result?.smile_score)} sub="Needs work" />
+          <MetricCard icon="🧍" label="Posture" value={pct(result?.posture_score)} valueColor={scoreColor(result?.posture_score)} sub="Good" />
+          <MetricCard icon="🎙" label="Audio confidence" value={pct(result?.audio_confidence)} valueColor={scoreColor(result?.audio_confidence)} sub="Excellent" />
+          <MetricCard icon="⚡" label="Speech rate" value={`\${Math.round(result?.speech_rate_wpm)} wpm\`} valueColor="text-amber-600" sub="Ideal: 110–160`} />
+          <MetricCard icon="🤐" label="Filler words" value={m?.audio?.fillers?.total} valueColor="text-green-600" sub="Excellent" />
         </div>
 
         {/* ── Transcript ── */}
         <SectionCard title="Transcript">
           <div className="bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-600 italic leading-relaxed">
-            "{data.transcript}"
+            {result?.transcript}
           </div>
           <div className="flex gap-4 flex-wrap mt-2 text-xs text-gray-400">
-            <span>🔡 {m.text?.lexical?.tokens ?? 33} tokens · TTR {fmt(data.lexical_ttr, 2)}</span>
-            <span>😐 Sentiment {fmt(data.sentiment, 2)} (neutral+)</span>
+            <span>🔡 {m?.text?.lexical?.tokens ?? 33} tokens · TTR {fmt(m?.text?.lexical?.ttr ?? data.lexical_ttr, 2)}</span>
+            <span>😐 Sentiment {fmt(m?.sentiment, 2)} (neutral+)</span>
           </div>
         </SectionCard>
 
@@ -885,14 +886,14 @@ export default function CandidateDetailView() {
             )}
           </div>
         </SectionCard>
- 
+
 
         {/* ── Visual metrics & Vendor assessment ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <SectionCard title="Visual metrics detail">
-            <ScoreBar label="Blink score" value={data.blink_score} color={barColor(data.blink_score)} />
-            <ScoreBar label="Gaze score" value={data.gaze_score} color={barColor(data.gaze_score)} />
-            <ScoreBar label="Nod score" value={data.nod_score} color={barColor(data.nod_score)} />
+            <ScoreBar label="Blink score" value={result?.blink_score} color={barColor(result?.blink_score)} />
+            <ScoreBar label="Gaze score" value={result?.gaze_score} color={barColor(result?.gaze_score)} />
+            <ScoreBar label="Nod score" value={result?.nod_score} color={barColor(result?.nod_score)} />
             <div className="mt-3">
               <InfoRow label="Gaze right" value={pct(m.visual.gaze_score.right_frac)} />
               <InfoRow label="Gaze center" value={pct(m.visual.gaze_score.center_frac)} />

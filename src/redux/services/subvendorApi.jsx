@@ -157,8 +157,8 @@ export const SubvendorApi = api.injectEndpoints({
       })
     }),
     viewResultByUserIdBySubVendor: builder.query({
-      query: ({ resultId, candidateId }) => ({
-        url: `/subvendor/result/specific?result_id=${resultId}&candidate_id=${candidateId}`,
+      query: ({ candidateId }) => ({
+        url: `/subvendor/result/specific?candidate_id=${candidateId}`,
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
