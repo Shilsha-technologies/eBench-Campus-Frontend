@@ -620,7 +620,7 @@ export default function AssessmentManagement() {
   };
 
   const handleSaveEditDiff = async (data) => {
-    console.log(data)
+    // console.log(data)
 
     try {
       await editDiff({
@@ -649,7 +649,7 @@ export default function AssessmentManagement() {
   };
 
   const handleConfirmDeleteDiff = async () => {
-    console.log(confirmDel);
+    // console.log(confirmDel);
     try {
       await deleteDiff({
         levelId: confirmDel.levelId,
@@ -657,7 +657,7 @@ export default function AssessmentManagement() {
       }).unwrap();
       toast.success("Difficulty removed.");
       setConfirmDel(null);
-      refetch();
+      refetch();// refetch the details..
     } catch (err) {
       toast.error(err?.data?.message || "Failed to delete difficulty");
     }

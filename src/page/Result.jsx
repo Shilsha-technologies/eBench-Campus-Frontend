@@ -107,7 +107,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "./Header";
-import { useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
+import { useBeginTestMutation, useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
 import toast from 'react-hot-toast';
 
 // export default function ProfilePage() {
@@ -466,13 +466,16 @@ export default function ProfilePage() {
         });
     }, [cookieData?.verified, candidate_id, token]);
 
-
+    const [beginTest] = useBeginTestMutation();
 
     async function startHandler() {
         // console.log("bajjj", candidateData)
 
         // Show loader while processing navigation
         setBeginLoader(true);
+        const res=await beginTest().unwrap()
+        // debugger;
+
         if (candidateData?.level_id == "LEVEL_001") {
             setTimeout(() => {
                 navigate("/record", { state: { data: token } })

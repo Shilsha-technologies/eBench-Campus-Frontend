@@ -1753,7 +1753,6 @@ export default function ExamPortal({
                             ]);
                             console.log('Submit responses:', res);
                             setModal("submitted");
-                            
                             setTimeout(() => {
                                 localStorage.clear();
                                 window.location.href = "/";
@@ -1789,7 +1788,7 @@ const TimerPill = React.memo(function TimerPill({ label, value, cls, T, dim }) {
             <span style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 500, color, animation: cls === "crit" ? "pulse 1s infinite" : "none" }}>{value}</span>
         </div>
     );
-})
+})     
 
 const MCQQuestion = React.memo(function MCQQuestion({ sec, currentQ, answers, onSelect, T, accent }) {
     const q = sec.questions[currentQ];

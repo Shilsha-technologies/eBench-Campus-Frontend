@@ -1335,8 +1335,10 @@ export default function RecordInterviewPage() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("candidate_session", candidateId)
+    // debugger;
     try {
       const result = await uploadTest(formData);
+      // debugger;
       // console.log("result from api", result);
       if (result?.data) {
         toast.success(result?.data?.message??"file uploaded successfully..")
