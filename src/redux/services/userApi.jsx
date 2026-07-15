@@ -27,6 +27,15 @@ export const userApi = api.injectEndpoints({
         // no credentials here either
       }),
     }),
+    beginTest: builder.mutation({
+      query: () => ({
+        url: `/candidate/begin_test`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    }),
     startTest: builder.query({
       query: () => ({
         url: `/candidate/test/questions`,
@@ -48,11 +57,15 @@ export const userApi = api.injectEndpoints({
       }),
     }),
     uploadTest: builder.mutation({
-      query: (data) => ({
-        url: `/candidate/upload_test`,
-        method: "POST",
-        body: data,
-      }),
+      query: (data) => {
+        // console.log("uploadTest payload:", data);
+        // debugger;
+        return {
+          url: "/candidate/upload_test",
+          method: "POST",
+          body: data,
+        };
+      },
     }),
     submitMcqAnswers: builder.mutation({
       query: (data) => ({
@@ -104,6 +117,7 @@ export const {
   useLazyGetProfileQuery,
   useUpdateProfileMutation,
   useStartTestQuery,
+  useBeginTestMutation,
   useVerifyUserOtpMutation,
   useCookiesGenerateQuery,
   useGetAllQuestionsQuery,
