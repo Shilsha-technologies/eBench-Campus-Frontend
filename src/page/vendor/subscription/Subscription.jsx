@@ -147,7 +147,7 @@ const VendorSubscriptionPage = () => {
                     </div>
 
                     <button
-                        onClick={() => setIsAddonOpen(true)}
+                        onClick={() => [setIsAddonOpen(true),document.body.style.overflow = "hidden"]}
                         className="h-12x px-5 w-36   rounded-md bg-indigo-600 text-white shadow-md cursor-pointer text-sm hover:bg-[#6390d8] transition"
                     >
                         Add-Credits
@@ -253,7 +253,7 @@ const VendorSubscriptionPage = () => {
                     isLoadingCheckout={isLoadingCheckout}
                     plan={selectedPlan}
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={() => [setIsModalOpen(false),document.body.style.overflow=""   ]}
                     onConfirm={handleConfirm}
                 />
             )}
@@ -261,7 +261,7 @@ const VendorSubscriptionPage = () => {
             {isAddonOpen &&
                 <AddonCreditsModal
                     isOpen={isAddonOpen}
-                    onClose={() => setIsAddonOpen(false)}
+                    onClose={() => [setIsAddonOpen(false),document.body.style.overflow="auto"]}
                     onPurchase={handleAddonPurchase}
                 />
             }
