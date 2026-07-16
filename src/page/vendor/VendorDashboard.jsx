@@ -388,7 +388,7 @@ export default function DashboardPage() {
             <h3 className="font-bold text-lg">Quick Actions</h3>
             <p className="text-indigo-100 text-sm mt-1 mb-4">Manage candidates and tests efficiently</p>
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => navigate("/vendor/candidates")} className="bg-white/20 hover:bg-white/30 rounded-xl py-2.5 text-sm font-medium transition-colors cursor-pointer">+ Add Candidate</button>
+              <button onClick={() => navigate("/vendor/candidates")} className="bg-white/20 hover:bg-white/30 rounded-xl py-2.5 text-sm font-medium transition-colors cursor-pointer">Candidate Management</button>
               <button onClick={() => navigate("/vendor/results")} className="bg-white/20 hover:bg-white/30 rounded-xl py-2.5 text-sm font-medium transition-colors cursor-pointer">View Results</button>
             </div>
           </div>

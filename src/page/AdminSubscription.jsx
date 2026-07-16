@@ -17,7 +17,7 @@ import { T } from "../components/admin/superadmin/SuperAdminDashboard";
 
 
 export default function SubscriptionModule() {
-    
+
     const [pageNumber, setPageNumber] = useState(1)
     const [size, setSize] = useState(10)
     const { data: countryList } = useGetCountryDataQuery();
@@ -77,7 +77,7 @@ export default function SubscriptionModule() {
         plan: debouncedQuery, pageNumber, size
     });
 
-    // console.log("opinionnnn",selectedOption);
+    // console.log("opinionnnn",selectedOption);       
     useEffect(() => {
         const country = selectedOption?.value;
 
@@ -225,11 +225,11 @@ export default function SubscriptionModule() {
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {/* Header */}
-            <div style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "space-between", 
-                flexWrap: "wrap", 
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
                 gap: 12,
                 background: "linear-gradient(135deg,rgba(34,197,94,.1),rgba(16,185,129,.05))",
                 padding: "20px 24px",
@@ -237,16 +237,16 @@ export default function SubscriptionModule() {
                 border: `1px solid ${T.border}`
             }}>
                 <div>
-                    <h1 style={{ 
-                        color: T.text, 
-                        fontWeight: 800, 
-                        fontSize: 22, 
+                    <h1 style={{
+                        color: T.text,
+                        fontWeight: 800,
+                        fontSize: 22,
                         marginBottom: 4,
                         display: "flex",
                         alignItems: "center",
                         gap: 10
                     }}>
-                        <Settings size={24} style={{ color: T.accent }}/>
+                        <Settings size={24} style={{ color: T.accent }} />
                         Subscription Management
                     </h1>
                     <p style={{ color: T.textMuted, fontSize: 13 }}>
@@ -301,16 +301,16 @@ export default function SubscriptionModule() {
                 gap: 20
             }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                    <div style={{ 
-                        width: 48, 
-                        height: 48, 
-                        borderRadius: 12, 
-                        background: `${T.gold}15`, 
-                        display: "flex", 
-                        alignItems: "center", 
-                        justifyContent: "center" 
+                    <div style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 12,
+                        background: `${T.gold}15`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
                     }}>
-                        <DollarSign size={22} style={{ color: T.gold }}/>
+                        <DollarSign size={22} style={{ color: T.gold }} />
                     </div>
                     <div>
                         <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 4 }}>
@@ -321,7 +321,7 @@ export default function SubscriptionModule() {
                         </div>
                     </div>
                 </div>
-                <button 
+                <button
                     onClick={() => [setShowPresetModal(true), setCreditPrice(plans?.addon_discount_percent)]}
                     style={{
                         display: "flex",
@@ -383,18 +383,18 @@ export default function SubscriptionModule() {
                 boxShadow: "0 8px 32px rgba(0,0,0,.08), 0 0 0 1px rgba(255,255,255,.5) inset",
                 overflow: "hidden"
             }}>
-                <div style={{ height: 3, background: "linear-gradient(90deg,#22c55e,#16a34a,#10b981)", width: "100%" }}/>
+                <div style={{ height: 3, background: "linear-gradient(90deg,#22c55e,#16a34a,#10b981)", width: "100%" }} />
                 <div style={{ padding: "20px 24px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
                         <div style={{ position: "relative" }}>
-                            <Search size={14} style={{ 
-                                position: "absolute", 
-                                left: 12, 
-                                top: "50%", 
-                                transform: "translateY(-50%)", 
-                                color: "rgba(100,116,139,.35)", 
-                                pointerEvents: "none" 
-                            }}/>
+                            <Search size={14} style={{
+                                position: "absolute",
+                                left: 12,
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                color: "rgba(100,116,139,.35)",
+                                pointerEvents: "none"
+                            }} />
                             <input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -485,16 +485,16 @@ export default function SubscriptionModule() {
                                     >
                                         <td style={{ padding: "16px 18px" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                <div style={{ 
-                                                    width: 36, 
-                                                    height: 36, 
-                                                    borderRadius: 10, 
-                                                    background: `${T.accent}15`, 
-                                                    display: "flex", 
-                                                    alignItems: "center", 
-                                                    justifyContent: "center" 
+                                                <div style={{
+                                                    width: 36,
+                                                    height: 36,
+                                                    borderRadius: 10,
+                                                    background: `${T.accent}15`,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center"
                                                 }}>
-                                                    <CreditCard size={16} style={{ color: T.accent }}/>
+                                                    <CreditCard size={16} style={{ color: T.accent }} />
                                                 </div>
                                                 <span style={{ color: T.text, fontWeight: 600, fontSize: 13 }}>
                                                     {p?.name}
@@ -504,21 +504,21 @@ export default function SubscriptionModule() {
 
                                         <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <Clock size={13} style={{ color: T.textDim }}/>
+                                                <Clock size={13} style={{ color: T.textDim }} />
                                                 {p?.duration_days} days
                                             </div>
                                         </td>
 
                                         <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <TrendingUp size={13} style={{ color: T.textDim }}/>
+                                                <TrendingUp size={13} style={{ color: T.textDim }} />
                                                 {p?.credits || "-"}
                                             </div>
                                         </td>
 
                                         <td style={{ padding: "16px 18px", fontSize: 13, color: T.textMuted }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <DollarSign size={13} style={{ color: T.gold }}/>
+                                                <DollarSign size={13} style={{ color: T.gold }} />
                                                 {p?.price} {p?.currency}
                                             </div>
                                         </td>
@@ -596,10 +596,10 @@ export default function SubscriptionModule() {
                     <div style={{ background: T.surface, width: "100%", borderRadius: 18, padding: "24px", border: `1px solid ${T.border}` }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                             <h2 style={{ fontSize: 20, color: T.text, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-                                <CreditCard size={20} style={{ color: T.accent }}/>
+                                <CreditCard size={20} style={{ color: T.accent }} />
                                 {mode === "add" ? "Add Subscription" : "Edit Subscription"}
                             </h2>
-                            <button 
+                            <button
                                 onClick={() => setShowModal(false)}
                                 style={{
                                     padding: 6,
@@ -611,7 +611,7 @@ export default function SubscriptionModule() {
                                     display: "flex"
                                 }}
                             >
-                                <X size={18}/>
+                                <X size={18} />
                             </button>
                         </div>
 
@@ -640,8 +640,8 @@ export default function SubscriptionModule() {
                                             required
                                         />
                                     ) : (
-                                        <select 
-                                            name="name" 
+                                        <select
+                                            name="name"
                                             style={{
                                                 color: T.text,
                                                 width: "100%",
@@ -868,16 +868,16 @@ export default function SubscriptionModule() {
                 <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.5)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <div style={{ background: T.surface, padding: "24px", borderRadius: 18, width: "480px", border: `1px solid ${T.border}`, boxShadow: "0 20px 60px rgba(0,0,0,.3)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                            <div style={{ 
-                                width: 48, 
-                                height: 48, 
-                                borderRadius: 12, 
-                                background: "rgba(239,68,68,.12)", 
-                                display: "flex", 
-                                alignItems: "center", 
-                                justifyContent: "center" 
+                            <div style={{
+                                width: 48,
+                                height: 48,
+                                borderRadius: 12,
+                                background: "rgba(239,68,68,.12)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
                             }}>
-                                <Trash2 size={24} style={{ color: "#ef4444" }}/>
+                                <Trash2 size={24} style={{ color: "#ef4444" }} />
                             </div>
                             <div>
                                 <h2 style={{ fontSize: 18, fontWeight: 700, color: "#ef4444", marginBottom: 4 }}>
@@ -947,10 +947,10 @@ export default function SubscriptionModule() {
                     <div style={{ padding: "24px", background: T.surface, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,.3)", minWidth: "380px", border: `1px solid ${T.border}` }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                             <h3 style={{ fontSize: 20, color: T.text, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-                                <Settings size={20} style={{ color: T.gold }}/>
+                                <Settings size={20} style={{ color: T.gold }} />
                                 Edit Addon Percentage
                             </h3>
-                            <button 
+                            <button
                                 onClick={() => setShowPresetModal(false)}
                                 style={{
                                     padding: 6,
@@ -962,7 +962,7 @@ export default function SubscriptionModule() {
                                     display: "flex"
                                 }}
                             >
-                                <X size={18}/>
+                                <X size={18} />
                             </button>
                         </div>
 

@@ -978,7 +978,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
     useStartTestQuery, useSubmitScenarioAnswerMutation, useSubmitMcqAnswersMutation,
-    useSubmitCodingMutation, useRunCodingMutation, useLazyRunCodingStatusQuery
+    useSubmitCodingMutation, useRunCodingMutation, useLazyRunCodingStatusQuery, useSubmitFinalTestMutation
 } from "../../redux/services/userApi";
 import { useMemo } from "react";
 
@@ -1316,8 +1316,9 @@ export default function ExamPortal({
     const [submitMcq] = useSubmitMcqAnswersMutation();
     const [submitScenario] = useSubmitScenarioAnswerMutation();
     const [submitCoding] = useSubmitCodingMutation();
+    const [finalSubmit] = useSubmitFinalTestMutation();
 
-    console.log("state-ful", state);
+    // console.log("state-ful", state);
 
     const persist = useCallback((s) => {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch (_) { }
@@ -1746,21 +1747,24 @@ export default function ExamPortal({
                                     submitted_code: val.sources?.[val.language] || "",
                                 }))
                             };
-                            const res= await Promise.all([
+                            const res = await Promise.all([
                                 submitMcq(mcqPayload).unwrap(),
                                 submitScenario(scenarioPayload).unwrap(),
-                                submitCoding(codingPayload).unwrap()
+                                submitCoding(codingPayload).unwrap(),
                             ]);
-                            console.log('Submit responses:', res);
+
+                            const finalRes = await finalSubmit().unwrap();
+                            // console.log('Submit responses:', res);
                             setModal("submitted");
                             setTimeout(() => {
                                 localStorage.clear();
                                 window.location.href = "/";
-                            },5000);
+                            }, 5000);
 
 
-                        } catch (e) {
-                            console.error('Submit failed', e);
+                        } catch (err) {
+                            // console.error('Submit failed', e);
+                            showToast(err?.data?.detail ?? "Submit failed", "danger");
                         }
                     }} />
             )}
@@ -1788,7 +1792,7 @@ const TimerPill = React.memo(function TimerPill({ label, value, cls, T, dim }) {
             <span style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 500, color, animation: cls === "crit" ? "pulse 1s infinite" : "none" }}>{value}</span>
         </div>
     );
-})     
+})
 
 const MCQQuestion = React.memo(function MCQQuestion({ sec, currentQ, answers, onSelect, T, accent }) {
     const q = sec.questions[currentQ];
@@ -2082,7 +2086,7 @@ const MCQQuestion = React.memo(function MCQQuestion({ sec, currentQ, answers, on
 
 const CodeQuestion = React.memo(function CodeQuestion({ sec, currentQ, code, onChange, T, lastSaved }) {
     const [runCoding, { isLoading: isLoadingRunCoding }] = useRunCodingMutation();
-    const [triggerRunStatus,{isLoading: isLoadingRunStatus}] = useLazyRunCodingStatusQuery();
+    const [triggerRunStatus, { isLoading: isLoadingRunStatus }] = useLazyRunCodingStatusQuery();
 
     const q = sec.questions[currentQ];
     // console.log("qqqq", q);

@@ -95,6 +95,13 @@ export const userApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    submitFinalTest: builder.mutation({
+      query: () => ({
+        url: `/candidate/test/submit`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
     runCodingStatus: builder.query({
       query: ({ submission_id }) => ({
         url: `/candidate/coding/run-status`,
@@ -116,6 +123,7 @@ export const {
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useUpdateProfileMutation,
+  useSubmitFinalTestMutation,
   useStartTestQuery,
   useBeginTestMutation,
   useVerifyUserOtpMutation,
