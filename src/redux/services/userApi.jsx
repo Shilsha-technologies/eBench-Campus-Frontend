@@ -21,8 +21,8 @@ export const userApi = api.injectEndpoints({
       }),
     }),
     cookiesGenerate: builder.query({
-      query: ({ candidate_id, token }) => ({
-        url: `/candidate/start_test?candidate_id=${candidate_id}&token=${token}`,
+      query: ({ token }) => ({
+        url: `/candidate/start_test?t=${token}`,
         method: "GET",
         // no credentials here either
       }),

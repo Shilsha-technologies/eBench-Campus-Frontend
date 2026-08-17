@@ -171,198 +171,345 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
 
-              {/* ===== Public Routes (Outside AuthProvider) ===== */}
-              <Route
-                path="/login"
-                element={
-                  <Login />
-                }
-              />
-              <Route
-                path="/"
-                element={
-                  <LandingPage />
-                }
-              />
-              <Route
-                path="/code-test"
-                element={
-                  <CodingTest />
-                }
-              />
-              <Route
-                path="/code"
-                element={
-                  <CodingAssessment />
-                }
-              />
+              {/* =====================================================
+                PUBLIC ROUTES
+                ===================================================== */}
+
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/code-test" element={<CodingTest />} />
+              <Route path="/code" element={<CodingAssessment />} />
               <Route path="/res" element={<IntroAnalysis />} />
-              <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
+
+              <Route
+                path="/admin/forget-password"
+                element={<AdminForgetPassword />}
+              />
+
               <Route path="/admin-login" element={<AdminLoginPage />} />
+
               <Route path="/vendor-signup" element={<Signup />} />
+
               <Route path="/otp-verify" element={<OtpVerification />} />
-              <Route path="/admin/otp-verify" element={<OtpVerification />} />
+              <Route
+                path="/admin/otp-verify"
+                element={<OtpVerification />}
+              />
+
               <Route
                 path="/candidate/start_test"
                 element={<IntroAnalysisApp />}
               />
-              <Route path="/admin-reset-password" element={<ResetPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/admin/reset-password" element={<ResetPassword />} />
+
+              <Route
+                path="/admin-reset-password"
+                element={<ResetPassword />}
+              />
+
+              <Route
+                path="/reset-password"
+                element={<ResetPassword />}
+              />
+
+              <Route
+                path="/admin/reset-password"
+                element={<ResetPassword />}
+              />
+
               <Route path="/record" element={<RecordPage />} />
+
               <Route path="/success" element={<Success />} />
               <Route path="/test-success" element={<SuccessPageTest />} />
+
               <Route path="/cancel" element={<Cancel />} />
               <Route path="/payment/cancel" element={<Cancel />} />
-              <Route path="/checkout-page" element={<CheckoutPage />} />
+
+              <Route
+                path="/checkout-page"
+                element={<CheckoutPage />}
+              />
+
               <Route
                 path="/verify-payments"
                 element={<ProcessingPayment />}
               />
+
               <Route
                 path="/payment-success"
                 element={<PaymentSuccess />}
               />
+
               <Route
                 path="/forgot-password"
                 element={<VendorForgotPassword />}
               />
+
               <Route
                 path="/payment-failed"
                 element={<PaymentFailed />}
               />
-              <Route path="/employee/login" element={<SubVendorLogin />} />
-              <Route path="/reset-password/subvendor" element={<SubvendorResetPassword />} />
 
-              {/* ===== Protected Routes (Inside AuthProvider) ===== */}
               <Route
-                path="/*"
-                element={
-                  <AuthProvider>
-                    <Routes>
-                      {/* ===== SuperAdmin Routes ===== */}
-                      <Route
-                        path="/superadmin/*"
-                        element={
-                          <AppErrorBoundary>
-                            <ProtectedRoute allowedRoles={["admin"]}>
-                              <SuperAdminLayout />
-                            </ProtectedRoute>
-                          </AppErrorBoundary>
-                        }
-                      >
-                        <Route path="dashboard" element={<SuperAdminDashboard />} />
-                        <Route path="users" element={<StudentManagement />} />
-                        <Route path="campuses" element={<CampusManagement />} />
-                        <Route path="campuses/:campusId" element={<CampusDetail />} />
-                        <Route path="subscription" element={<SubscriptionList />} />
-                        <Route path="Assesement" element={<AssessmentManagement />} />
-                        <Route path="system" element={<SuperAdminDashboard />} />
-                        <Route path="database" element={<SuperAdminDashboard />} />
-                        <Route path="logs" element={<SuperAdminDashboard />} />
-                        <Route path="settings" element={<AdminSetting />} />
-                      </Route>
-
-                      {/* ===== Vendor Routes ===== */}
-                      <Route
-                        path="/vendor/*"
-                        element={
-                          <AppErrorBoundary>
-                            <ProtectedRoute allowedRoles={["vendor"]}>
-                              <DashboardLayout />
-                            </ProtectedRoute>
-                          </AppErrorBoundary>
-                        }
-                      >
-                        <Route path="dashboard" element={<VendorDashboard />} />
-                        <Route
-                          path="candidates"
-                          element={<UserManagement />}
-                        />
-                        <Route path="employee" element={<RoleManagement />} />
-                        <Route
-                          path="subscription/plan"
-                          element={<Subscription />}
-                        />
-                        <Route
-                          path="subscription/view"
-                          element={<ViewSubscription />}
-                        />
-                        <Route path="profile" element={<Profile />} />
-                        <Route
-                          path="results"
-                          element={<ResultManagement />}
-                        />
-                        <Route
-                          path="results/view"
-                          element={<IntroAnalysis />}
-                        />
-                        <Route
-                          path="candidates/:candidateId"
-                          element={<CandidateDetailsPage />}
-                        />
-                        <Route path="employee/view" element={<ViewSubVendorDetails />} />
-                      </Route>
-
-                      {/* ===== Sub Vendor Routes ===== */}
-                      <Route
-                        path="/subvendor/*"
-                        element={
-                          <AppErrorBoundary>
-                            <ProtectedRoute allowedRoles={["sub_vendor"]}>
-                              <DashboardSubVendorLayout />
-                            </ProtectedRoute>
-                          </AppErrorBoundary>
-                        }
-                      >
-                        <Route path="dashboard" element={<DashboardHome />} />
-                        <Route path="user-management" element={<UserManagement />} />
-                        <Route
-                          path="result-management"
-                          element={<ResultManagement />}
-                        />
-                        <Route
-                          path="result-management/view"
-                          element={<IntroAnalysis />}
-                        />
-                        <Route
-                          path="user-management/:candidateId"
-                          element={<CandidateDetailsPage />}
-                        />
-                        <Route
-                          path="profile"
-                          element={<ProfileSection />}
-                        />
-                      </Route>
-
-                      {/* ===== Student Routes ===== */}
-                      <Route
-                        path="/student/*"
-                        element={
-                          <AppErrorBoundary>
-                            <ProtectedRoute allowedRoles={["student"]}>
-                              <StudentProvider>
-                                <StudentDashboardLayout />
-                              </StudentProvider>
-                            </ProtectedRoute>
-                          </AppErrorBoundary>
-                        }
-                      >
-                        <Route path="dashboard" element={<StudentDashboard />} />
-                        <Route path="request" element={<StudentRequestTest />} />
-                        <Route path="history" element={<StudentTestHistory />} />
-                        <Route path="results" element={<StudentResults />} />
-                        <Route path="credits" element={<StudentCredits />} />
-                        <Route path="profile" element={<StudentProfile />} />
-                      </Route>
-                    </Routes>
-                  </AuthProvider>
-                }
+                path="/employee/login"
+                element={<SubVendorLogin />}
               />
 
-              {/* ===== Fallback Routes ===== */}
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route path="*" element={<NotFound />} />
+              <Route
+                path="/reset-password/subvendor"
+                element={<SubvendorResetPassword />}
+              />
+
+              {/* =====================================================
+                AUTH PROVIDER
+                ===================================================== */}
+
+              <Route element={<AuthProvider />}>
+
+                {/* =================================================
+                  SUPER ADMIN
+                  ================================================= */}
+
+                <Route
+                  path="/superadmin"
+                  element={
+                    <AppErrorBoundary>
+                      <ProtectedRoute allowedRoles={["admin"]}>
+                        <SuperAdminLayout />
+                      </ProtectedRoute>
+                    </AppErrorBoundary>
+                  }
+                >
+                  <Route
+                    path="dashboard"
+                    element={<SuperAdminDashboard />}
+                  />
+
+                  <Route
+                    path="users"
+                    element={<StudentManagement />}
+                  />
+
+                  <Route
+                    path="campuses"
+                    element={<CampusManagement />}
+                  />
+
+                  <Route
+                    path="campuses/:campusId"
+                    element={<CampusDetail />}
+                  />
+
+                  <Route
+                    path="subscription"
+                    element={<SubscriptionList />}
+                  />
+
+                  <Route
+                    path="Assesement"
+                    element={<AssessmentManagement />}
+                  />
+
+                  <Route
+                    path="system"
+                    element={<SuperAdminDashboard />}
+                  />
+
+                  <Route
+                    path="database"
+                    element={<SuperAdminDashboard />}
+                  />
+
+                  <Route
+                    path="logs"
+                    element={<SuperAdminDashboard />}
+                  />
+
+                  <Route
+                    path="settings"
+                    element={<AdminSetting />}
+                  />
+                </Route>
+
+
+                {/* =================================================
+                  VENDOR
+                  ================================================= */}
+
+                <Route
+                  path="/vendor"
+                  element={
+                    <AppErrorBoundary>
+                      <ProtectedRoute allowedRoles={["vendor"]}>
+                        <DashboardLayout />
+                      </ProtectedRoute>
+                    </AppErrorBoundary>
+                  }
+                >
+                  <Route
+                    path="dashboard"
+                    element={<VendorDashboard />}
+                  />
+
+                  <Route
+                    path="candidates"
+                    element={<UserManagement />}
+                  />
+
+                  <Route
+                    path="employee"
+                    element={<RoleManagement />}
+                  />
+
+                  <Route
+                    path="subscription/plan"
+                    element={<Subscription />}
+                  />
+
+                  <Route
+                    path="subscription/view"
+                    element={<ViewSubscription />}
+                  />
+
+                  <Route
+                    path="profile"
+                    element={<Profile />}
+                  />
+
+                  <Route
+                    path="results"
+                    element={<ResultManagement />}
+                  />
+
+                  <Route
+                    path="results/view"
+                    element={<IntroAnalysis />}
+                  />
+
+                  <Route
+                    path="candidates/:candidateId"
+                    element={<CandidateDetailsPage />}
+                  />
+
+                  <Route
+                    path="employee/view"
+                    element={<ViewSubVendorDetails />}
+                  />
+                </Route>
+
+
+                {/* =================================================
+                  SUB VENDOR
+                  ================================================= */}
+
+                <Route
+                  path="/subvendor"
+                  element={
+                    <AppErrorBoundary>
+                      <ProtectedRoute allowedRoles={["sub_vendor"]}>
+                        <DashboardSubVendorLayout />
+                      </ProtectedRoute>
+                    </AppErrorBoundary>
+                  }
+                >
+                  <Route
+                    path="dashboard"
+                    element={<DashboardHome />}
+                  />
+
+                  <Route
+                    path="user-management"
+                    element={<UserManagement />}
+                  />
+
+                  <Route
+                    path="result-management"
+                    element={<ResultManagement />}
+                  />
+
+                  <Route
+                    path="result-management/view"
+                    element={<IntroAnalysis />}
+                  />
+
+                  <Route
+                    path="user-management/:candidateId"
+                    element={<CandidateDetailsPage />}
+                  />
+
+                  <Route
+                    path="profile"
+                    element={<ProfileSection />}
+                  />
+                </Route>
+
+
+                {/* =================================================
+                  STUDENT
+                  ================================================= */}
+
+                <Route
+                  path="/student"
+                  element={
+                    <AppErrorBoundary>
+                      <ProtectedRoute allowedRoles={["student"]}>
+                        <StudentProvider>
+                          <StudentDashboardLayout />
+                        </StudentProvider>
+                      </ProtectedRoute>
+                    </AppErrorBoundary>
+                  }
+                >
+                  <Route
+                    path="dashboard"
+                    element={<StudentDashboard />}
+                  />
+
+                  <Route
+                    path="request"
+                    element={<StudentRequestTest />}
+                  />
+
+                  <Route
+                    path="history"
+                    element={<StudentTestHistory />}
+                  />
+
+                  <Route
+                    path="results"
+                    element={<StudentResults />}
+                  />
+
+                  <Route
+                    path="credits"
+                    element={<StudentCredits />}
+                  />
+
+                  <Route
+                    path="profile"
+                    element={<StudentProfile />}
+                  />
+                </Route>
+
+              </Route>
+
+              {/* =====================================================
+                OTHER
+                ===================================================== */}
+
+              <Route
+                path="/unauthorized"
+                element={<Unauthorized />}
+              />
+
+              {/* =====================================================
+                404 - MUST BE LAST
+                ===================================================== */}
+
+              <Route
+                path="*"
+                element={<NotFound />}
+              />
+
             </Routes>
           </Suspense>
         </AppErrorBoundary>
