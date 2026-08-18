@@ -374,8 +374,7 @@ export default function ProfilePage() {
     const [searchParams] = useSearchParams();
     const [agreed, setAgreed] = useState(false);
 
-    const candidate_id = searchParams.get("candidate_id");
-    const token = searchParams.get("token");
+    const token = searchParams.get("t");
 
     const [isOtpOpen, setIsOtpOpen] = useState(true);
     const [otp, setOtp] = useState("");
@@ -390,7 +389,7 @@ export default function ProfilePage() {
         isError,
         isLoading: dataLoading,
         refetch
-    } = useCookiesGenerateQuery({ candidate_id, token });
+    } = useCookiesGenerateQuery({ token });
 
     const [
         fetchCandidate,
@@ -435,9 +434,11 @@ export default function ProfilePage() {
         }
 
         const form = new FormData();
-        form.append("candidate_id", candidate_id);
+        form.append("token", cookieData?.test_token);
         form.append("otp", otp);
 
+        console.log("cookieData - ", cookieData)
+        debugger;
         try {
             const res = await verifyOtp(form).unwrap();
 
@@ -445,7 +446,7 @@ export default function ProfilePage() {
                 toast.success("Authentication Successfully");
 
                 // 🔥 Refetch cookie to update verified status
-                await refetch();
+                // await refetch();
 
                 setIsOtpOpen(false);
             } else {
@@ -456,13 +457,15 @@ export default function ProfilePage() {
         }
     };
 
+    const candidate_id = 9549504950
+
     // 📦 Fetch data ONLY AFTER verification
     useEffect(() => {
         if (!cookieData?.verified) return;
 
         fetchCandidate({
-            id: candidate_id,
-            token: token
+            id: candidate_id ?? 854985948,
+            token: t
         });
     }, [cookieData?.verified, candidate_id, token]);
 
@@ -473,21 +476,27 @@ export default function ProfilePage() {
 
         // Show loader while processing navigation
         setBeginLoader(true);
-        const res=await beginTest().unwrap()
-        // debugger;
+        try {
+            const res = await beginTest().unwrap()
+            // debugger;
 
-        if (candidateData?.level_id == "LEVEL_001") {
-            setTimeout(() => {
-                navigate("/record", { state: { data: token } })
-                setBeginLoader(false)
-            }, 2000)
+            if (res?.level_id == "LEVEL_001") {
+                setTimeout(() => {
+                    navigate("/record", { state: { data: token } })
+                    setBeginLoader(false)
+                }, 2000)
+            }
+            if (res?.level_id == "LEVEL_002") {
+                setTimeout(() => {
+                    navigate("/code-test");
+                    setBeginLoader(false)
+                }, 2000)
+            }
         }
-        if (candidateData?.level_id == "LEVEL_002") {
-            setTimeout(() => {
-                navigate("/code-test");
-                setBeginLoader(false)
-            }, 2000)
+        catch (err) {
+            toast.error("somethinf went wrong")
         }
+
     }
 
     // ⏳ Loader

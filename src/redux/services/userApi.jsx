@@ -18,11 +18,12 @@ export const userApi = api.injectEndpoints({
         url: '/candidate/verify_otp',
         method: 'POST',
         body: data,
+        credentials: "include"
       }),
     }),
     cookiesGenerate: builder.query({
-      query: ({ candidate_id, token }) => ({
-        url: `/candidate/start_test?candidate_id=${candidate_id}&token=${token}`,
+      query: ({ token }) => ({
+        url: `/candidate/start_test?t=${token}`,
         method: "GET",
         // no credentials here either
       }),

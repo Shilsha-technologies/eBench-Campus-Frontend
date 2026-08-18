@@ -1,72 +1,170 @@
-import { useState, useEffect, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import PhoneInput from "react-phone-input-2";
 import Select from "react-select";
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
-import { ClockFading, X } from "lucide-react";
-import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery } from "../../../redux/services/vendorApi";
+
+import {
+    useLazyGetDegreeCampusDetailsQuery,
+    useLazyGetDepartmentCampusDetailsQuery,
+    useGetSpecializationCampusDetailsQuery,
+} from "../../../redux/services/vendorApi";
+
+// =====================================================
+// EDUCATION VALIDATION
+// =====================================================
+
+const educationSchema = yup.object().shape({
+    level: yup
+        .string()
+        .required("Education level is required"),
+
+    degree: yup
+        .string()
+        .required("Degree is required"),
+
+    specialization: yup
+        .string()
+        .required("Specialization is required"),
+
+    enrollmentYear: yup
+        .string()
+        .required("Enrollment year required"),
+
+    graduationYear: yup
+        .string()
+        .when("isPursuing", {
+            is: false,
+            then: (schema) =>
+                schema.required("Graduation year required"),
+            otherwise: (schema) =>
+                schema.notRequired(),
+        }),
+
+    cgpa: yup
+        .string()
+        .required("CGPA required"),
+
+    department: yup
+        .string()
+        .required("Department required"),
+
+    rollNumber: yup
+        .string()
+        .notRequired(),
+
+    isPursuing: yup
+        .boolean()
+        .default(false),
+});
+
+// =====================================================
+// MAIN VALIDATION
+// =====================================================
 
 const validationSchema = yup.object().shape({
-    firstName: yup.string().required("First Name is required").max(30),
-    lastName: yup.string().required("Last Name is required").max(30),
+    firstName: yup
+        .string()
+        .required("First Name is required")
+        .max(30),
 
-    // birthCountry: yup.object().nullable().required("Birth Country is required"),
-    nationality: yup.object().nullable().required("Nationality is required"),
-    countryOfResidence: yup.object().nullable().required("Country of Residence is required"),
+    lastName: yup
+        .string()
+        .required("Last Name is required")
+        .max(30),
 
-    email: yup.string().email("Invalid email").required("Email is required"),
+    nationality: yup
+        .object()
+        .nullable()
+        .required("Nationality is required"),
+
+    countryOfResidence: yup
+        .object()
+        .nullable()
+        .required("Country of Residence is required"),
+
+    email: yup
+        .string()
+        .email("Invalid email")
+        .required("Email is required"),
 
     mobileNumber: yup
         .string()
         .required("Mobile number is required"),
 
-    degree: yup.string().when([], {
-        then: (schema) => schema.required("Degree is required"),
-    }),
+    education: yup
+        .array()
+        .of(educationSchema)
+        .min(1, "At least one education is required")
+        .required("Education is required"),
 
-    specialization: yup.string().when([], {
-        then: (schema) => schema.required("Specialization is required"),
-    }),
-
-    enrollmentYear: yup.string().when([], {
-        then: (schema) => schema.required("Enrollment year required"),
-    }),
-
-
-    cgpa: yup.string().when([], {
-        then: (schema) => schema.required("CGPA required"),
-    }),
-
-
-
-    department: yup.string().when([], {
-        then: (schema) => schema.required("Department required"),
-    }),
-    skills: yup.array().of(yup.string()).when([], {
-        then: (schema) => schema.min(1, "Skills required").required("Skills required"),
-    }),
+    skills: yup
+        .array()
+        .of(yup.string())
+        .min(1, "Skills required")
+        .required("Skills required"),
 });
 
-const moduleType = localStorage.getItem('module')
+// =====================================================
+// EMPTY EDUCATION OBJECT
+// =====================================================
 
-export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
+const emptyEducation = {
+    level: "",
+    degree: "",
+    specialization: "",
+    enrollmentYear: "",
+    graduationYear: "",
+    cgpa: "",
+    department: "",
+    rollNumber: "",
+    isPursuing: false,
+};
+
+// =====================================================
+// COMPONENT
+// =====================================================
+
+export default function UserForm({
+    onSubmit,
+    isVendorAdding,
+    onClose,
+}) {
+    // =================================================
+    // SKILLS
+    // =================================================
+
     const [skills, setSkills] = useState([]);
     const [skillInput, setSkillInput] = useState("");
 
     const addSkill = (e) => {
-        if (e) e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
+
         const trimmed = skillInput.trim();
+
         if (trimmed && !skills.includes(trimmed)) {
-            setSkills([...skills, trimmed]);
+            setSkills([
+                ...skills,
+                trimmed,
+            ]);
+
             setSkillInput("");
         }
     };
 
     const removeSkill = (skillToRemove) => {
-        setSkills(skills.filter((s) => s !== skillToRemove));
+        setSkills(
+            skills.filter(
+                (s) => s !== skillToRemove
+            )
+        );
     };
 
     const handleSkillKeyDown = (e) => {
@@ -76,487 +174,1824 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         }
     };
 
+    // =================================================
+    // REACT HOOK FORM
+    // =================================================
+
     const {
         register,
         control,
         handleSubmit,
         setValue,
         watch,
-        formState: { errors },
+        formState: {
+            errors,
+        },
     } = useForm({
-        resolver: yupResolver(validationSchema),
+        resolver: yupResolver(
+            validationSchema
+        ),
+
         mode: "onBlur",
+
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+
+            nationality: null,
+            countryOfResidence: null,
+
+            email: "",
+            mobileNumber: "",
+            countryCode: "in",
+
+            education: [
+                {
+                    ...emptyEducation,
+                },
+            ],
+
+            skills: [],
+        },
     });
 
-    const isFirstRender = useRef(true);
+    const values = watch();
 
-    useEffect(() => {
-        register("skills");
-    }, [register]);
+    console.log("countryOfResidence", values);
 
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            setValue("skills", skills);
-            return;
-        }
-        setValue("skills", skills, { shouldValidate: true });
-    }, [skills, setValue]);
 
-    const countryCode = watch("countryCode") || "in";
-    const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
-    // const 
+    // =================================================
+    // EDUCATION FIELD ARRAY
+    // =================================================
+
+    const {
+        fields: educationFields,
+        append: addEducation,
+        remove: removeEducation,
+    } = useFieldArray({
+        control,
+        name: "education",
+    });
+
+    // =================================================
+    // COUNTRY
+    // =================================================
+
+    const countryCode =
+        watch("countryCode") || "in";
+
+    const {
+        data: countryData,
+        isLoading: countryLoading,
+    } = useGetCountryDataQuery();
+
     const countryOptions =
         countryData?.data?.map((item) => ({
             label: item?.name,
             value: item?.name,
         })) || [];
 
-    const {
-        data: degrees = [],
-        isLoading: degLoading,
-    } = useGetDegreeCampusDetailsQuery();
+    // =================================================
+    // EDUCATION API
+    // =================================================
 
-    const {
-        data: departments = [],
-        isLoading: deptLoading,
-    } = useGetDepartmentCampusDetailsQuery();
+    const [
+        triggerDegree,
+        {
+            data: degrees = [],
+            isLoading: degLoading,
+        },
+    ] = useLazyGetDegreeCampusDetailsQuery();
+
+    const [
+        triggerDepartment,
+        {
+            data: departments = [],
+            isLoading: deptLoading,
+        },
+    ] = useLazyGetDepartmentCampusDetailsQuery();
+
+    // =================================================
+    // WATCH EDUCATION
+    // =================================================
+
+    const educationWatch = watch("education");
+
+    // =================================================
+    // SELECTED DEGREE
+    // =================================================
+
+    const [selectedDegreeId, setSelectedDegreeId] =
+        useState(null);
+
+    useEffect(() => {
+        const degreesSelected = educationWatch
+            .map((e) => e.degree)
+            .filter(Boolean);
+
+        if (degreesSelected.length) {
+            setSelectedDegreeId(
+                degreesSelected[
+                degreesSelected.length - 1
+                ]
+            );
+        } else {
+            setSelectedDegreeId(null);
+        }
+    }, [educationWatch]);
+
+    // =================================================
+    // DEPARTMENT API
+    // =================================================
+
+    useEffect(() => {
+        if (selectedDegreeId) {
+            triggerDepartment(selectedDegreeId);
+        }
+    }, [
+        selectedDegreeId,
+        triggerDepartment,
+    ]);
+
+    // =================================================
+    // SPECIALIZATION API
+    // =================================================
+
+    const selectedDepartmentId =
+        educationWatch
+            .map((e) => e.department)
+            .filter(Boolean)
+            .pop() || null;
 
     const {
         data: specializations = [],
         isLoading: specLoading,
-    } = useGetSpecializationCampusDetailsQuery();
+    } = useGetSpecializationCampusDetailsQuery(
+        selectedDepartmentId,
+        {
+            skip: !selectedDepartmentId,
+        }
+    );
 
+    // =================================================
+    // LEVEL CHANGE
+    // =================================================
 
-    const handleFormSubmit = (data) => {
-        // console.log("koko", data)
-        // console.log("data ", skills, skillInput)
-        const payload = {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            email: data.email,
-            mobile: data.mobileNumber,
-            birth_country: data.birthCountry?.value,
-            nationality: data.nationality?.value,
-            country_of_residence: data.countryOfResidence?.value,
-            university_name: data.universityName,
-            college_name: data.collegeName,
-            degree: data.degree,
-            specialization: data.specialization,
-            enrollment_year: data.enrollmentYear,
-            graduation_year: data.graduationYear,
-            cgpa: data.cgpa,
-            roll_number: data.rollNumber,
-            department: data.department,
-            is_persuing: data?.isPursuing,
-            skills: skills
-        };
+    const handleEducationLevelChange = async (
+        e,
+        index
+    ) => {
+        const level = e.target.value;
 
-        onSubmit(payload, false);
+        // Set selected level
+        setValue(
+            `education.${index}.level`,
+            level,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+            }
+        );
+
+        // Clear dependent fields
+        setValue(
+            `education.${index}.degree`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+
+        setValue(
+            `education.${index}.department`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+
+        setValue(
+            `education.${index}.specialization`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+
+        // If no level selected, don't call API
+        if (!level) {
+            return;
+        }
+
+        try {
+            console.log(
+                "Calling Degree API with level:",
+                level
+            );
+
+            await triggerDegree(level).unwrap();
+
+            console.log(
+                "Degree API called successfully"
+            );
+        } catch (error) {
+            console.error(
+                "Degree API error:",
+                error
+            );
+        }
     };
 
-    // console.log("specializations",specializations)
+    // =================================================
+    // DEGREE CHANGE
+    // =================================================
+
+    const handleDegreeChange = async (e, index) => {
+        const degreeId = e.target.value;
+
+        // Set selected degree
+        setValue(
+            `education.${index}.degree`,
+            degreeId,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+            }
+        );
+
+        // Clear dependent fields
+        setValue(
+            `education.${index}.department`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+
+        setValue(
+            `education.${index}.specialization`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+
+        // Don't call API if degree is cleared
+        if (!degreeId) {
+            return;
+        }
+
+        try {
+            console.log(
+                "Calling Department API with degree ID:",
+                degreeId
+            );
+
+            await triggerDepartment(degreeId).unwrap();
+
+            console.log(
+                "Department API called successfully"
+            );
+        } catch (error) {
+            console.error(
+                "Department API error:",
+                error
+            );
+        }
+    };
+
+    // =================================================
+    // DEPARTMENT CHANGE
+    // =================================================
+
+    const handleDepartmentChange = (
+        e,
+        index
+    ) => {
+        const departmentId = e.target.value;
+
+        setValue(
+            `education.${index}.department`,
+            departmentId,
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+            }
+        );
+
+        // Clear specialization
+        setValue(
+            `education.${index}.specialization`,
+            "",
+            {
+                shouldValidate: false,
+            }
+        );
+    };
+
+    // =================================================
+    // SYNC SKILLS
+    // =================================================
+
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+
+            setValue(
+                "skills",
+                skills
+            );
+
+            return;
+        }
+
+        setValue(
+            "skills",
+            skills,
+            {
+                shouldValidate: true,
+            }
+        );
+    }, [
+        skills,
+        setValue,
+    ]);
+
+    // =================================================
+    // SUBMIT
+    // =================================================
+
+    const handleFormSubmit = (data) => {
+
+        debugger;
+        const payload = {
+            first_name:
+                data.firstName,
+
+            last_name:
+                data.lastName,
+
+            email:
+                data.email,
+
+            mobile:
+                data.mobileNumber,
+
+            nationality:
+                data.nationality?.value,
+
+            country_of_residence:
+                data.countryOfResidence?.value,
+
+            college_name:
+                data.collegeName,
+
+            // =========================================
+            // MULTIPLE EDUCATION
+            // =========================================
+
+            education:
+                data.education.map(
+                    (edu) => ({
+                        level:
+                            edu.level,
+
+                        degree:
+                            edu.degree,
+
+                        specialization:
+                            edu.specialization,
+
+                        enrollment_year:
+                            edu.enrollmentYear,
+
+                        graduation_year:
+                            edu.graduationYear,
+
+                        cgpa:
+                            edu.cgpa,
+
+                        department:
+                            edu.department,
+
+                        roll_number:
+                            edu.rollNumber,
+
+                        is_persuing:
+                            edu.isPursuing,
+                    })
+                ),
+
+            // =========================================
+            // SKILLS
+            // =========================================
+
+            skills: skills,
+        };
+
+        console.log(
+            "FINAL PAYLOAD",
+            payload
+        );
+
+        onSubmit(
+            payload,
+            false
+        );
+    };
+
+    // =================================================
+    // ADD EDUCATION
+    // =================================================
+
+    const handleAddEducation = () => {
+        addEducation({
+            ...emptyEducation,
+        });
+    };
+
+    // =================================================
+    // RENDER
+    // =================================================
 
     return (
         <motion.div
-            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            className="
+                fixed inset-0
+                bg-black/40
+                flex items-center
+                justify-center
+                z-50
+            "
+        >
             <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="bg-white rounded-2xl h-96 md:h-128 overflow-auto shadow-xl w-full max-w-5xl p-6">
-                <div className=" mb-5 border-b border-gray-300 pb-3 flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-gray-500 ">
+                initial={{
+                    scale: 0.8,
+                    opacity: 0,
+                }}
+                animate={{
+                    scale: 1,
+                    opacity: 1,
+                }}
+                className="
+                    bg-white
+                    rounded-2xl
+                    h-[90vh]
+                    overflow-auto
+                    shadow-xl
+                    w-full
+                    max-w-6xl
+                    p-6
+                "
+            >
+                {/* =====================================
+                    HEADER
+                ====================================== */}
+
+                <div
+                    className="
+                        mb-5
+                        border-b
+                        border-gray-300
+                        pb-3
+                        flex
+                        justify-between
+                        items-center
+                    "
+                >
+                    <h2
+                        className="
+                            text-2xl
+                            font-semibold
+                            text-gray-500
+                        "
+                    >
                         Add New User
                     </h2>
+
                     <div>
-                        <X className=" cursor-pointer" onClick={onClose} />
+                        <X
+                            className="
+                                cursor-pointer
+                            "
+                            onClick={onClose}
+                        />
                     </div>
                 </div>
 
-
+                {/* =====================================
+                    FORM
+                ====================================== */}
 
                 <form
-                    onSubmit={handleSubmit((data) => handleFormSubmit(data, false))}
-                    className="grid grid-cols-2 md:grid-cols-3  gap-5">
-                    {/* First Name */}
+                    onSubmit={handleSubmit(
+                        handleFormSubmit
+                    )}
+                    className="
+                        grid
+                        grid-cols-2
+                        md:grid-cols-3
+                        gap-5
+                    "
+                >
+                    {/* =================================
+                        FIRST NAME
+                    ================================== */}
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             First Name
                         </label>
+
                         <input
-                            {...register("firstName")}
+                            {...register(
+                                "firstName"
+                            )}
                             placeholder="Enter first name"
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.firstName ? "border-red-500" : "border-gray-300"
-                                }`}
+                            className={`
+                                w-full
+                                border
+                                rounded-lg
+                                p-2
+                                outline-none
+                                ${errors.firstName
+                                    ? "border-red-500"
+                                    : "border-gray-300"
+                                }
+                            `}
                         />
+
                         {errors.firstName && (
-                            <p className="text-sm text-red-500 mt-1">{errors.firstName.message}</p>
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .firstName
+                                        .message
+                                }
+                            </p>
                         )}
                     </div>
 
-                    {/* Last Name */}
+                    {/* =================================
+                        LAST NAME
+                    ================================== */}
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             Last Name
                         </label>
+
                         <input
-                            {...register("lastName")}
+                            {...register(
+                                "lastName"
+                            )}
                             placeholder="Enter last name"
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.lastName ? "border-red-500" : "border-gray-300"
-                                }`}
+                            className={`
+                                w-full
+                                border
+                                rounded-lg
+                                p-2
+                                outline-none
+                                ${errors.lastName
+                                    ? "border-red-500"
+                                    : "border-gray-300"
+                                }
+                            `}
                         />
+
                         {errors.lastName && (
-                            <p className="text-sm text-red-500 mt-1">{errors.lastName.message}</p>
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .lastName
+                                        .message
+                                }
+                            </p>
                         )}
                     </div>
 
+                    {/* =================================
+                        NATIONALITY
+                    ================================== */}
 
-
-                    {/* Nationality */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             Nationality
                         </label>
+
                         <Controller
                             name="nationality"
                             control={control}
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    options={countryOptions}
-                                    placeholder="Select Nationality"
-                                    classNamePrefix="react-select"
+                                    options={
+                                        countryOptions
+                                    }
+                                    isLoading={
+                                        countryLoading
+                                    }
+                                    placeholder="
+                                        Select Nationality
+                                    "
+                                    classNamePrefix="
+                                        react-select
+                                    "
                                     styles={{
-                                        control: (base, state) => ({
+                                        control: (
+                                            base
+                                        ) => ({
                                             ...base,
-                                            borderColor: errors.nationality ? "#ef4444" : "#d1d5db",
+
+                                            borderColor:
+                                                errors
+                                                    .nationality
+                                                    ? "#ef4444"
+                                                    : "#d1d5db",
                                         }),
                                     }}
                                 />
                             )}
                         />
+
                         {errors.nationality && (
-                            <p className="text-sm text-red-500 mt-1">{errors.nationality.message}</p>
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .nationality
+                                        .message
+                                }
+                            </p>
                         )}
                     </div>
 
-                    {/* Country of Residence */}
+                    {/* =================================
+                        COUNTRY OF RESIDENCE
+                    ================================== */}
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             Country of Residence
                         </label>
+
                         <Controller
                             name="countryOfResidence"
                             control={control}
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    options={countryOptions}
-                                    placeholder="Select Country of Residence"
-                                    classNamePrefix="react-select"
-                                    className=" outline-none"
+                                    options={
+                                        countryOptions
+                                    }
+                                    isLoading={
+                                        countryLoading
+                                    }
+                                    placeholder="
+                                        Select Country of Residence
+                                    "
+                                    classNamePrefix="
+                                        react-select
+                                    "
                                     styles={{
-                                        control: (base, state) => ({
+                                        control: (
+                                            base
+                                        ) => ({
                                             ...base,
-                                            borderColor: errors.countryOfResidence ? "#ef4444" : "#d1d5db",
+
+                                            borderColor:
+                                                errors
+                                                    .countryOfResidence
+                                                    ? "#ef4444"
+                                                    : "#d1d5db",
                                         }),
                                     }}
                                 />
                             )}
                         />
+
                         {errors.countryOfResidence && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.countryOfResidence.message}
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .countryOfResidence
+                                        .message
+                                }
                             </p>
                         )}
                     </div>
 
-                    {/* Email */}
+                    {/* =================================
+                        EMAIL
+                    ================================== */}
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             Email
                         </label>
+
                         <input
-                            {...register("email")}
+                            {...register(
+                                "email"
+                            )}
                             type="email"
                             placeholder="Enter email"
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.email ? "border-red-500" : "border-gray-300"
-                                }`}
+                            className={`
+                                w-full
+                                border
+                                rounded-lg
+                                p-2
+                                outline-none
+                                ${errors.email
+                                    ? "border-red-500"
+                                    : "border-gray-300"
+                                }
+                            `}
                         />
+
                         {errors.email && (
-                            <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .email
+                                        .message
+                                }
+                            </p>
                         )}
                     </div>
 
-                    {/* Mobile Number */}
-                    <div className="">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {/* =================================
+                        MOBILE
+                    ================================== */}
+
+                    <div>
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                                mb-1
+                            "
+                        >
                             Mobile Number
                         </label>
+
                         <Controller
                             name="mobileNumber"
                             control={control}
-                            render={({ field }) => (
+                            render={() => (
                                 <PhoneInput
-                                    country={countryCode}
-                                    onChange={(value, country) => {
-                                        setValue("mobileNumber", value.replace(/[^0-9]/g, ""));
-                                        setValue("countryCode", country.countryCode);
+                                    country={
+                                        countryCode
+                                    }
+                                    onChange={(
+                                        value,
+                                        country
+                                    ) => {
+                                        setValue(
+                                            "mobileNumber",
+                                            value.replace(
+                                                /[^0-9]/g,
+                                                ""
+                                            ),
+                                            {
+                                                shouldValidate:
+                                                    true,
+                                            }
+                                        );
+
+                                        setValue(
+                                            "countryCode",
+                                            value
+                                        );
                                     }}
                                     inputStyle={{
                                         width: "100%",
-                                        borderRadius: "0.5rem",
-                                        borderColor: errors.mobileNumber ? "#ef4444" : "#d1d5db",
-                                        // padding: "10px 12px",
+                                        borderRadius:
+                                            "0.5rem",
+                                        borderColor:
+                                            errors
+                                                .mobileNumber
+                                                ? "#ef4444"
+                                                : "#d1d5db",
                                     }}
-                                    placeholder="Enter phone number"
+                                    placeholder="
+                                        Enter phone number
+                                    "
                                 />
                             )}
                         />
+
                         {errors.mobileNumber && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.mobileNumber.message}
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors
+                                        .mobileNumber
+                                        .message
+                                }
                             </p>
                         )}
                     </div>
 
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Degree</label>
-                        <select
-                            {...register("degree")}
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.degree ? "border-red-500" : "border-gray-300"
-                                }`}
+                    {/* ==========================================
+                        EDUCATION SECTION
+                    =========================================== */}
+
+                    <div
+                        className="
+                            col-span-2
+                            md:col-span-3
+                        "
+                    >
+                        <div
+                            className="
+                                flex
+                                justify-between
+                                items-center
+                                mb-4
+                            "
                         >
-                            <option value="">
-                                {degLoading ? "Loading..." : "Select Degree"}
-                            </option>
+                            <div>
+                                <h3
+                                    className="
+                                        text-xl
+                                        font-semibold
+                                        text-gray-700
+                                    "
+                                >
+                                    Education
+                                </h3>
 
-                            {degrees?.data?.length > 0 && degrees?.data?.map((deg) => (
-                                <option key={deg.id} value={deg.name}>
-                                    {deg.name}
-                                </option>
-                            ))}
-                        </select>
+                                <p
+                                    className="
+                                        text-sm
+                                        text-gray-500
+                                    "
+                                >
+                                    Add one or more UG / PG
+                                    qualifications.
+                                </p>
+                            </div>
 
-                        {errors.degree && (
-                            <p className="text-sm text-red-500 mt-1">{errors.degree.message}</p>
-                        )}
-                    </div>
-
-                    {/* Department */}
-                    {/* <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
-                                <input {...register("department")}
-
-                                    className={`w-full border rounded-lg p-2 outline-none  ${errors.department ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    placeholder="Department Name"
-                                />
-                                {errors.department && <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>}
-                            </div> */}
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
-                        <select
-                            {...register("department")}
-                            className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.department ? "border-red-500" : "border-gray-300"
-                                }`}
-                        >
-                            <option value="">
-                                {deptLoading ? "Loading..." : "Select Department"}
-                            </option>
-
-                            {departments?.data?.length > 0 && departments?.data?.map((dept) => (
-                                <option key={dept.name} value={dept.id}>
-                                    {dept.name}
-                                </option>
-                            ))}
-                        </select>
-
-                        {errors.department && (
-                            <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>
-                        )}
-                    </div>
-
-                    {/* Specialization */}
-                    {/* <div>
-                                <label className="font-medium text-sm text-gray-700 mb-1">Specialization</label>
-                                <input {...register("specialization")}
-                                    className={`w-full border rounded-lg p-2 outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                    placeholder="Specialization"
-                                />
-                                {errors.specialization && <p className="text-sm text-red-500 mt-1">{errors.specialization.message}</p>}
-                            </div> */}
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">
-                            Specialization
-                        </label>
-                        <select
-                            {...register("specialization")}
-                            className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"
-                                }`}
-                        >
-                            <option value="">
-                                {specLoading ? "Loading..." : "Select Specialization"}
-                            </option>
-
-                            {specializations?.data?.length > 0 && specializations?.data?.map((spec) => (
-                                <option key={spec.name} value={spec.id}>
-                                    {spec.name}
-                                </option>
-                            ))}
-                        </select>
-
-                        {errors.specialization && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.specialization.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Enrollment Year */}
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Enrollment (Month / Year)</label>
-
-                        <input
-                            type="month"
-                            placeholder="Month Year"
-                            {...register("enrollmentYear")}
-                            className={`w-full border rounded-lg p-2 text-gray-500 outline-none 
-    ${errors.enrollmentYear ? "border-red-500" : "border-gray-300"}`}
-                        />
-                        {errors.enrollmentYear && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.enrollmentYear.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Graduation Year */}
-                    {/* <div>
-                                <label>Graduation Date</label>
-                                <input type="date" {...register("graduationYear")}
-                                    className={`w-full border rounded-lg p-2 outline-none text-gray-500 ${errors.graduationYear ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                />
-                                {errors.graduationYear && <p className="text-sm text-red-500 mt-1">{errors.graduationYear.message}</p>}
-                            </div> */}
-                    <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Graduation (Month / Year)
-                        </label>
-
-                        {/* Month Input */}
-                        <input
-                            type="month"
-                            {...register("graduationYear")}
-                            disabled={watch("isPursuing")}
-                            className={`w-full border rounded-lg p-2 outline-none text-gray-500
-    ${errors.graduationYear ? "border-red-500" : "border-gray-300"}
-    ${watch("isPursuing") ? "bg-gray-100 cursor-not-allowed" : ""}`}
-                        />
-
-                        {/* Still Pursuing */}
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="pursuing"
-                                placeholder="Month Year"
-                                checked={watch("isPursuing")}
-                                onChange={(e) => {
-                                    const checked = e.target.checked;
-                                    setValue("isPursuing", checked);
-
-                                    // Clear date if pursuing
-                                    if (checked) {
-                                        setValue("graduationYear", "");
-                                    }
-                                }}
-                            />
-                            <label htmlFor="pursuing" className="text-sm text-gray-600">
-                                Still Pursuing
-                            </label>
+                            <button
+                                type="button"
+                                onClick={
+                                    handleAddEducation
+                                }
+                                className="
+                                    px-4
+                                    py-2
+                                    bg-green-600
+                                    text-white
+                                    rounded-lg
+                                    text-sm
+                                    hover:bg-green-700
+                                    transition
+                                    cursor-pointer
+                                "
+                            >
+                                + Add Education
+                            </button>
                         </div>
 
-                        {/* Error */}
-                        {errors.graduationYear && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.graduationYear.message}
-                            </p>
+                        {/* =================================
+                            EDUCATION LIST
+                        ================================== */}
+
+                        {educationFields.map(
+                            (field, index) => (
+                                <div
+                                    key={field.id}
+                                    className="
+                                        border
+                                        border-gray-100
+                                        rounded-xl
+                                        p-5
+                                        mb-5
+                                        bg-gray-50
+                                    "
+                                >
+                                    {/* HEADER */}
+
+                                    <div
+                                        className="
+                                            flex
+                                            justify-between
+                                            items-center
+                                            mb-4
+                                        "
+                                    >
+                                        <h4
+                                            className="
+                                                text-lg
+                                                font-semibold
+                                                text-gray-700
+                                            "
+                                        >
+                                            Education #
+                                            {index + 1}
+                                        </h4>
+
+                                        {educationFields.length >
+                                            1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeEducation(
+                                                            index
+                                                        )
+                                                    }
+                                                    className="
+                                                    text-red-500
+                                                    hover:text-red-700
+                                                    font-medium
+                                                "
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                    </div>
+
+                                    <div
+                                        className="
+                                            grid
+                                            grid-cols-1
+                                            md:grid-cols-2
+                                            lg:grid-cols-3
+                                            gap-5
+                                        "
+                                    >
+                                        {/* =====================
+                                            LEVEL
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Education Level
+                                            </label>
+
+                                            <select
+                                                {...register(
+                                                    `education.${index}.level`
+                                                )}
+                                                onChange={(e) =>
+                                                    handleEducationLevelChange(
+                                                        e,
+                                                        index
+                                                    )
+                                                }
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.level
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            >
+                                                <option value="">
+                                                    Select Level
+                                                </option>
+
+                                                <option value="UG">
+                                                    UG
+                                                </option>
+
+                                                <option value="PG">
+                                                    PG
+                                                </option>
+                                            </select>
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.level && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].level
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            DEGREE
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Degree
+                                            </label>
+
+                                            <select
+                                                {...register(
+                                                    `education.${index}.degree`
+                                                )}
+                                                onChange={(e) =>
+                                                    handleDegreeChange(
+                                                        e,
+                                                        index
+                                                    )
+                                                }
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.degree
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            >
+                                                <option value="">
+                                                    {degLoading
+                                                        ? "Loading..."
+                                                        : "Select Degree"}
+                                                </option>
+
+                                                {degrees?.data?.map(
+                                                    (deg) => (
+                                                        <option
+                                                            key={
+                                                                deg.id
+                                                            }
+                                                            value={
+                                                                deg.id
+                                                            }
+                                                        >
+                                                            {
+                                                                deg.name
+                                                            }
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.degree && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].degree
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            DEPARTMENT
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Department
+                                            </label>
+
+                                            <select
+                                                {...register(
+                                                    `education.${index}.department`
+                                                )}
+                                                onChange={(e) =>
+                                                    handleDepartmentChange(
+                                                        e,
+                                                        index
+                                                    )
+                                                }
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.department
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            >
+                                                <option value="">
+                                                    {deptLoading
+                                                        ? "Loading..."
+                                                        : "Select Department"}
+                                                </option>
+
+                                                {departments?.data?.map(
+                                                    (dept) => (
+                                                        <option
+                                                            key={
+                                                                dept.id
+                                                            }
+                                                            value={
+                                                                dept.id
+                                                            }
+                                                        >
+                                                            {
+                                                                dept.name
+                                                            }
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.department && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].department
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            SPECIALIZATION
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Specialization
+                                            </label>
+
+                                            <select
+                                                {...register(
+                                                    `education.${index}.specialization`
+                                                )}
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.specialization
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            >
+                                                <option value="">
+                                                    {specLoading
+                                                        ? "Loading..."
+                                                        : "Select Specialization"}
+                                                </option>
+
+                                                {specializations?.data?.map(
+                                                    (spec) => (
+                                                        <option
+                                                            key={
+                                                                spec.id
+                                                            }
+                                                            value={
+                                                                spec.id
+                                                            }
+                                                        >
+                                                            {
+                                                                spec.name
+                                                            }
+                                                        </option>
+                                                    )
+                                                )}
+                                            </select>
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.specialization && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].specialization
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            ENROLLMENT
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Enrollment
+                                            </label>
+
+                                            <input
+                                                type="month"
+                                                {...register(
+                                                    `education.${index}.enrollmentYear`
+                                                )}
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.enrollmentYear
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            />
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.enrollmentYear && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].enrollmentYear
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            GRADUATION
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Graduation
+                                            </label>
+
+                                            <input
+                                                type="month"
+                                                {...register(
+                                                    `education.${index}.graduationYear`
+                                                )}
+                                                disabled={watch(
+                                                    `education.${index}.isPursuing`
+                                                )}
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.graduationYear
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+
+                                                    ${watch(
+                                                        `education.${index}.isPursuing`
+                                                    )
+                                                        ? "bg-gray-100 cursor-not-allowed"
+                                                        : ""
+                                                    }
+                                                `}
+                                            />
+
+                                            {/* PURSUING */}
+
+                                            <div
+                                                className="
+                                                    flex
+                                                    items-center
+                                                    gap-2
+                                                    mt-2
+                                                "
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    {...register(
+                                                        `education.${index}.isPursuing`
+                                                    )}
+                                                />
+
+                                                <label
+                                                    className="
+                                                        text-sm
+                                                        text-gray-600
+                                                    "
+                                                >
+                                                    Still Pursuing
+                                                </label>
+                                            </div>
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.graduationYear && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].graduationYear
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            CGPA
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                CGPA
+                                            </label>
+
+                                            <input
+                                                {...register(
+                                                    `education.${index}.cgpa`
+                                                )}
+                                                placeholder="CGPA"
+                                                className={`
+                                                    w-full
+                                                    border
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                    ${errors.education?.[
+                                                        index
+                                                    ]?.cgpa
+                                                        ? "border-red-500"
+                                                        : "border-gray-300"
+                                                    }
+                                                `}
+                                            />
+
+                                            {errors.education?.[
+                                                index
+                                            ]?.cgpa && (
+                                                    <p
+                                                        className="
+                                                        text-sm
+                                                        text-red-500
+                                                        mt-1
+                                                    "
+                                                    >
+                                                        {
+                                                            errors
+                                                                .education[
+                                                                index
+                                                            ].cgpa
+                                                                .message
+                                                        }
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        {/* =====================
+                                            ROLL NUMBER
+                                        ====================== */}
+
+                                        <div>
+                                            <label
+                                                className="
+                                                    font-medium
+                                                    text-sm
+                                                    text-gray-700
+                                                    mb-1
+                                                    block
+                                                "
+                                            >
+                                                Roll Number
+                                                (Optional)
+                                            </label>
+
+                                            <input
+                                                {...register(
+                                                    `education.${index}.rollNumber`
+                                                )}
+                                                placeholder="
+                                                    Roll Number
+                                                "
+                                                className="
+                                                    w-full
+                                                    border
+                                                    border-gray-300
+                                                    rounded-lg
+                                                    p-2
+                                                    outline-none
+                                                "
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )
                         )}
+
+                        {/* EDUCATION ERROR */}
+
+                        {typeof errors.education?.message ===
+                            "string" && (
+                                <p
+                                    className="
+                                    text-sm
+                                    text-red-500
+                                    mb-3
+                                "
+                                >
+                                    {
+                                        errors.education
+                                            .message
+                                    }
+                                </p>
+                            )}
                     </div>
 
-                    {/* CGPA */}
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">CGPA</label>
-                        <input {...register("cgpa")}
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.cgpa ? "border-red-500" : "border-gray-300"
-                                }`}
-                            placeholder="CGPA"
-                        />
-                        {errors.cgpa && <p className="text-sm text-red-500 mt-1">{errors.cgpa.message}</p>}
-                    </div>
+                    {/* ==========================================
+                        SKILLS
+                    =========================================== */}
 
-                    {/* Roll Number */}
-                    <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Roll Number (Optional)</label>
-                        <input {...register("rollNumber")}
-                            className={`w-full border rounded-lg p-2 outline-none ${errors.rollNumber ? "border-red-500" : "border-gray-300"
-                                }`}
-                            placeholder="Roll Number"
-                        />
-                        {errors.rollNumber && <p className="text-sm text-red-500 mt-1">{errors.rollNumber.message}</p>}
-                    </div>
-
-                    {/* Skills */}
-                    <div className="col-span-2  md:col-span-2 space-y-1.5">
-                        <label className="block text-sm font-medium text-gray-700">
+                    <div
+                        className="
+                            col-span-2
+                            md:col-span-3
+                            space-y-1.5
+                        "
+                    >
+                        <label
+                            className="
+                                block
+                                text-sm
+                                font-medium
+                                text-gray-700
+                            "
+                        >
                             Skills
                         </label>
 
-                        <div className="flex gap-2 max-w-md">
+                        <div
+                            className="
+                                flex
+                                gap-2
+                                max-w-md
+                            "
+                        >
                             <input
-                                placeholder="Type skill (e.g. React) and click '+'"
-                                value={skillInput}
-                                onChange={(e) => setSkillInput(e.target.value)}
-                                onKeyDown={handleSkillKeyDown}
-                                className="flex-1 border border-gray-300 rounded-lg p-2 outline-none text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                placeholder="
+                                    Type skill (e.g. React)
+                                "
+                                value={
+                                    skillInput
+                                }
+                                onChange={(e) =>
+                                    setSkillInput(
+                                        e.target.value
+                                    )
+                                }
+                                onKeyDown={
+                                    handleSkillKeyDown
+                                }
+                                className="
+                                    flex-1
+                                    border
+                                    border-gray-300
+                                    rounded-lg
+                                    p-2
+                                    outline-none
+                                    text-sm
+                                    focus:border-blue-500
+                                    focus:ring-2
+                                    focus:ring-blue-100
+                                "
                             />
+
                             <button
                                 type="button"
-                                onClick={addSkill}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all active:scale-95 cursor-pointer shadow-sm"
+                                onClick={
+                                    addSkill
+                                }
+                                className="
+                                    px-4
+                                    py-2
+                                    bg-blue-600
+                                    text-white
+                                    rounded-lg
+                                    font-bold
+                                    hover:bg-blue-700
+                                "
                             >
                                 +
                             </button>
                         </div>
-                        {errors.skills && <p className="text-sm text-red-500 mt-1">{errors.skills.message}</p>}
-                        <div className="flex gap-2 mb-2 flex-wrap">
-                            {skills.map((s) => (
-                                <span key={s} className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold border border-blue-200 shadow-sm animate-fade-in">
-                                    {s}
-                                    <button
-                                        type="button"
-                                        onClick={() => removeSkill(s)}
-                                        className="hover:text-red-500 font-bold cursor-pointer transition-colors"
+
+                        {errors.skills && (
+                            <p
+                                className="
+                                    text-sm
+                                    text-red-500
+                                    mt-1
+                                "
+                            >
+                                {
+                                    errors.skills
+                                        .message
+                                }
+                            </p>
+                        )}
+
+                        {/* SKILL TAGS */}
+
+                        <div
+                            className="
+                                flex
+                                gap-2
+                                mb-2
+                                flex-wrap
+                            "
+                        >
+                            {skills.map(
+                                (skill) => (
+                                    <span
+                                        key={
+                                            skill
+                                        }
+                                        className="
+                                            flex
+                                            items-center
+                                            gap-1.5
+                                            px-3
+                                            py-1
+                                            bg-blue-50
+                                            text-blue-700
+                                            rounded-full
+                                            text-xs
+                                            font-semibold
+                                            border
+                                            border-blue-200
+                                        "
                                     >
-                                        ✕
-                                    </button>
-                                </span>
-                            ))}
+                                        {skill}
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                removeSkill(
+                                                    skill
+                                                )
+                                            }
+                                            className="
+                                                hover:text-red-500
+                                                font-bold
+                                                cursor-pointer
+                                            "
+                                        >
+                                            ✕
+                                        </button>
+                                    </span>
+                                )
+                            )}
                         </div>
                     </div>
 
+                    {/* ==========================================
+                        BUTTONS
+                    =========================================== */}
 
+                    <div
+                        className="
+                            col-span-2
+                            md:col-span-3
+                            flex
+                            justify-end
+                            gap-4
+                            pt-4
+                        "
+                    >
+                        <button
+                            type="button"
+                            onClick={
+                                onClose
+                            }
+                            className="
+                                px-4
+                                py-2
+                                border
+                                border-gray-300
+                                text-gray-600
+                                rounded-lg
+                                hover:bg-gray-100
+                            "
+                        >
+                            Cancel
+                        </button>
 
-
-                    {/* Buttons */}
-                    <div className="col-span-3 flex justify-end gap-4 pt-4">
                         <button
                             type="submit"
-                            className="px-4 cursor-pointer py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            disabled={
+                                isVendorAdding
+                            }
+                            className="
+                                px-4
+                                py-2
+                                bg-blue-600
+                                text-white
+                                rounded-lg
+                                hover:bg-blue-700
+                                disabled:opacity-50
+                            "
                         >
-                            {isVendorAdding ? 'Saving...' : 'Save User'}
+                            {isVendorAdding
+                                ? "Saving..."
+                                : "Save User"}
                         </button>
                     </div>
                 </form>
@@ -564,5 +1999,3 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         </motion.div>
     );
 }
-
-

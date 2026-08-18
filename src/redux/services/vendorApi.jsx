@@ -374,22 +374,24 @@ export const vendorApi = api.injectEndpoints({
       })
     }),
     getDegreeCampusDetails: builder.query({
-      query: (id) => ({
+      query: (level = "UG") => ({
         url: `/campus/degrees`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+        params: { level },
+        // headers: {
+        //   Authorization: `Bearer ${localStorage.getItem('token')}`
+        // },
+      }),
     }),
     getDepartmentCampusDetails: builder.query({
-      query: () => ({
+      query: (degreeId) => ({
         url: `/campus/departments`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+        params: { degree_id: degreeId },
+        // headers: {
+        //   Authorization: `Bearer ${localStorage.getItem('token')}`
+        // },
+      }),
     }),
     getAddonCredits: builder.query({
       query: () => ({
@@ -413,13 +415,14 @@ export const vendorApi = api.injectEndpoints({
     }),
 
     getSpecializationCampusDetails: builder.query({
-      query: () => ({
+      query: (departmentId) => ({
         url: `/campus/specializations`,
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+        params: departmentId ? { department_id: departmentId } : {},
+        // headers: {
+        //   Authorization: `Bearer ${localStorage.getItem('token')}`
+        // },
+      }),
     }),
     getCandidateById: builder.query({
       query: (candidateId) => ({
@@ -465,7 +468,7 @@ export const vendorApi = api.injectEndpoints({
   }),
 });
 
-export const { useAddonCreditsCheckoutMutation, useChangePasswordMutation, useGetAddonCreditsQuery, useListofSubscriptionQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery, useGetDegreeCampusDetailsQuery, useViewSubVendorDetailsQuery, useAssignSubVendorSubscriptionMutation, useGetAllUserByVendorQuery, useAddVendorMutation, useListofSubVendorQuery,
+export const { useAddonCreditsCheckoutMutation, useChangePasswordMutation, useGetAddonCreditsQuery, useListofSubscriptionQuery, useGetDepartmentCampusDetailsQuery, useLazyGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery, useGetDegreeCampusDetailsQuery, useLazyGetDegreeCampusDetailsQuery, useViewSubVendorDetailsQuery, useAssignSubVendorSubscriptionMutation, useGetAllUserByVendorQuery, useAddVendorMutation, useListofSubVendorQuery,
   useSendTestLinkToUserMutation, useImportVendorMutation, useRegisterSubVendorMutation, useActiveDeactiveSubVendorMutation,
   useGetVendorProfileQuery, useUpdateVendorProfileMutation, useAddCompanyProfileMutation, useDeleteCandidateByCandidateIdMutation,
   useUpdateCompanyProfileMutation, useAddBranchDetailsMutation, useDeleteBranchDetailsMutation,
