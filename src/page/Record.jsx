@@ -1253,9 +1253,9 @@ export default function RecordInterviewPage() {
     }
   };
 
-//   s1 = "ab", s2 = "eidbaooo"
-// Output: true
-// Explanation: s2 contains one permutation of s1 ("ba").
+  //   s1 = "ab", s2 = "eidbaooo"
+  // Output: true
+  // Explanation: s2 contains one permutation of s1 ("ba").
 
   const startRecordingFlow = async () => {
     try {
@@ -1282,8 +1282,8 @@ export default function RecordInterviewPage() {
     }
   };
 
-  function recognition(s1,s2){
-    
+  function recognition(s1, s2) {
+
   }
 
 
@@ -1334,14 +1334,13 @@ export default function RecordInterviewPage() {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("candidate_session", candidateId)
     // debugger;
     try {
       const result = await uploadTest(formData);
-      // debugger;
+      debugger;
       // console.log("result from api", result);
       if (result?.data) {
-        toast.success(result?.data?.message??"file uploaded successfully..")
+        toast.success(result?.data?.message ?? "file uploaded successfully..")
         setTimeout(() => {
           navigate('/test-success');
         }, 1500)

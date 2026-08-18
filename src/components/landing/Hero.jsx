@@ -75,7 +75,7 @@
 
 // //     return () => clearTimeout(timeout);
 // //   }, [displayed, deleting, phraseIndex]);
- 
+
 
 // //   return (
 // //     <section className="relative px-8 py-10 overflow-hidden bg-linear-to-br from-[#F0F7FF] via-[#EBF4FD] to-[#F7FBFF]">
@@ -1214,14 +1214,7 @@ export default function HeroSection() {
 
   const [mode, setMode] = useState("campus");
 
-  // Auto-toggle between modes every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMode(prevMode => prevMode === "campus" ? "student" : "campus");
-    }, 5000); // 5 seconds interval
 
-    return () => clearInterval(interval); 
-  }, []);
 
   const theme = THEMES[mode];
 
@@ -1296,12 +1289,12 @@ export default function HeroSection() {
             {/* Eyebrow */}
             <div
 
-              // className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 self-start border transition-all duration-300"
+            // className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 self-start border transition-all duration-300"
 
-              // style={{ background: theme.primaryLight, borderColor: theme.primaryBorder }}
+            // style={{ background: theme.primaryLight, borderColor: theme.primaryBorder }}
             >
-              
-                       <ModeToggle mode={mode} onChange={setMode} />
+
+              <ModeToggle mode={mode} onChange={setMode} />
 
             </div>
 
@@ -1318,7 +1311,7 @@ export default function HeroSection() {
                 <span
 
                   style={{
-                    
+
 
                     color: `${theme.gradFrom}`,
 
@@ -1347,7 +1340,7 @@ export default function HeroSection() {
                 <button
 
                   key={i}
-                  
+
                   className="px-5 py-2.5 rounded-xl text-[13px] font-semibold cursor-pointer font-[inherit] transition-all duration-200 hover:-translate-y-0.5"
 
                   style={{

@@ -18,6 +18,7 @@ export const userApi = api.injectEndpoints({
         url: '/candidate/verify_otp',
         method: 'POST',
         body: data,
+        credentials: "include"
       }),
     }),
     cookiesGenerate: builder.query({

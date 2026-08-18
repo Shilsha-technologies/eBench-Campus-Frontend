@@ -434,9 +434,11 @@ export default function ProfilePage() {
         }
 
         const form = new FormData();
-        form.append("candidate_id", candidate_id);
+        form.append("token", cookieData?.test_token);
         form.append("otp", otp);
 
+        console.log("cookieData - ", cookieData)
+        debugger;
         try {
             const res = await verifyOtp(form).unwrap();
 
@@ -455,14 +457,14 @@ export default function ProfilePage() {
         }
     };
 
-    const candidate_id =9549504950
+    const candidate_id = 9549504950
 
     // 📦 Fetch data ONLY AFTER verification
     useEffect(() => {
         if (!cookieData?.verified) return;
 
         fetchCandidate({
-            id: candidate_id??854985948,
+            id: candidate_id ?? 854985948,
             token: t
         });
     }, [cookieData?.verified, candidate_id, token]);
@@ -474,21 +476,27 @@ export default function ProfilePage() {
 
         // Show loader while processing navigation
         setBeginLoader(true);
-        const res=await beginTest().unwrap()
-        // debugger;
+        try {
+            const res = await beginTest().unwrap()
+            // debugger;
 
-        if (candidateData?.level_id == "LEVEL_001") {
-            setTimeout(() => {
-                navigate("/record", { state: { data: token } })
-                setBeginLoader(false)
-            }, 2000)
+            if (res?.level_id == "LEVEL_001") {
+                setTimeout(() => {
+                    navigate("/record", { state: { data: token } })
+                    setBeginLoader(false)
+                }, 2000)
+            }
+            if (res?.level_id == "LEVEL_002") {
+                setTimeout(() => {
+                    navigate("/code-test");
+                    setBeginLoader(false)
+                }, 2000)
+            }
         }
-        if (candidateData?.level_id == "LEVEL_002") {
-            setTimeout(() => {
-                navigate("/code-test");
-                setBeginLoader(false)
-            }, 2000)
+        catch (err) {
+            toast.error("somethinf went wrong")
         }
+
     }
 
     // ⏳ Loader
