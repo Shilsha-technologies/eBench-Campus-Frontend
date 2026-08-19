@@ -254,9 +254,9 @@ export default function DashboardPage() {
 
   const { data, isLoading, isError } = useVendorDashboardApiQuery();
 
-  const { vendor, branches, credits_summary, candidates_summary, recent_candidates, recent_activity, dashboard_stats } = data || {};
+  const { vendor, address, branches, credits_summary, candidates_summary, recent_candidates, recent_activity, dashboard_stats } = data || {};
 
-  console.log("ddlj", data)
+  console.log("ddlj", vendor)
 
   // If no data is available, show no data message
   if (!data || (!vendor && !dashboard_stats)) {
@@ -306,7 +306,7 @@ export default function DashboardPage() {
             <p className="text-sm text-indigo-100 mt-1">Manage placements, candidates, and hiring activities easily</p>
             <div className="flex flex-wrap gap-4 mt-4 text-sm text-indigo-100">
               <span>🏫 {`${vendor?.name}`}</span>
-              <span>📍 Noida, Uttar Pradesh</span>
+              <span>📍 {`${address?.address}`}</span>
               <span>📧 {`${vendor?.email}`}</span>
             </div>
           </div>
@@ -335,7 +335,13 @@ export default function DashboardPage() {
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
           <div className="text-sm text-gray-500 mb-1">Active Candidates</div>
           <div className="text-2xl font-bold text-gray-900">{activeCandidates}</div>
-          <ProgressBar value={Math.round((activeCandidates / totalCandidates) * 100)} showLabel={false} color="indigo" />
+          <ProgressBar
+            value={Number.isFinite(Math.round((activeCandidates / totalCandidates) * 100))
+              ? Math.round((activeCandidates / totalCandidates) * 100)
+              : 0}
+            showLabel={false}
+            color="indigo"
+          />
           <div className="text-xs text-gray-400 mt-1">{Math.round((activeCandidates / totalCandidates) * 100)}% of total</div>
         </div>
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">

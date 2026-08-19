@@ -551,7 +551,7 @@ export function ProgressBar({ value, label, color = "indigo", showLabel = true }
       {showLabel && (
         <div className="flex justify-between text-sm mb-1">
           <span className="text-gray-600">{label}</span>
-          <span className="font-semibold text-gray-800">{value}%</span>
+          <span className="font-semibold text-gray-800">{Number.isFinite(Number(value)) ? Number(value) : 0}%</span>
         </div>
       )}
       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
