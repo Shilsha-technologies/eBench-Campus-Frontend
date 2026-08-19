@@ -117,10 +117,10 @@ export default function CandidateDetailsPage() {
                   {candidate?.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>
-              <button onClick={() => setParentModalOpen(true)} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+              {/* <button onClick={() => setParentModalOpen(true)} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
                 Add Parent Details
               </button>
-              <ParentModal isOpen={isParentModalOpen} onClose={() => setParentModalOpen(false)} />
+              <ParentModal isOpen={isParentModalOpen} onClose={() => setParentModalOpen(false)} /> */}
 
             </div>
 

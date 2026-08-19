@@ -444,19 +444,19 @@
 
 //                         <div>
 //                             <label className="text-sm">Mobile <span className=" text-red-500">*</span>  </label>
-                            // <PhoneInput
-                            //     country="in"
-                            //     disabled={!personalEdit}
-                            //     value={tempVendor.phone}
-                            //     inputStyle={{ width: "100%" }}
-                            //     onChange={(val) =>
-                            //         setTempVendor((p) => ({ ...p, phone: val }))
-                            //     }
-                            //     inputProps={{
-                            //         required: true,
-                            //         name: "phone",
-                            //     }}
-                            // />
+// <PhoneInput
+//     country="in"
+//     disabled={!personalEdit}
+//     value={tempVendor.phone}
+//     inputStyle={{ width: "100%" }}
+//     onChange={(val) =>
+//         setTempVendor((p) => ({ ...p, phone: val }))
+//     }
+//     inputProps={{
+//         required: true,
+//         name: "phone",
+//     }}
+// />
 //                         </div>
 
 //                         <Input
@@ -1430,7 +1430,7 @@ export default function ProfilePage() {
       // Get state name from code for submission
       const selectedStateObj = states.find(state => state.iso2 === selectedState);
       const stateName = selectedStateObj ? selectedStateObj.name : '';
-      
+
       // Prepare form data with proper state and city names
       const submissionData = {
         ...formdata,
@@ -1482,8 +1482,8 @@ export default function ProfilePage() {
       {/* ── Progress Card ── */}
       <div
         className={`rounded-2xl p-5 border ${previewCompletion === 100
-            ? "bg-emerald-50 border-emerald-200"
-            : "bg-white border-gray-100 shadow-sm"
+          ? "bg-emerald-50 border-emerald-200"
+          : "bg-white border-gray-100 shadow-sm"
           }`}
       >
         <div className="flex items-center gap-4 mb-3">
@@ -1523,8 +1523,8 @@ export default function ProfilePage() {
             <h3 className="font-semibold text-gray-900">Campus Information</h3>
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-full ${isEditing
-                  ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
-                  : "bg-gray-100 text-gray-500 border border-gray-200"
+                ? "bg-indigo-50 text-indigo-600 border border-indigo-200"
+                : "bg-gray-100 text-gray-500 border border-gray-200"
                 }`}
             >
               {isEditing ? "" : ""}
@@ -1694,6 +1694,7 @@ export default function ProfilePage() {
               label="Pincode"
               placeholder="500001"
               disable={!isEditing}
+              required={true}
               error={errors.pincode}
               {...register("pincode", {
                 pattern: { value: /^[0-9]{4,10}$/, message: "Enter a valid pincode" },
@@ -1701,7 +1702,7 @@ export default function ProfilePage() {
             />
 
             {/* Total Students */}
-            <Input
+            {/* <Input
               label="Total Students"
               placeholder="2500"
               type="number"
@@ -1710,7 +1711,7 @@ export default function ProfilePage() {
               {...register("totalStudents", {
                 min: { value: 1, message: "Must be at least 1" },
               })}
-            />
+            /> */}
 
             {/* Contact Email — always locked */}
             <Input
@@ -1748,7 +1749,7 @@ export default function ProfilePage() {
                     inputStyle={{ width: "100%" }}
                     onChange={(val, countryData) => {
                       // Extract local number without country code
-                      const localNumber = val.startsWith(countryData.dialCode) 
+                      const localNumber = val.startsWith(countryData.dialCode)
                         ? val.substring(countryData.dialCode.length)
                         : val;
                       field.onChange(localNumber);
@@ -1774,6 +1775,7 @@ export default function ProfilePage() {
               label="Website"
               placeholder="https://college.edu"
               disable={!isEditing}
+              required={true}
               error={errors.website}
               {...register("website", {
                 pattern: {

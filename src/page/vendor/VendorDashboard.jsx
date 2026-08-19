@@ -245,21 +245,21 @@ export default function DashboardPage() {
   // const { candidates,  } = useApp();
   const navigate = useNavigate();
 
-   const { getProfileCompleteness, canAccessManagement } = useAuth();
-    let profileCompletion = getProfileCompleteness()
-    // debugger;
-  if(profileCompletion<100){
+  const { getProfileCompleteness, canAccessManagement } = useAuth();
+  let profileCompletion = getProfileCompleteness()
+  // debugger;
+  if (profileCompletion < 100) {
     return navigate('/vendor/profile')
   }
 
   const { data, isLoading, isError } = useVendorDashboardApiQuery();
 
-  const { vendor, branches, credits_summary, candidates_summary, recent_candidates,recent_activity, dashboard_stats } = data || {};
+  const { vendor, branches, credits_summary, candidates_summary, recent_candidates, recent_activity, dashboard_stats } = data || {};
 
   console.log("ddlj", data)
 
   // If no data is available, show no data message
-  if (!data || (!vendor && !dashboard_stats)) { 
+  if (!data || (!vendor && !dashboard_stats)) {
     return (
       <div className="p-4 lg:p-3">
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
@@ -272,20 +272,20 @@ export default function DashboardPage() {
       </div>
     );
   }
-  const totalCandidates = dashboard_stats?.total_candidates??0;
-  const testsSent = dashboard_stats?.tests_sent??0;
-  const testsCompleted = dashboard_stats?.tests_completed??0;
-  const activeCandidates = dashboard_stats?.active_candidates??0;
-  const avgScore = dashboard_stats?.average_score??0;
-  const passRate = dashboard_stats?.pass_rate??0;
+  const totalCandidates = dashboard_stats?.total_candidates ?? 0;
+  const testsSent = dashboard_stats?.tests_sent ?? 0;
+  const testsCompleted = dashboard_stats?.tests_completed ?? 0;
+  const activeCandidates = dashboard_stats?.active_candidates ?? 0;
+  const avgScore = dashboard_stats?.average_score ?? 0;
+  const passRate = dashboard_stats?.pass_rate ?? 0;
 
-  const activityIcons = { 
-  test: "", 
-  candidate: "", 
-  result: "", 
-  credit: "",
-  credits_purchased: "" 
-};
+  const activityIcons = {
+    test: "",
+    candidate: "",
+    result: "",
+    credit: "",
+    credits_purchased: ""
+  };
 
   // const RECENT_ACTIVITY = [
   //   { id: 1, text: "Test link sent to Arjun Sharma", time: "2 hours ago", type: "test" },
@@ -294,7 +294,7 @@ export default function DashboardPage() {
   //   { id: 5, text: "50 credits purchased (Professional plan)", time: "2 days ago", type: "credit" },
   // ];
 
-  const RECENT_ACTIVITY=recent_activity??[]
+  const RECENT_ACTIVITY = recent_activity ?? []
 
   return (
     <div className="p-4 lg:p-3 space-y-6">
@@ -311,9 +311,9 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex gap-6">
-            <div className="text-center"><p className="text-xl font-bold">{candidates_summary?.total_candidates??0}</p><p className="text-xs text-indigo-100">Candidates</p></div>
-            <div className="text-center"><p className="text-xl font-bold">{dashboard_stats?.tests_completed??0}</p><p className="text-xs text-indigo-100">Completed</p></div>
-            <div className="text-center"><p className="text-xl font-bold">{data?.credits??0}</p><p className="text-xs text-indigo-100">Credits</p></div>
+            <div className="text-center"><p className="text-xl font-bold">{candidates_summary?.total_candidates ?? 0}</p><p className="text-xs text-indigo-100">Candidates</p></div>
+            <div className="text-center"><p className="text-xl font-bold">{dashboard_stats?.tests_completed ?? 0}</p><p className="text-xs text-indigo-100">Completed</p></div>
+            <div className="text-center"><p className="text-xl font-bold">{data?.credits ?? 0}</p><p className="text-xs text-indigo-100">Credits</p></div>
           </div>
         </div>
       </div>
@@ -396,9 +396,29 @@ export default function DashboardPage() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <h3 className="font-semibold text-gray-900 mb-3">Test Completion Rate</h3>
             <div className="space-y-3">
-              <ProgressBar label="Tests Sent" value={Math.round((testsSent / totalCandidates) * 100)} color="indigo" />
-              <ProgressBar label="Tests Completed" value={Math.round((testsCompleted / totalCandidates) * 100)} color="emerald" />
-              <ProgressBar label="Pending Tests" value={Math.round(((testsSent - testsCompleted) / totalCandidates) * 100)} color="amber" />
+              <ProgressBar label="Tests Sent" value={totalCandidates > 0 && Number.isFinite(testsSent)
+                ? Math.round((testsSent / totalCandidates) * 100)
+                : 0} color="indigo" />
+              <ProgressBar
+                label="Tests Completed"
+                value={
+                  totalCandidates > 0 && Number.isFinite(testsCompleted)
+                    ? Math.round((testsCompleted / totalCandidates) * 100)
+                    : 0
+                }
+                color="emerald"
+              />
+
+              <ProgressBar
+                label="Pending Tests"
+                value={
+                  totalCandidates > 0 && Number.isFinite(testsSent - testsCompleted)
+                    ? Math.round(((testsSent - testsCompleted) / totalCandidates) * 100)
+                    : 0
+                }
+                color="amber"
+              />
+
             </div>
           </div>
         </div>
