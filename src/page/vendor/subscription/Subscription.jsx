@@ -29,6 +29,7 @@ const VendorSubscriptionPage = () => {
 
             const result = await checkoutPage(formdata)
             // console.log("res", result)
+            debugger;
             if (result?.data?.checkout_url) {
                 window.location.href = result?.data?.checkout_url;
                 return;
@@ -484,7 +485,7 @@ import { Tag } from "lucide-react"
 
 function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
 
-    const { data, isLoading, isError ,error} = useGetAddonCreditsQuery(undefined, {
+    const { data, isLoading, isError, error } = useGetAddonCreditsQuery(undefined, {
         skip: !isOpen,
     })
 
@@ -548,7 +549,7 @@ function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
                 {/* Error */}
                 {isError && (
                     <p className="text-center text-sm text-red-500 py-6">
-                        {error?.data?.detail??"Failed to load addon credits. Please try again."}
+                        {error?.data?.detail ?? "Failed to load addon credits. Please try again."}
                     </p>
                 )}
 

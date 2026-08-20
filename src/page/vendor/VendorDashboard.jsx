@@ -342,8 +342,11 @@ export default function DashboardPage() {
             showLabel={false}
             color="indigo"
           />
-          <div className="text-xs text-gray-400 mt-1">{Math.round((activeCandidates / totalCandidates) * 100)}% of total</div>
-        </div>
+          <div className="text-xs text-gray-400 mt-1">
+            {Number.isFinite(activeCandidates / totalCandidates)
+              ? `${Math.round((activeCandidates / totalCandidates) * 100)}% of total`
+              : '0% of total'}
+          </div>        </div>
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
           <div className="text-sm text-gray-500 mb-1">Average Score</div>
           <div className="text-2xl font-bold text-gray-900">{avgScore || "—"}</div>
