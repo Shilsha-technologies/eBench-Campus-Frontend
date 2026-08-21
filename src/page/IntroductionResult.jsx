@@ -97,8 +97,8 @@ function ScoreRing({ value, max = 100, size = 84 }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`text-lg font-bold ${c.text}`}>{value}</span>
-        <span className="text-[10px] text-slate-400 font-medium">/{max}</span>
+        <span className={`text-sm font-bold ${c.text}`}>{value}</span>
+        {/* <span className="text-[10px] text-slate-400 font-medium">/{max}</span> */}
       </div>
     </div>
   );
@@ -118,11 +118,11 @@ function ScoreBar({ label, value, max, correct, icon }) {
           <span className="text-sm font-medium text-slate-700">{label}</span>
           <span className={`text-sm font-semibold ${c.text}`}>
             {value}/{max}
-            {correct !== undefined && (
+            {/* {correct !== undefined && (
               <span className="ml-1 text-xs font-normal text-slate-400">
                 ({correct} correct)
               </span>
-            )}
+            )} */}
           </span>
         </div>
         <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
@@ -177,7 +177,7 @@ function CommunicationCard({ level }) {
         </div>
       </div>
 
-      <button
+      {/* <button
         onClick={() => setShowTranscript((v) => !v)}
         className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors"
       >
@@ -190,13 +190,15 @@ function CommunicationCard({ level }) {
         <p className="mt-2 rounded-lg bg-slate-50 p-3 text-xs leading-relaxed text-slate-500 italic">
           "{level.transcript}"
         </p>
-      )}
+      )} */}
     </div>
   );
 }
 
 // ---------------- Level 2: Technical ----------------
 function TechnicalCard({ level }) {
+  // console.log("level---card", level)
+  // debugger;
   const d = level.details;
   const c = scoreColor(level.score * 10); // small denom score, scale roughly for badge tone
   // debugger;
@@ -219,7 +221,7 @@ function TechnicalCard({ level }) {
       </div>
 
       <div className="flex items-center gap-5 mb-5">
-        <ScoreRing value={d.total_score} max={20} size={72} />
+        <ScoreRing value={d?.overall_score_percentage} size={72} />
         <div className="flex-1 grid grid-cols-2 gap-2 text-xs">
           <div>
             <p className="text-slate-400">Test type</p>

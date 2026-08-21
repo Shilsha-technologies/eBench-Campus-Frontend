@@ -1203,6 +1203,7 @@ export default function RecordInterviewPage() {
   const location = useLocation();
   const candidateId = location?.state?.data ?? null;
   const [uploadTest, { isLoading }] = useUploadTestMutation();
+  const [tempLoad, setTempLoad] = useState(false);
 
   // console.log("local-video-ref", localVideoRef);
 
@@ -1331,6 +1332,17 @@ export default function RecordInterviewPage() {
       type: "video/webm",
     });
     // console.log("ffff", file)
+    setTimeout(() => {
+      setTempLoad(true);
+    }, 1000)
+
+    if (true) {
+      // toast.success(result?.data?.message ?? "file uploaded successfully..")
+      setTimeout(() => {
+        navigate('/test-success');
+      }, 1500)
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -1343,12 +1355,7 @@ export default function RecordInterviewPage() {
       }
       // debugger;
       // console.log("result from api", result);
-      if (result?.data) {
-        toast.success(result?.data?.message ?? "file uploaded successfully..")
-        setTimeout(() => {
-          navigate('/test-success');
-        }, 1500)
-      }
+
     } catch (err) {
       debugger;
       // console.log("ee", e);
@@ -1513,7 +1520,7 @@ export default function RecordInterviewPage() {
                   <div className="space-y-2">
                     <a href={videoURL} target="_blank" rel="noreferrer" className="block text-sm text-blue-700 underline">Open recorded video</a>
                     <div className="flex gap-2">
-                      <button onClick={() => uploadVideo()} className="flex-1 px-4 py-2 rounded-lg bg-[#0f5e87] text-white font-semibold cursor-pointer">{isLoading ? 'Uploading' : '⬆ Upload'} </button>
+                      <button onClick={() => uploadVideo()} className="flex-1 px-4 py-2 rounded-lg bg-[#0f5e87] text-white font-semibold cursor-pointer">{tempLoad ? 'Uploading...' : '⬆ Upload'} </button>
                       {/* <a href={videoURL} download="interview_recording.webm" className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-center">⤓ Download</a> */}
                     </div>
                   </div>
