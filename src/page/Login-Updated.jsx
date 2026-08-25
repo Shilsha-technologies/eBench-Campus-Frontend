@@ -376,6 +376,7 @@ export default function CreateAccount() {
               {/* ── Email ── */}
               <div style={{ marginBottom: 18 }}>
                 <label
+                  htmlFor="email"
                   style={{
                     fontSize: 13,
                     fontWeight: 600,
@@ -453,6 +454,7 @@ export default function CreateAccount() {
                 >
                   <label
                     style={{ fontSize: 13, fontWeight: 600, color: "#3A5068" }}
+                    htmlFor="password"
                   >
                     Password
                   </label>
