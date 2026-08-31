@@ -642,7 +642,7 @@
 //                         </div>
 //                     </div>
 
-                    
+
 //                     <p className="text-sm text-[#94B8D8] leading-relaxed mb-6">
 
 //                         Join eBench and expand your opportunities by connecting with global clients,
@@ -999,7 +999,7 @@ function SignupPage({ nav }) {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    },[])
+    }, [])
 
     const {
 
@@ -1150,7 +1150,7 @@ function SignupPage({ nav }) {
                         </div>
                     </div>
 
-                    
+
                     <p className="text-sm text-[#94B8D8] leading-relaxed mb-6">
 
                         Join eBench and expand your opportunities by connecting with global clients,
@@ -1182,16 +1182,16 @@ function SignupPage({ nav }) {
                     ))}
 
                     <div className="mt-auto pt-8">
-  <p className="text-sm text-[#94B8D8] opacity-80">
-    Already registered?{" "}
-    <Link
-      to="/login"
-      className="text-white font-semibold hover:underline"
-    >
-      Login here
-    </Link>
-  </p>
-</div>
+                        <p className="text-sm text-[#94B8D8] opacity-80">
+                            Already registered?{" "}
+                            <Link
+                                to="/login"
+                                className="text-white font-semibold hover:underline"
+                            >
+                                Login here
+                            </Link>
+                        </p>
+                    </div>
                 </div>
 
                 {/* ── Right Panel ── */}
@@ -1320,30 +1320,61 @@ function SignupPage({ nav }) {
                             )}
                         </FormField>
 
-                        {/* Name */}
-                        <FormField label={watchedModule === "campus" ? "Campus Name" : "Student Name"}>
-                            <input
+                        {/* Campus / Student Name */}
+                        <FormField
+                            label={watchedModule === "campus" ? "Campus Name" : "Student Name"}
+                        >
+                            <div>
+                                <input
+                                    type="text"
+                                    maxLength={100}
+                                    placeholder={`Enter your ${watchedModule === "campus" ? "campus" : "student"
+                                        } name`}
+                                    className={`${inputClass} ${errors.name
+                                        ? "border-red-400 focus:ring-red-100"
+                                        : ""
+                                        }`}
+                                    {...register("name", {
+                                        required: "Name is required",
 
-                                type="text"
+                                        validate: {
+                                            notWhitespace: (value) =>
+                                                value.trim().length > 0 ||
+                                                "Name cannot be blank or whitespace only",
 
-                                placeholder={`Enter your ${watchedModule === "campus" ? "campus" : "student"} name`}
+                                            validCharacters: (value) =>
+                                                /^[A-Za-z &'().-]+$/.test(value.trim()) &&
+                                                (value.match(/\(/g)?.length || 0) === (value.match(/\)/g)?.length || 0) ||
+                                                "Name contains invalid special characters",
 
-                                className={`${inputClass} ${errors.name ? "border-red-400 focus:ring-red-100" : ""}`}
+                                            minLengthCheck: (value) =>
+                                                value.trim().length >= 2 ||
+                                                "Name must be at least 2 characters",
 
-                                {...register("name", {
+                                            maxLengthCheck: (value) =>
+                                                value.trim().length <= 100 ||
+                                                "Name must not exceed 100 characters",
+                                        },
 
-                                    required: "Name is required",
+                                        setValueAs: (value) => value,
+                                    })}
+                                />
 
-                                    minLength: { value: 2, message: "Name must be at least 2 characters" },
+                                {/* Character counter */}
+                                <div className="mt-1 flex justify-between text-xs text-gray-500">
+                                    <span>
+                                        {errors.name && (
+                                            <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
 
-                                })}
+                                        )}
+                                    </span>
+                                    <span>
+                                        {watch("name")?.length || 0}/100
+                                    </span>
+                                </div>
 
-                            />
 
-                            {errors.name && (
-                                <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-
-                            )}
+                            </div>
                         </FormField>
 
                         {/* Email */}
@@ -1373,11 +1404,11 @@ function SignupPage({ nav }) {
                                 <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
 
                             )}
-                            
+
                             {watchedModule && (
                                 <p className="text-gray-500 text-xs mt-1">
-                                    {watchedModule === "campus" 
-                                        ? "Use your work email (e.g., vishal@company.com)"
+                                    {watchedModule === "campus"
+                                        ? "Use your work email (e.g., work@company.com)"
                                         : "Use your personal email (e.g., personal@gmail.com)"
                                     }
                                 </p>
@@ -1504,19 +1535,18 @@ function SignupPage({ nav }) {
                         </button>
                     </form>
 
-                    <p className="text-xs text-[#94B8D8] text-center leading-relaxed mt-3">
+                    {/* <p className="text-xs text-[#94B8D8] text-center leading-relaxed mt-3">
 
                         By signing up, you agree to our{" "}
                         <span className="text-blue-500 cursor-pointer">Terms</span> and{" "}
                         <span className="text-blue-500 cursor-pointer">Privacy Policy</span>
-                    </p>
+                    </p> */}
                 </div>
             </div>
-        </div>
+        </div >
 
     );
 
 }
 
 export default SignupPage;
-

@@ -29,21 +29,21 @@ function UserSegments({ nav }) {
     },
   ];
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   return (
     <section className="py-24 px-6 bg-linear-to-b from-white to-[#f4f6f8]">
       <SectionHeader
-          title="Built for Everyone in the Ecosystem"
-          sub="From students improving skills to parents tracking growth — everyone benefits."
-        />
+        title="Built for Everyone in the Ecosystem"
+        sub="From students improving skills to parents tracking growth — everyone benefits."
+      />
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
         {/* LEFT SIDE (TEXT + IMAGE) */}
         <div className="space-y-8">
           <div>
             <h2 className="text-xl  text-gray-900 leading-tight mb-6">
-               <span className="text-blue">Empowering Students & Colleges</span>
+              <span className="text-blue">Empowering Students & Colleges</span>
             </h2>
 
             <p className="text-gray-600 text-lg">
@@ -104,7 +104,7 @@ function UserSegments({ nav }) {
               </div>
 
               <button
-                onClick={() => s.title === "Students" ? navigate("/signup") : navigate("vendor-signup")}
+                onClick={() => s.title === "Students" ? navigate("/signup") : navigate("signup")}
                 className={`w-full cursor-pointer py-2 rounded-lg text-white font-medium bg-linear-to-r ${s.color}`}
               >
                 {s.title === "Students" ? "Get Started ->" : "Continue ->"}

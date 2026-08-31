@@ -271,7 +271,7 @@
 
 //=============================================  ============================
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Header from "./Header";
 import { motion } from "framer-motion";
 import {
@@ -399,7 +399,10 @@ const OtpVerification = () => {
     form.append("email", email);
     try {
       const result = await resendOtp(form).unwrap();
-      if (result?.status) toast.success("OTP sent successfully. Check your mail.");
+      if (result?.status) {
+        toast.success("OTP sent successfully. Check your mail.");
+        setResendTimer(60);
+      }
     } catch (err) {
       toast.error(err?.data?.detail ?? "Internal Server Error");
     }
@@ -409,7 +412,10 @@ const OtpVerification = () => {
     if (!email) return toast.error("Email is required...");
     try {
       const result = await adminResendCode({ email }).unwrap();
-      if (result?.status) toast.success("OTP sent successfully. Check your mail.");
+      if (result?.status) {
+        toast.success("OTP sent successfully. Check your mail.");
+        setResendTimer(60);
+      }
     } catch (err) {
       toast.error(err?.data?.detail ?? "Internal Server Error");
     }
@@ -418,7 +424,19 @@ const OtpVerification = () => {
   const isAdmin = location.pathname.includes("admin");
   const isBusy = isVerifying || isResetting || adminverifyLoading;
   const isResendBusy = otpResendLoading || adminLoading;
+  const [resendTimer, setResendTimer] = useState(0);
   const filledCount = otp.filter(Boolean).length;
+
+  // Countdown effect for resend timer
+  useEffect(() => {
+    let timer;
+    if (resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendTimer]);
 
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -526,9 +544,9 @@ const OtpVerification = () => {
             border: "1px solid #E2EDF8",
           }}>
             {/* Logo */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 22 }}>
+            {/* <div style={{ display: "flex", justifyContent: "center", marginBottom: 22 }}>
               <img src={logo} alt="eBench Logo" style={{ width: 130, objectFit: "contain" }} />
-            </div>
+            </div> */}
 
             {/* Shield icon */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
@@ -671,17 +689,17 @@ const OtpVerification = () => {
               Didn't receive the code?{" "}
               <button
                 type="button"
-                disabled={isResendBusy}
+                disabled={isResendBusy || resendTimer > 0}
                 onClick={isAdmin ? adminResendOtpHandler : resendOtpHandler}
                 style={{
-                  background: "none", border: "none", cursor: isResendBusy ? "not-allowed" : "pointer",
+                  background: "none", border: "none", cursor: isResendBusy || resendTimer > 0 ? "default" : "pointer",
                   color: isResendBusy ? "#94B8D8" : "#2B7FFF",
                   fontWeight: 700, fontSize: 14, padding: 0,
                   fontFamily: "inherit",
                   transition: "opacity 0.2s",
                   display: "inline-flex", alignItems: "center", gap: 5,
                 }}
-                onMouseEnter={e => { if (!isResendBusy) e.currentTarget.style.opacity = "0.75"; }}
+                onMouseEnter={e => { if (!isResendBusy && resendTimer === 0) e.currentTarget.style.opacity = "0.75"; }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
               >
                 {isResendBusy ? (
@@ -691,6 +709,8 @@ const OtpVerification = () => {
                     </svg>
                     Sending...
                   </>
+                ) : resendTimer > 0 ? (
+                  <>Resend in {resendTimer}s</>
                 ) : (
                   <>
                     <svg width="13" height="13" fill="none" viewBox="0 0 24 24">

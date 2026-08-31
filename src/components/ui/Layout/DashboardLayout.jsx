@@ -388,11 +388,10 @@ export function Sidebar({ isOpen, onClose }) {
 
 
 function Header({ onMenuToggle }) {
-  // const { profile, authUser } = useApp();
+  // const { profile } = useApp();
 
   let profile = JSON.parse(localStorage.getItem('user'))
-  console.log("popopopo", profile)
-  let authUser = {}
+  // console.log("popopopo", profile)
 
   const navigate = useNavigate();
 
@@ -410,13 +409,25 @@ function Header({ onMenuToggle }) {
         {/* <h1 className="text-base font-semibold text-gray-900 hidden sm:block">Campus Management System</h1> */}
         <div className="hidden sm:block">
           <h1 className="text-sm font-semibold text-gray-900">
-            {getGreeting()}, {profile?.name || authUser?.campusName || "Campus"}
+            {getGreeting()},{' '}
+            <span
+              className="cursor"
+              title={profile?.name || "Campus"}
+            >
+              {profile?.name
+                ? profile.name.length > 15
+                  ? `${profile.name.slice(0, 15)}...`
+                  : profile.name
+                : "Campus"}
+            </span>
+
             {profile?.planName && (
               <span className="ml-2 text-xs font-normal text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
                 {profile.planName} Plan
               </span>
             )}
           </h1>
+
           <p className="text-xs pt- text-gray-400">
             Here’s what’s happening today
           </p>
@@ -432,10 +443,16 @@ function Header({ onMenuToggle }) {
           className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded-xl transition-colors"
         >
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-            {(profile?.campusName || authUser?.campusName || "CA").slice(0, 2).toUpperCase()}
+            {(profile?.campusName || "Campus").slice(0, 2).toUpperCase()}
           </div>
           <div className="hidden sm:block text-left">
-            <div className="text-xs font-semibold text-gray-800">{profile?.name || authUser?.campusName || "Campus Admin"}</div>
+            <div className="text-xs font-semibold text-gray-800">
+              {profile?.name
+                ? profile.name.length > 15
+                  ? `${profile.name.slice(0, 15)}...`
+                  : profile.name
+                : "Campus"}
+            </div>
             <div className="text-xs text-gray-400">
               {profile?.last_login
                 ? `Last login: ${new Date(profile?.last_login).toLocaleString('en-US', {

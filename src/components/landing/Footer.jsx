@@ -1,4 +1,6 @@
 import { Logo } from "./Navbar";
+import { Linkedin, Twitter, Facebook, Youtube } from "lucide-react";
+
 
 function Footer({ nav }) {
   return (
@@ -11,12 +13,17 @@ function Footer({ nav }) {
               AI-powered campus hiring platform connecting students, colleges, and recruiters through skill-based assessments.
             </p>
             <div className="flex gap-2.5 mt-5">
-              {["Li", "Tw", "Fb", "Yt"].map((s) => (
+              {[
+                { name: "LinkedIn", icon: Linkedin },
+                { name: "Twitter", icon: Twitter },
+                { name: "Facebook", icon: Facebook },
+                { name: "YouTube", icon: Youtube },
+              ].map(({ name, icon: Icon }) => (
                 <div
-                  key={s}
-                  className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-xs font-bold text-blue-400 cursor-pointer hover:bg-blue-500/30 transition-colors"
+                  key={name}
+                  className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-blue-400 cursor-pointer hover:bg-blue-500/30 transition-colors"
                 >
-                  {s}
+                  <Icon size={16} strokeWidth={2} />
                 </div>
               ))}
             </div>

@@ -14,33 +14,33 @@ export default function CampusManagement() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("all");
 
-    const [search, setSearch] = useState('')
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const [sign, setSign] = useState(false)
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const debouncedQuery = useDebounce(search, 500);
-    
-    const [aciveInactive, { isLoading: signLoading, isError: signError, isSuccess }] = useActiveInactiveUserMutation({});
+  const [search, setSearch] = useState('')
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [sign, setSign] = useState(false)
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const debouncedQuery = useDebounce(search, 500);
+
+  const [aciveInactive, { isLoading: signLoading, isError: signError, isSuccess }] = useActiveInactiveUserMutation({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedCampus, setSelectedCampus] = useState(null);
-    const {
-      data,
-      error,
-      isLoading,
-      isError,
-    } = useGetAllVendorQuery({ search:debouncedQuery, status:statusFilter, page, limit: pageSize });
+  const {
+    data,
+    error,
+    isLoading,
+    isError,
+  } = useGetAllVendorQuery({ search: debouncedQuery, status: statusFilter, page, limit: pageSize });
 
-    useEffect(() => {
-      setPage(1)
-    },[statusFilter,debouncedQuery])
+  useEffect(() => {
+    setPage(1)
+  }, [statusFilter, debouncedQuery])
 
 
   const filtered = data?.vendors || []
-    // console.log("campus-management", filtered);
+  // console.log("campus-management", filtered);
 
 
-  let total=data?.total??0
+  let total = data?.total ?? 0
   const columns = [
     {
       key: "name",
@@ -51,11 +51,17 @@ export default function CampusManagement() {
             {getInitials(value || 'Unknown')}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="font-semibold text-sm text-[#1e293b] truncate" title={value || 'N/A'}>
-              {value || 'N/A'}
+            <div
+              className="font-semibold text-sm text-[#1e293b] truncate max-w-full"
+              title={value || 'N/A'}
+            >
+              {value && value.length > 15
+                ? `${value.slice(0, 15)}...`
+                : value || 'N/A'}
             </div>
-            {row.established && (
-              <div className="text-xs text-[#64748b]">Est. {row.established}</div>
+
+            {row?.established && (
+              <div className="text-xs text-[#64748b]">Est. {row?.established}</div>
             )}
           </div>
         </div>
@@ -158,24 +164,23 @@ export default function CampusManagement() {
           )}
           <button
             onClick={() => navigate(`/superadmin/campuses/${row.id}`)}
-            className={`p-2 rounded-lg cursor-pointer transition-colors ${
-              row.is_disabled 
-                ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                : 'bg-green-50 text-green-600 hover:bg-green-100'
-            }`}
+            className={`p-2 rounded-lg cursor-pointer transition-colors ${row.is_disabled
+              ? 'bg-red-50 text-red-600 hover:bg-red-100'
+              : 'bg-green-50 text-green-600 hover:bg-green-100'
+              }`}
             title="View campus details"
           >
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
               />
             </svg>
           </button>
@@ -193,9 +198,9 @@ export default function CampusManagement() {
   // Confirm status change
   const confirmStatusChange = async () => {
     if (!selectedCampus) return;
-    const formdata=new FormData()
-    formdata.append('vendor_ids',selectedCampus?.id)
-    formdata.append('is_disabled',!selectedCampus.is_disabled)
+    const formdata = new FormData()
+    formdata.append('vendor_ids', selectedCampus?.id)
+    formdata.append('is_disabled', !selectedCampus.is_disabled)
     try {
       const result = await aciveInactive(formdata).unwrap();
       // debugger;
@@ -257,11 +262,10 @@ export default function CampusManagement() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
-                statusFilter === s
-                  ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
-                  : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:bg-white hover:text-[#1e293b]"
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${statusFilter === s
+                ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
+                : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:bg-white hover:text-[#1e293b]"
+                }`}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
             </button>
@@ -288,27 +292,27 @@ export default function CampusManagement() {
                 headerTextColor="text-white"
               />
               {/* Pagination */}
-                      {
-                        filtered?.length > 0 &&
-                        <div className="p-4 flex items-center justify-between">
-                          <div className="text-xs text-[#28ba5e]">
-                            Showing {Math.min((page - 1) * pageSize + 1, total)}-
-                            {Math.min(page * pageSize, total)} of {total} users
-                          </div>
-              
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-[#28ba5e]">Rows</span>
-                              <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}
-                                className="px-2 py-1 rounded-md text-xs outline-none   border border-[#28ba5e] text-[#28ba5e] bg-white">
-                                {[10, 20, 50].map((s) => <option key={s} value={s}>{s}</option>)}
-                              </select>
-                            </div>
-              
-                            <Pagination page={page} totalPages={data?.total_pages} setPage={setPage} />
-                          </div>
-                        </div>
-                      }
+              {
+                filtered?.length > 0 &&
+                <div className="p-4 flex items-center justify-between">
+                  <div className="text-xs text-[#28ba5e]">
+                    Showing {Math.min((page - 1) * pageSize + 1, total)}-
+                    {Math.min(page * pageSize, total)} of {total} users
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#28ba5e]">Rows</span>
+                      <select value={pageSize} onChange={(e) => setPageSize(Number(e.target.value))}
+                        className="px-2 py-1 rounded-md text-xs outline-none   border border-[#28ba5e] text-[#28ba5e] bg-white">
+                        {[10, 20, 50].map((s) => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+
+                    <Pagination page={page} totalPages={data?.total_pages} setPage={setPage} />
+                  </div>
+                </div>
+              }
             </div>
           )}
         </div>
@@ -323,45 +327,41 @@ export default function CampusManagement() {
               <h2 className="text-lg font-semibold text-white">
                 {selectedCampus.is_disabled ? 'Activate Campus' : 'Deactivate Campus'}
               </h2>
-              <button 
-                onClick={cancelStatusChange} 
+              <button
+                onClick={cancelStatusChange}
                 className="w-8 h-8 flex text-white items-center cursor-pointer justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-black  text-xl"
               >
                 ×
               </button>
             </div>
             <div className="p-6">
-              <div className={`p-4 rounded-lg mb-4 ${
-                selectedCampus.is_disabled 
-                  ? 'bg-green-50 border border-green-200' 
-                  : 'bg-red-50 border border-red-200'
-              }`}>
+              <div className={`p-4 rounded-lg mb-4 ${selectedCampus.is_disabled
+                ? 'bg-green-50 border border-green-200'
+                : 'bg-red-50 border border-red-200'
+                }`}>
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    selectedCampus.is_disabled 
-                      ? 'bg-green-100 text-green-600' 
-                      : 'bg-red-100 text-red-600'
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedCampus.is_disabled
+                    ? 'bg-green-100 text-green-600'
+                    : 'bg-red-100 text-red-600'
+                    }`}>
                     {selectedCampus.is_disabled ? '✓' : '!'}
                   </div>
                   <div>
-                    <h3 className={`font-semibold ${
-                      selectedCampus.is_disabled ? 'text-green-900' : 'text-red-900'
-                    }`}>
+                    <h3 className={`font-semibold ${selectedCampus.is_disabled ? 'text-green-900' : 'text-red-900'
+                      }`}>
                       {selectedCampus.name || 'Unknown Campus'}
                     </h3>
-                    <p className={`text-sm ${
-                      selectedCampus.is_disabled ? 'text-green-700' : 'text-red-700'
-                    }`}>
-                      {selectedCampus.is_disabled 
-                        ? 'This campus will be activated and users will regain access.' 
+                    <p className={`text-sm ${selectedCampus.is_disabled ? 'text-green-700' : 'text-red-700'
+                      }`}>
+                      {selectedCampus.is_disabled
+                        ? 'This campus will be activated and users will regain access.'
                         : 'This campus will be deactivated and users will lose access.'
                       }
                     </p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-sm text-gray-600 mb-6">
                 Are you sure you want to {selectedCampus.is_disabled ? 'activate' : 'deactivate'} this campus?
               </div>
@@ -376,11 +376,10 @@ export default function CampusManagement() {
                 <button
                   onClick={confirmStatusChange}
                   disabled={signLoading}
-                  className={`px-4 py-2.5 cursor-pointer text-sm font-medium rounded-lg transition-colors ${
-                    selectedCampus.is_disabled 
-                      ? 'bg-[#28ba5e] hover:bg-[#1e9e4f] text-white' 
-                      : 'bg-red-600 hover:bg-red-700 text-white'
-                  } ${signLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`px-4 py-2.5 cursor-pointer text-sm font-medium rounded-lg transition-colors ${selectedCampus.is_disabled
+                    ? 'bg-[#28ba5e] hover:bg-[#1e9e4f] text-white'
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+                    } ${signLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {signLoading ? 'Processing...' : (selectedCampus.is_disabled ? 'Activate' : 'Deactivate')}
                 </button>
@@ -456,11 +455,10 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-semibold border-b-2 transition-all ${
-                tab === t.id
-                  ? "text-[#28ba5e] border-[#28ba5e] bg-[rgba(40,186,94,0.05)]"
-                  : "text-[#64748b] border-transparent hover:text-[#1e293b]"
-              }`}
+              className={`px-4 py-1.5 rounded-lg text-xs font-semibold border-b-2 transition-all ${tab === t.id
+                ? "text-[#28ba5e] border-[#28ba5e] bg-[rgba(40,186,94,0.05)]"
+                : "text-[#64748b] border-transparent hover:text-[#1e293b]"
+                }`}
             >
               {t.label}
             </button>
@@ -508,11 +506,10 @@ export function CampusDetailPanel({ campus, onClose, onViewStudents }) {
                 <button
                   key={s}
                   onClick={() => setStudentFilter(s)}
-                  className={`px-3 py-1 rounded-full border text-xs font-medium transition-all ${
-                    studentFilter === s
-                      ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
-                      : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:text-[#1e293b]"
-                  }`}
+                  className={`px-3 py-1 rounded-full border text-xs font-medium transition-all ${studentFilter === s
+                    ? "bg-[rgba(40,186,94,0.1)] text-[#28ba5e] border-[rgba(40,186,94,0.3)]"
+                    : "bg-transparent text-[#64748b] border-[rgba(40,186,94,.15)] hover:text-[#1e293b]"
+                    }`}
                 >
                   {s === "all" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
@@ -728,9 +725,8 @@ const STATUS_STYLES = {
 export function StatusTag({ status }) {
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border ${
-        STATUS_STYLES[status] || STATUS_STYLES.pending
-      }`}
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border ${STATUS_STYLES[status] || STATUS_STYLES.pending
+        }`}
     >
       {status}
     </span>
@@ -820,16 +816,16 @@ export const DUMMY_STUDENTS = [
   { _id: "s002", name: "Priya Mehta", email: "priya.m@iit.edu", phone: "+91-9812345678", campusId: "c001", campusName: "IIT Delhi", branch: "Electrical", year: "3rd", status: "active", testCompleted: true, testScore: 88, testDate: "2024-03-11", addedBy: "employee", addedById: "e001", addedByName: "Dr. Rajesh Kumar" },
   { _id: "s003", name: "Rohit Kumar", email: "rohit.k@iit.edu", phone: "+91-9823456789", campusId: "c001", campusName: "IIT Delhi", branch: "Mechanical", year: "4th", status: "placed", testCompleted: true, testScore: 85, testDate: "2024-03-09", addedBy: "employee", addedById: "e002", addedByName: "Prof. Sunita Rao" },
   { _id: "s004", name: "Sneha Patel", email: "sneha.p@iit.edu", phone: "+91-9834567890", campusId: "c001", campusName: "IIT Delhi", branch: "Civil", year: "3rd", status: "active", testCompleted: false, testScore: null, testDate: null, addedBy: "employee", addedById: "e003", addedByName: "Mr. Anil Desai" },
-  
+
   // c002 - NIT Bangalore
   { _id: "s005", name: "Vikram Singh", email: "vikram.s@nit.edu", phone: "+91-9845678901", campusId: "c002", campusName: "NIT Bangalore", branch: "Information Technology", year: "4th", status: "placed", testCompleted: true, testScore: 90, testDate: "2024-03-08", addedBy: "campus", addedById: null, addedByName: "NIT Bangalore" },
   { _id: "s006", name: "Anjali Nair", email: "anjali.n@nit.edu", phone: "+91-9856789012", campusId: "c002", campusName: "NIT Bangalore", branch: "Electronics", year: "3rd", status: "active", testCompleted: true, testScore: 87, testDate: "2024-03-12", addedBy: "employee", addedById: "e004", addedByName: "Prof. Meera Singh" },
   { _id: "s007", name: "Rahul Gupta", email: "rahul.g@nit.edu", phone: "+91-9867890123", campusId: "c002", campusName: "NIT Bangalore", branch: "Chemical", year: "4th", status: "placed", testCompleted: true, testScore: 82, testDate: "2024-03-07", addedBy: "employee", addedById: "e005", addedByName: "Dr. Vikram Joshi" },
-  
+
   // c003 - BITS Pilani
   { _id: "s008", name: "Meera Iyer", email: "meera.i@bits.edu", phone: "+91-9878901234", campusId: "c003", campusName: "BITS Pilani", branch: "Computer Science", year: "3rd", status: "active", testCompleted: false, testScore: null, testDate: null, addedBy: "campus", addedById: null, addedByName: "BITS Pilani" },
   { _id: "s009", name: "Karan Malhotra", email: "karan.m@bits.edu", phone: "+91-9889012345", campusId: "c003", campusName: "BITS Pilani", branch: "Electrical", year: "4th", status: "placed", testCompleted: true, testScore: 94, testDate: "2024-03-06", addedBy: "employee", addedById: "e006", addedByName: "Dr. Amit Patel" },
-  
+
   // c004 - Delhi University
   { _id: "s010", name: "Ishaan Roy", email: "ishaan.r@du.ac.in", phone: "+91-9890123456", campusId: "c004", campusName: "Delhi University", branch: "Commerce", year: "3rd", status: "active", testCompleted: true, testScore: 78, testDate: "2024-03-05", addedBy: "employee", addedById: "e008", addedByName: "Prof. Ishaan Roy" },
 ];
