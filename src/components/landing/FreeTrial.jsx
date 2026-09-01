@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Pill } from "../../libs/Divider";
 
 function FreeTrial({ nav }) {
-    const navigate=useNavigate();
+  const navigate = useNavigate();
   return (
     <section className="py-24 px-8 bg-white">
       <div className="max-w-4xl mx-auto">
@@ -20,7 +20,7 @@ function FreeTrial({ nav }) {
               No credit card required. Start assessing students and discovering talent today.
             </p>
             <div className="flex gap-4 justify-center mb-10 flex-wrap">
-              {[ ["🏛️", "Colleges", "500 Free Credits"], ["💼", "Recruiters", "500 Free Credits"]].map(([e, l, c]) => (
+              {[["🏛️", "Colleges", "500 Free Credits"], ["💼", "Recruiters", "500 Free Credits"]].map(([e, l, c]) => (
                 <div key={l} className="bg-white/7 border border-white/10 rounded-2xl px-7 py-5 text-center min-w-[140px]">
                   <div className="text-2xl mb-1.5">{e}</div>
                   <div className="text-xs text-[#94B8D8] mb-1">{l}</div>
@@ -29,7 +29,7 @@ function FreeTrial({ nav }) {
               ))}
             </div>
             <button
-              onClick={() => navigate("/vendor-signup")}
+              onClick={() => navigate("/signup")}
               className="text-lg font-bold cursor-pointer text-white px-12 py-4 rounded-xl bg-linear-to-r from-blue-500 to-sky-400 shadow-[0_8px_28px_rgba(43,127,255,0.5)] hover:shadow-[0_14px_36px_rgba(43,127,255,0.6)] hover:-translate-y-0.5 transition-all"
             >
               Start Free Trial →

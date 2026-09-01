@@ -9,12 +9,12 @@ import { setCredentials } from "../redux/Slices/AuthSlice";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function  CreateAccount() {
- const [vendorData, setVendorData] = useState({
-  email: "",
-  password: "",
-  module: "company"
-});
+export default function CreateAccount() {
+  const [vendorData, setVendorData] = useState({
+    email: "",
+    password: "",
+    module: "company"
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   const [login, { isLoading }] = useLoginMutation();
@@ -34,9 +34,9 @@ export default function  CreateAccount() {
     try {
       const formData = { ...vendorData };
 
-      const result = await login(formData).unwrap(); 
+      const result = await login(formData).unwrap();
       // console.log("rrees",result);
-      dispatch(setCredentials({ token: result?.access_token,module:result?.module, user: result.role, detail: { name: result?.name, email: result?.email, id: result?.vendor_id,planName: result?.plan_name,status : result?.is_subscribed } }));
+      dispatch(setCredentials({ token: result?.access_token, module: result?.module, user: result.role, detail: { name: result?.name, email: result?.email, id: result?.vendor_id, planName: result?.plan_name, status: result?.is_subscribed } }));
       // console.log("Login successful!");
       // debugger;
       navigate("/vendor/dashboard"); // redirect after login
@@ -203,7 +203,7 @@ export default function  CreateAccount() {
                   </Link>
                 </div>
               </div>
-              
+
               {/* Submit Button */}
               <button
                 type="submit"
@@ -215,7 +215,7 @@ export default function  CreateAccount() {
               {/* Signup Link */}
               <p className="text-center text-gray-600 text-sm">
                 Don’t have a vendor account?{" "}
-                <Link to="/vendor-signup" className="text-blue-600 hover:underline">
+                <Link to="/signup" className="text-blue-600 hover:underline">
                   Signup
                 </Link>
               </p>

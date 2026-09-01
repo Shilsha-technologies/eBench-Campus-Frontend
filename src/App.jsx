@@ -196,7 +196,7 @@ function App() {
           <Route path="/res" element={<IntroAnalysis />} />
           <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
-          <Route path="/vendor-signup" element={<Signup />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/otp-verify" element={<OtpVerification />} />
           <Route path="/admin/otp-verify" element={<OtpVerification />} />
           <Route
@@ -241,9 +241,9 @@ function App() {
                   <Route
                     path="/superadmin/*"
                     element={
-                        <ProtectedRoute allowedRoles={["admin"]}>
-                          <SuperAdminLayout />
-                        </ProtectedRoute>
+                      <ProtectedRoute allowedRoles={["admin"]}>
+                        <SuperAdminLayout />
+                      </ProtectedRoute>
                     }
                   >
                     <Route path="dashboard" element={<SuperAdminDashboard />} />
@@ -262,9 +262,9 @@ function App() {
                   <Route
                     path="/vendor/*"
                     element={
-                        <ProtectedRoute allowedRoles={["vendor"]}>
-                          <DashboardLayout />
-                        </ProtectedRoute>
+                      <ProtectedRoute allowedRoles={["vendor"]}>
+                        <DashboardLayout />
+                      </ProtectedRoute>
                     }
                   >
                     <Route path="dashboard" element={<VendorDashboard />} />
@@ -301,9 +301,9 @@ function App() {
                   <Route
                     path="/subvendor/*"
                     element={
-                        <ProtectedRoute allowedRoles={["sub_vendor"]}>
-                          <DashboardSubVendorLayout />
-                        </ProtectedRoute>
+                      <ProtectedRoute allowedRoles={["sub_vendor"]}>
+                        <DashboardSubVendorLayout />
+                      </ProtectedRoute>
                     }
                   >
                     <Route path="dashboard" element={<DashboardHome />} />
@@ -330,11 +330,11 @@ function App() {
                   <Route
                     path="/student/*"
                     element={
-                        <ProtectedRoute allowedRoles={["student"]}>
-                          <StudentProvider>
-                            <StudentDashboardLayout />
-                          </StudentProvider>
-                        </ProtectedRoute>
+                      <ProtectedRoute allowedRoles={["student"]}>
+                        <StudentProvider>
+                          <StudentDashboardLayout />
+                        </StudentProvider>
+                      </ProtectedRoute>
                     }
                   >
                     <Route path="dashboard" element={<StudentDashboard />} />

@@ -16,7 +16,7 @@
 //         if (!email) {
 //             return toast.error("Email is required!");
 //         }
- 
+
 //         try {
 //             const result = await forgotPassword({ email }).unwrap();
 //             toast.success(result?.message || "Reset link sent!");
@@ -70,7 +70,7 @@
 //                                 </span>
 //                             </li>
 
-                            
+
 //                         </ul>
 //                     </div>
 
@@ -261,7 +261,7 @@ export default function VendorForgotPassword() {
             boxShadow: "0 24px 80px rgba(43,127,255,0.14), 0 4px 16px rgba(0,0,0,0.05)",
             border: "1px solid #E2EDF8",
           }}>
-            
+
 
             {/* Lock icon circle */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
@@ -282,7 +282,7 @@ export default function VendorForgotPassword() {
               Forgot Password?
             </h2>
             <p style={{ fontSize: 14, color: "#6B84A0", textAlign: "center", marginBottom: 28, lineHeight: 1.6 }}>
-              Enter your registered email to receive a secure password reset link.
+              An OTP has been sent to your registered email address.
             </p>
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>

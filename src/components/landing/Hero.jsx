@@ -96,7 +96,7 @@
 // //           </p>
 // //           <div className="flex flex-wrap gap-3">
 // //             <button
-// //               onClick={() => navigate("/vendor-signup")}
+// //               onClick={() => navigate("/signup")}
 // //               className="text-base cursor-pointer font-bold text-white px-8 py-4 rounded-xl bg-linear-to-r from-blue-500 to-sky-400 shadow-[0_6px_24px_rgba(43,127,255,0.4)] hover:shadow-[0_12px_32px_rgba(43,127,255,0.5)] hover:-translate-y-0.5 transition-all"
 // //             >
 // //               Start Free Trial →
@@ -643,7 +643,7 @@ const THEMES = {
 
     label: "For Students",
 
-    emoji: "👋",
+    emoji: "🧑‍🎓",
 
     primary: "#10b981",
 
@@ -1371,7 +1371,7 @@ export default function HeroSection() {
                   }}
                   onClick={() => {
                     if (cta.label === "Register Your Campus" || cta.label === "Get Started") {
-                      navigate("/vendor-signup");
+                      navigate("/signup");
                     } else if (cta.label === "Login") {
                       navigate("/login");
                     } else if (cta.label === "Login as Employee") {

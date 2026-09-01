@@ -2,15 +2,15 @@ import { useNavigate } from "react-router-dom";
 import logo from '../../assets/eBenchCampu.png';
 import whiteLogo from '../../assets/ebenchwhite.png';
 
-export function Logo({ nav ,item=false,heigth=70,width=180}) {
+export function Logo({ nav, item = false, heigth = 70, width = 180 }) {
   return (
     <div
       className="flex items-center gap-2.5 cursor-pointer"
       onClick={() => nav("landing")}
     >
       <div className=" rounded-[10px] bg-linear-to-br  flex items-center justify-baseline">
-        <img 
-         src={item ? whiteLogo :logo}
+        <img
+          src={item ? whiteLogo : logo}
           width={item ? width : 110}
           height={item ? heigth : 120}
           alt="logi"
@@ -76,7 +76,7 @@ function Navbar({ nav }) {
           </button> */}
 
           <button
-            onClick={() => navigate("/vendor-signup")}
+            onClick={() => navigate("/signup")}
             className="text-sm cursor-pointer font-bold text-white px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-sky-400 shadow-[0_6px_20px_rgba(43,127,255,0.35)] hover:shadow-[0_8px_24px_rgba(43,127,255,0.45)] hover:-translate-y-0.5 transition-all"
           >
             Start Free Trial

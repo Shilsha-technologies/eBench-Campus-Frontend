@@ -269,7 +269,7 @@ export default function CreateAccount() {
             <p style={{ fontSize: 14, color: "#6B84A0", marginBottom: 28 }}>
               Don't have a vendor account?{" "}
               <Link
-                to="/vendor-signup"
+                to="/signup"
                 style={{ color: "#2B7FFF", fontWeight: 700, textDecoration: "none" }}
               >
                 Sign up free →
@@ -435,7 +435,7 @@ export default function CreateAccount() {
                 {watchedModule && (
                   <p style={{ color: "#6B84A0", fontSize: 12, marginTop: 4 }}>
                     {watchedModule === "campus"
-                      ? "Use your work email (e.g., vishal@company.com)"
+                      ? "Use your work email (e.g., work@company.com)"
                       : "Use your personal email (e.g., personal@gmail.com)"
                     }
                   </p>
@@ -458,17 +458,6 @@ export default function CreateAccount() {
                   >
                     Password
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#2B7FFF",
-                      textDecoration: "none",
-                    }}
-                  >
-                    Forgot password?
-                  </Link>
                 </div>
                 <div style={{ position: "relative" }}>
                   <span
@@ -530,6 +519,17 @@ export default function CreateAccount() {
                     )}
                   </button>
                 </div>
+                <Link className="flex justify-end mt-2"
+                  to="/forgot-password"
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#2B7FFF",
+                    textDecoration: "none",
+                  }}
+                >
+                  Forgot password?
+                </Link>
                 {errors.password && (
                   <p style={{ color: "#ef4444", fontSize: 12, marginTop: 4 }}>
                     {errors.password.message}
