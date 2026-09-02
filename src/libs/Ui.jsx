@@ -144,11 +144,11 @@ export function StatCard({ label, value, icon, color = "indigo", change }) {
     <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${colors[color]}`}>{icon}</div>
-        {change !== undefined && (
+        {/* {change !== undefined && (
           <span className={`text-xs font-medium px-2 py-1 rounded-full ${change >= 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
             {change >= 0 ? "+" : ""}{change}%
           </span>
-        )}
+        )} */}
       </div>
       <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
       <div className="text-sm text-gray-500">{label}</div>

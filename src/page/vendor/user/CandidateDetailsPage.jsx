@@ -188,10 +188,7 @@ export default function CandidateDetailsPage() {
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Birth Country</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.birth_country || 'N/A'}</p>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Nationality</label>
-              <p className="text-base font-medium text-gray-900 mt-2">{candidate.nationality || 'N/A'}</p>
-            </div>
+
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Country of Residence</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.country_of_residence || 'N/A'}</p>
@@ -293,7 +290,7 @@ export default function CandidateDetailsPage() {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Currently Pursuing</label>
+              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Graduation Status</label>
               <div className="mt-2">
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${candidate.is_pursuing ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                   {candidate.is_pursuing ? 'Active Student' : 'Graduated'}

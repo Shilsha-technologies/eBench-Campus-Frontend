@@ -181,7 +181,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     {/* First Name */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            First Name
+                            First Name <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <input
                             {...register("firstName")}
@@ -197,7 +197,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     {/* Last Name */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Last Name
+                            Last Name <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <input
                             {...register("lastName")}
@@ -215,7 +215,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     {/* Nationality */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nationality
+                            Nationality <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <Controller
                             name="nationality"
@@ -243,7 +243,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     {/* Country of Residence */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Country of Residence
+                            Country of Residence <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <Controller
                             name="countryOfResidence"
@@ -274,7 +274,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     {/* Email */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Email
+                            Email <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <input
                             {...register("email")}
@@ -290,38 +290,81 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
                     {/* Mobile Number */}
                     <div className="">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Mobile Number
-                        </label>
                         <Controller
                             name="mobileNumber"
                             control={control}
+                            rules={{
+                                required: "Mobile number is required",
+                                validate: (value) => {
+                                    const mobile = String(value || "").trim();
+
+                                    if (!mobile) {
+                                        return "Mobile number is required";
+                                    }
+
+                                    if (mobile.startsWith("0")) {
+                                        return "Mobile number cannot start with 0";
+                                    }
+
+                                    if (!/^[1-9][0-9]{9}$/.test(mobile)) {
+                                        return "Enter a valid 10-digit mobile number";
+                                    }
+
+                                    return true;
+                                },
+                            }}
                             render={({ field }) => (
-                                <PhoneInput
-                                    country={countryCode}
-                                    onChange={(value, country) => {
-                                        setValue("mobileNumber", value.replace(/[^0-9]/g, ""));
-                                        setValue("countryCode", country.countryCode);
-                                    }}
-                                    inputStyle={{
-                                        width: "100%",
-                                        borderRadius: "0.5rem",
-                                        borderColor: errors.mobileNumber ? "#ef4444" : "#d1d5db",
-                                        // padding: "10px 12px",
-                                    }}
-                                    placeholder="Enter phone number"
-                                />
+                                <div className="flex flex-col gap-1">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Mobile Number <span className="text-red-500 ml-0.5">*</span>
+                                    </label>
+
+                                    <PhoneInput
+                                        country="in"
+                                        value={
+                                            field.value
+                                                ? `${watch("countryCode") || "+91"}${field.value}`
+                                                : ""
+                                        }
+                                        inputStyle={{
+                                            width: "100%",
+                                            borderRadius: "0.5rem",
+                                            borderColor: errors.mobileNumber
+                                                ? "#ef4444"
+                                                : "#d1d5db",
+                                        }}
+                                        onChange={(val, countryData) => {
+                                            // Extract only the local number
+                                            const localNumber = val.startsWith(countryData.dialCode)
+                                                ? val.substring(countryData.dialCode.length)
+                                                : val;
+
+                                            field.onChange(localNumber);
+
+                                            // Store country code separately with +
+                                            setValue(
+                                                "countryCode",
+                                                `+${countryData.dialCode}`
+                                            );
+                                        }}
+                                        inputProps={{
+                                            name: "mobileNumber",
+                                        }}
+                                    />
+
+                                    {errors.mobileNumber && (
+                                        <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
+                                            <span>⚠</span>
+                                            {errors.mobileNumber.message}
+                                        </span>
+                                    )}
+                                </div>
                             )}
                         />
-                        {errors.mobileNumber && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.mobileNumber.message}
-                            </p>
-                        )}
                     </div>
 
                     <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Degree</label>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Degree <span className="text-red-500 ml-0.5">*</span></label>
                         <select
                             {...register("degree")}
                             className={`w-full border rounded-lg p-2 outline-none ${errors.degree ? "border-red-500" : "border-gray-300"
@@ -355,7 +398,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                 {errors.department && <p className="text-sm text-red-500 mt-1">{errors.department.message}</p>}
                             </div> */}
                     <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Department</label>
+                        <label className="font-medium text-sm text-gray-700 mb-1">Department <span className="text-red-500 ml-0.5">*</span></label>
                         <select
                             {...register("department")}
                             className={`w-full border text-gray-500 rounded-lg p-2 outline-none ${errors.department ? "border-red-500" : "border-gray-300"
@@ -389,7 +432,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                             </div> */}
                     <div>
                         <label className="font-medium text-sm text-gray-700 mb-1">
-                            Specialization
+                            Specialization <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <select
                             {...register("specialization")}
@@ -416,79 +459,47 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
                     {/* Enrollment Year */}
                     <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">Enrollment (Month / Year)</label>
-
-                        <input
-                            type="month"
-                            placeholder="Month Year"
-                            {...register("enrollmentYear")}
-                            className={`w-full border rounded-lg p-2 text-gray-500 outline-none 
-    ${errors.enrollmentYear ? "border-red-500" : "border-gray-300"}`}
-                        />
+                        <label className="font-medium text-sm text-gray-700 mb-1">
+                            Enrollment (Month / Year) <span className="text-red-500 ml-0.5">*</span>
+                        </label>
+                        <MonthInput name="enrollmentYear" register={register} watch={watch} error={errors.enrollmentYear} />
                         {errors.enrollmentYear && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.enrollmentYear.message}
-                            </p>
+                            <p className="text-sm text-red-500 mt-1">{errors.enrollmentYear.message}</p>
                         )}
                     </div>
 
-                    {/* Graduation Year */}
-                    {/* <div>
-                                <label>Graduation Date</label>
-                                <input type="date" {...register("graduationYear")}
-                                    className={`w-full border rounded-lg p-2 outline-none text-gray-500 ${errors.graduationYear ? "border-red-500" : "border-gray-300"
-                                        }`}
-                                />
-                                {errors.graduationYear && <p className="text-sm text-red-500 mt-1">{errors.graduationYear.message}</p>}
-                            </div> */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Graduation (Month / Year)
-                        </label>
-
-                        {/* Month Input */}
-                        <input
-                            type="month"
-                            {...register("graduationYear")}
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Graduation (Month / Year)</label>
+                        <MonthInput
+                            name="graduationYear"
+                            register={register}
+                            watch={watch}
+                            error={errors.graduationYear}
                             disabled={watch("isPursuing")}
-                            className={`w-full border rounded-lg p-2 outline-none text-gray-500
-    ${errors.graduationYear ? "border-red-500" : "border-gray-300"}
-    ${watch("isPursuing") ? "bg-gray-100 cursor-not-allowed" : ""}`}
                         />
-
-                        {/* Still Pursuing */}
                         <div className="flex items-center gap-2">
                             <input
                                 type="checkbox"
                                 id="pursuing"
-                                placeholder="Month Year"
                                 checked={watch("isPursuing")}
                                 onChange={(e) => {
                                     const checked = e.target.checked;
                                     setValue("isPursuing", checked);
-
-                                    // Clear date if pursuing
-                                    if (checked) {
-                                        setValue("graduationYear", "");
-                                    }
+                                    if (checked) setValue("graduationYear", "");
                                 }}
                             />
-                            <label htmlFor="pursuing" className="text-sm text-gray-600">
-                                Still Pursuing
-                            </label>
+                            <label htmlFor="pursuing" className="text-sm text-gray-600">Still Pursuing</label>
                         </div>
-
-                        {/* Error */}
                         {errors.graduationYear && (
-                            <p className="text-sm text-red-500 mt-1">
-                                {errors.graduationYear.message}
-                            </p>
+                            <p className="text-sm text-red-500 mt-1">{errors.graduationYear.message}</p>
                         )}
                     </div>
 
                     {/* CGPA */}
                     <div>
-                        <label className="font-medium text-sm text-gray-700 mb-1">CGPA</label>
+                        <label className="font-medium text-sm text-gray-700 mb-1">CGPA
+                            <span className="text-red-500 ml-0.5">*</span>
+                        </label>
                         <input {...register("cgpa")}
                             className={`w-full border rounded-lg p-2 outline-none ${errors.cgpa ? "border-red-500" : "border-gray-300"
                                 }`}
@@ -512,6 +523,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     <div className="col-span-2  md:col-span-2 space-y-1.5">
                         <label className="block text-sm font-medium text-gray-700">
                             Skills
+                            <span className="text-red-500 ml-0.5">*</span>
                         </label>
 
                         <div className="flex gap-2 max-w-md">
@@ -561,8 +573,34 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     </div>
                 </form>
             </motion.div>
-        </motion.div>
+        </motion.div >
     );
 }
 
+
+
+const MonthInput = ({ name, register, watch, error, disabled, placeholder = "MM/YYYY" }) => {
+    const [focused, setFocused] = useState(false);
+    const value = watch(name);
+    const showPlaceholder = !value && !focused;
+
+    const { onBlur, ...rest } = register(name);
+
+    return (
+        <input
+            type={showPlaceholder ? "text" : "month"}
+            placeholder={placeholder}
+            disabled={disabled}
+            {...rest}
+            onFocus={() => setFocused(true)}
+            onBlur={(e) => {
+                setFocused(false);
+                onBlur(e);
+            }}
+            className={`w-full border rounded-lg p-2 outline-none text-gray-500
+        ${error ? "border-red-500" : "border-gray-300"}
+        ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+        />
+    );
+};
 
