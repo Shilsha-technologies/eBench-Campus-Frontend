@@ -272,13 +272,15 @@ import toast from 'react-hot-toast';
 //                         <p className='text-sm text-blue-500 text-center mb-4'>OTP has been send in your test link Pls check your mail</p>
 //                         <input
 //                             type="text"
+//                             inputMode="numeric"
+//                             pattern="\d{6}"
 //                             maxLength={6}
 //                             value={otp}
-//                             onChange={(e) => setOtp(e.target.value)}
+//                             onChange={handleOtpChange}
 //                             placeholder="Enter 6 digit OTP"
 //                             className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
 //                         />
-
+//
 //                         <button
 //                             onClick={handleVerify}
 //                             className="w-full mt-4 bg-[#286a94] text-white font-semibold py-2 rounded-lg hover:bg-[#3b7aa7]"
@@ -405,8 +407,7 @@ export default function ProfilePage() {
     // console.log("candidateData--000", candidateData);
     const CANDIDATE = candidateData?.candidate || { name: "fjdkjf", age: "32", phone: "9876543210" };
 
-    const TEST = candidateData?.test || { levelName: "MERN", title: "Introduction Test", subtitle: "Self Introduction", icon: "fi-fi-rr-user", accentColor: "#286a94", accentBackground: "#f0f7fd", totalQuestions: 10, totalMarks: "N/A", cutoffPercentage: 80, isAiInterview: false };
-
+    const TEST = candidateData?.test;
     const lv = {
         key: candidateData?.level_id || '1',
         bc: TEST?.levelName,
@@ -456,6 +457,14 @@ export default function ProfilePage() {
         }
     };
 
+    // 🔐 OTP input validation handler
+    const handleOtpChange = (e) => {
+        // Remove any non-digit characters
+        const raw = e.target.value;
+        const cleaned = raw.replace(/\D/g, "");
+        setOtp(cleaned);
+    };
+
     // 📦 Fetch data ONLY AFTER verification
     useEffect(() => {
         if (!cookieData?.verified) return;
@@ -473,7 +482,7 @@ export default function ProfilePage() {
 
         // Show loader while processing navigation
         setBeginLoader(true);
-        const res=await beginTest().unwrap()
+        const res = await beginTest().unwrap()
         // debugger;
 
         if (candidateData?.level_id == "LEVEL_001") {
@@ -519,9 +528,11 @@ export default function ProfilePage() {
 
                     <input
                         type="text"
+                        inputMode="numeric"
+                        pattern="\d{6}"
                         maxLength={6}
                         value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
+                        onChange={handleOtpChange}
                         placeholder="Enter 6 digit OTP"
                         className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
                     />
@@ -717,8 +728,8 @@ export default function ProfilePage() {
 
                                 <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                                     Need help?{" "}
-                                    <a href="mailto:support@shilshatech.com" className="text-slate-500 hover:underline">
-                                        support@shilshatech.com
+                                    <a href="mailto:info@shilshatech.com" className="text-slate-500 hover:underline">
+                                        info@shilshatech.com
                                     </a>
                                 </p>
                             </div>

@@ -72,7 +72,7 @@ const SuperAdminCard = ({ title, children, style = {} }) => (
     transition: "all .3s",
     ...style,
   }}>
-    <div style={{ height: 3, background: "linear-gradient(90deg,#22c55e,#16a34a,#10b981)", width: "100%" }}/>
+    <div style={{ height: 3, background: "linear-gradient(90deg,#22c55e,#16a34a,#10b981)", width: "100%" }} />
     <div style={{ padding: 20 }}>{children}</div>
   </div>
 );
@@ -194,11 +194,11 @@ export default function SuperAdminDashboard() {
   const renderOverview = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       {/* Header */}
-      <div style={{ 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "space-between", 
-        flexWrap: "wrap", 
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
         gap: 10,
         background: "linear-gradient(135deg,rgba(34,197,94,.1),rgba(167,139,250,.05))",
         padding: "20px 24px",
@@ -206,26 +206,26 @@ export default function SuperAdminDashboard() {
         border: `1px solid ${T.border}`
       }}>
         <div>
-          <h1 style={{ 
-            color: T.text, 
-            fontWeight: 800, 
-            fontSize: 24, 
+          <h1 style={{
+            color: T.text,
+            fontWeight: 800,
+            fontSize: 24,
             marginBottom: 4,
             display: "flex",
             alignItems: "center",
             gap: 10
           }}>
-            <Crown size={28} style={{ color: T.gold }}/>
+            <Crown size={28} style={{ color: T.gold }} />
             Super Admin Dashboard
           </h1>
           <p style={{ color: T.textMuted, fontSize: 14 }}>
-            Full system control and monitoring • {new Date().toLocaleDateString("en-IN",{ weekday: "long", day: "numeric", month: "long" })}
+            Full system control and monitoring • {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <SuperAdminButton icon={RefreshCw} variant="secondary">Refresh</SuperAdminButton>
           <SuperAdminButton icon={Download} variant="primary">Export Report</SuperAdminButton>
-          <SuperAdminButton icon={Download} gold>Export Report</SuperAdminButton>
+          {/* <SuperAdminButton icon={Download} gold>Export Report</SuperAdminButton> */}
         </div>
       </div>
 
@@ -238,30 +238,30 @@ export default function SuperAdminDashboard() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <SuperAdminCard>
           <h3 style={{ color: T.text, fontWeight: 700, fontSize: 16, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            <BarChart3 size={18} style={{ color: T.accent }}/>
+            <BarChart3 size={18} style={{ color: T.accent }} />
             Performance Metrics
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             {PERFORMANCE_DATA.map(item => (
-              <div key={item.metric} style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                gap: 10, 
-                padding: "12px 14px", 
-                borderRadius: 12, 
+              <div key={item.metric} style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "12px 14px",
+                borderRadius: 12,
                 background: "rgba(255,255,255,.03)",
                 border: `1px solid ${T.borderSoft}`
               }}>
-                <div style={{ 
-                  width: 32, 
-                  height: 32, 
-                  borderRadius: 10, 
-                  background: `${T.accent}15`, 
-                  display: "flex", 
-                  alignItems: "center", 
-                  justifyContent: "center" 
+                <div style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10,
+                  background: `${T.accent}15`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}>
-                  <item.icon size={16} style={{ color: T.accent }}/>
+                  <item.icon size={16} style={{ color: T.accent }} />
                 </div>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{item.value}</p>
@@ -274,7 +274,7 @@ export default function SuperAdminDashboard() {
 
         <SuperAdminCard>
           <h3 style={{ color: T.text, fontWeight: 700, fontSize: 16, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            <Shield size={18} style={{ color: T.gold }}/>
+            <Shield size={18} style={{ color: T.gold }} />
             Security Overview
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -284,17 +284,17 @@ export default function SuperAdminDashboard() {
               { label: "Failed Logins (24h)", value: "12", status: "warning" },
               { label: "Security Updates", value: "Current", status: "excellent" },
             ].map(item => (
-              <div key={item.label} style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "space-between", 
-                padding: "10px 12px", 
-                borderRadius: 10, 
+              <div key={item.label} style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "10px 12px",
+                borderRadius: 10,
                 background: "rgba(255,255,255,.03)",
                 border: `1px solid ${T.borderSoft}`
               }}>
                 <span style={{ fontSize: 13, color: T.textMuted }}>{item.label}</span>
-                <StatusBadge status={item.status} type="security"/>
+                <StatusBadge status={item.status} type="security" />
               </div>
             ))}
           </div>
@@ -305,19 +305,19 @@ export default function SuperAdminDashboard() {
       <SuperAdminCard>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <h3 style={{ color: T.text, fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            <Activity size={18} style={{ color: T.accent }}/>
+            <Activity size={18} style={{ color: T.accent }} />
             Recent System Activity
           </h3>
           <SuperAdminButton icon={Eye} variant="secondary">View All</SuperAdminButton>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {SYSTEM_LOGS.map(log => (
-            <div key={log.id} style={{ 
-              display: "flex", 
-              alignItems: "flex-start", 
-              gap: 12, 
-              padding: "12px 14px", 
-              borderRadius: 12, 
+            <div key={log.id} style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 12,
+              padding: "12px 14px",
+              borderRadius: 12,
               background: "rgba(255,255,255,.02)",
               border: `1px solid ${T.borderSoft}`,
               transition: "background .15s"
@@ -325,28 +325,28 @@ export default function SuperAdminDashboard() {
               onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.04)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.02)"}
             >
-              <div style={{ 
-                width: 28, 
-                height: 28, 
-                borderRadius: "50%", 
-                flexShrink: 0, 
-                display: "flex", 
-                alignItems: "center", 
+              <div style={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
                 justifyContent: "center",
-                background: log.severity === "error" ? "rgba(239,68,68,.12)" : 
-                           log.severity === "warning" ? "rgba(245,158,11,.12)" : 
-                           log.severity === "success" ? "rgba(16,185,129,.12)" : "rgba(59,130,246,.12)"
+                background: log.severity === "error" ? "rgba(239,68,68,.12)" :
+                  log.severity === "warning" ? "rgba(245,158,11,.12)" :
+                    log.severity === "success" ? "rgba(16,185,129,.12)" : "rgba(59,130,246,.12)"
               }}>
-                {log.severity === "error" ? <XCircle size={13} color="#fca5a5"/> :
-                 log.severity === "warning" ? <AlertCircle size={13} color="#fcd34d"/> :
-                 log.severity === "success" ? <CheckCircle size={13} color="#6ee7b7"/> :
-                 <Activity size={13} color="#93c5fd"/>}
+                {log.severity === "error" ? <XCircle size={13} color="#fca5a5" /> :
+                  log.severity === "warning" ? <AlertCircle size={13} color="#fcd34d" /> :
+                    log.severity === "success" ? <CheckCircle size={13} color="#6ee7b7" /> :
+                      <Activity size={13} color="#93c5fd" />}
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{log.message}</p>
                 <p style={{ fontSize: 11.5, color: T.textDim, marginTop: 2 }}>{log.time}</p>
               </div>
-              <StatusBadge status={log.severity}/>
+              <StatusBadge status={log.severity} />
             </div>
           ))}
         </div>
@@ -358,12 +358,12 @@ export default function SuperAdminDashboard() {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
         <h2 style={{ color: T.text, fontWeight: 700, fontSize: 20, display: "flex", alignItems: "center", gap: 8 }}>
-          <UserCheck size={22} style={{ color: T.accent }}/>
+          <UserCheck size={22} style={{ color: T.accent }} />
           Admin User Management
         </h2>
         <SuperAdminButton icon={Users}>Add New Admin</SuperAdminButton>
       </div>
-      
+
       <SuperAdminCard>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -388,24 +388,24 @@ export default function SuperAdminDashboard() {
                     </div>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <span style={{ 
-                      display: "inline-flex", 
-                      alignItems: "center", 
-                      gap: 4, 
-                      padding: "4px 10px", 
-                      borderRadius: 99, 
-                      fontSize: 11.5, 
-                      fontWeight: 600, 
-                      background: user.role === "superadmin" ? `${T.gold}20` : `${T.accent}15`, 
-                      color: user.role === "superadmin" ? T.gold : T.accent, 
-                      border: `1px solid ${user.role === "superadmin" ? `${T.gold}35` : `${T.accent}25`}` 
+                    <span style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      padding: "4px 10px",
+                      borderRadius: 99,
+                      fontSize: 11.5,
+                      fontWeight: 600,
+                      background: user.role === "superadmin" ? `${T.gold}20` : `${T.accent}15`,
+                      color: user.role === "superadmin" ? T.gold : T.accent,
+                      border: `1px solid ${user.role === "superadmin" ? `${T.gold}35` : `${T.accent}25`}`
                     }}>
-                      {user.role === "superadmin" && <Crown size={11}/>}
+                      {user.role === "superadmin" && <Crown size={11} />}
                       {user.role}
                     </span>
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <StatusBadge status={user.status}/>
+                    <StatusBadge status={user.status} />
                   </td>
                   <td style={{ padding: "14px 16px", fontSize: 12, color: T.textMuted }}>
                     {user.lastLogin}
@@ -428,10 +428,10 @@ export default function SuperAdminDashboard() {
   const renderSettings = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <h2 style={{ color: T.text, fontWeight: 700, fontSize: 20, display: "flex", alignItems: "center", gap: 8 }}>
-        <Settings size={22} style={{ color: T.accent }}/>
+        <Settings size={22} style={{ color: T.accent }} />
         System Settings
       </h2>
-      
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <SuperAdminCard>
           <h3 style={{ color: T.text, fontWeight: 700, fontSize: 16, marginBottom: 16 }}>Security Configuration</h3>
@@ -442,37 +442,37 @@ export default function SuperAdminDashboard() {
               { label: "IP Whitelist", enabled: false },
               { label: "Audit Logging", enabled: true },
             ].map(setting => (
-              <div key={setting.label} style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "space-between", 
-                padding: "12px 14px", 
-                borderRadius: 12, 
+              <div key={setting.label} style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 14px",
+                borderRadius: 12,
                 background: "rgba(255,255,255,.03)",
                 border: `1px solid ${T.borderSoft}`
               }}>
                 <span style={{ fontSize: 13, color: T.text }}>{setting.label}</span>
-                <div style={{ 
-                  width: 40, 
-                  height: 20, 
-                  borderRadius: 99, 
-                  background: setting.enabled ? "linear-gradient(135deg,#8b5cf6,#7c3aed)" : "rgba(255,255,255,.1)", 
-                  position: "relative", 
-                  cursor: "pointer", 
-                  boxShadow: setting.enabled ? "0 4px 12px rgba(139,92,246,.4)" : "none", 
-                  transition: "all .2s" 
+                <div style={{
+                  width: 40,
+                  height: 20,
+                  borderRadius: 99,
+                  background: setting.enabled ? "linear-gradient(135deg,#8b5cf6,#7c3aed)" : "rgba(255,255,255,.1)",
+                  position: "relative",
+                  cursor: "pointer",
+                  boxShadow: setting.enabled ? "0 4px 12px rgba(139,92,246,.4)" : "none",
+                  transition: "all .2s"
                 }}>
-                  <div style={{ 
-                    position: "absolute", 
-                    top: 2, 
-                    width: 16, 
-                    height: 16, 
-                    borderRadius: "50%", 
-                    background: "white", 
-                    boxShadow: "0 1px 4px rgba(0,0,0,.3)", 
-                    transition: "left .2s", 
-                    left: setting.enabled ? 22 : 2 
-                  }}/>
+                  <div style={{
+                    position: "absolute",
+                    top: 2,
+                    width: 16,
+                    height: 16,
+                    borderRadius: "50%",
+                    background: "white",
+                    boxShadow: "0 1px 4px rgba(0,0,0,.3)",
+                    transition: "left .2s",
+                    left: setting.enabled ? 22 : 2
+                  }} />
                 </div>
               </div>
             ))}
@@ -488,12 +488,12 @@ export default function SuperAdminDashboard() {
               { label: "Max File Upload", value: "50MB" },
               { label: "API Rate Limit", value: "1000 req/min" },
             ].map(config => (
-              <div key={config.label} style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "space-between", 
-                padding: "12px 14px", 
-                borderRadius: 12, 
+              <div key={config.label} style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 14px",
+                borderRadius: 12,
                 background: "rgba(255,255,255,.03)",
                 border: `1px solid ${T.borderSoft}`
               }}>
@@ -508,49 +508,49 @@ export default function SuperAdminDashboard() {
   );
 
   return (
-    <div style={{ 
-      minHeight: "100vh", 
+    <div style={{
+      minHeight: "100vh",
       background: T.bg,
       padding: 20,
       fontFamily: "'DM Sans', sans-serif"
     }}>
       {/* Tab Navigation */}
-      <div style={{ 
-        display: "flex", 
-        gap: 4, 
-        background: "rgba(255,255,255,.04)", 
-        padding: 4, 
-        borderRadius: 14, 
-        width: "fit-content", 
-        marginBottom: 20, 
-        border: `1px solid ${T.borderSoft}` 
+      <div style={{
+        display: "flex",
+        gap: 4,
+        background: "rgba(255,255,255,.04)",
+        padding: 4,
+        borderRadius: 14,
+        width: "fit-content",
+        marginBottom: 20,
+        border: `1px solid ${T.borderSoft}`
       }}>
         {[
           { id: "overview", label: "System Overview", icon: LayoutDashboard },
           { id: "users", label: "Admin Users", icon: Users },
           { id: "settings", label: "System Settings", icon: Settings },
         ].map(tab => (
-          <button 
-            key={tab.id} 
-            onClick={() => setActiveTab(tab.id)} 
-            style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: 6, 
-              padding: "8px 16px", 
-              borderRadius: 10, 
-              fontSize: 13, 
-              fontWeight: 600, 
-              cursor: "pointer", 
-              transition: "all .2s", 
-              background: activeTab === tab.id ?  "linear-gradient(135deg, rgb(34, 197, 94), rgb(22, 163, 74))" : "transparent", 
-              border: "none", 
-              color: activeTab === tab.id ? "#fff" : T.textMuted, 
-              boxShadow: activeTab === tab.id ? "0 4px 14px #48a74866" : "none", 
-              fontFamily: "'DM Sans',sans-serif" 
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 16px",
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all .2s",
+              background: activeTab === tab.id ? "linear-gradient(135deg, rgb(34, 197, 94), rgb(22, 163, 74))" : "transparent",
+              border: "none",
+              color: activeTab === tab.id ? "#fff" : T.textMuted,
+              boxShadow: activeTab === tab.id ? "0 4px 14px #48a74866" : "none",
+              fontFamily: "'DM Sans',sans-serif"
             }}
           >
-            <tab.icon size={14}/>
+            <tab.icon size={14} />
             {tab.label}
           </button>
         ))}

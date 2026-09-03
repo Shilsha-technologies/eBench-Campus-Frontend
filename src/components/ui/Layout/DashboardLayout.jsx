@@ -1,166 +1,8 @@
-// import AdminSidebar from "./Sidebar";
-// import AdminHeader from "./Header";
-// import { requestPermission } from "../../../redux/services/firebase";
-
-// export const AdminDashboardLayout = () => {
-//   const [sidebarOpen, setSidebarOpen] = useState(false);
-//   const role=localStorage.getItem('role')
-//   if(!localStorage.getItem('token')){
-//     if(role==="admin"){
-//     window.location.href = '/admin-login';
-//     }else{
-//     window.location.href = '/';
-//     }
-//     localStorage.clear()
-//     return;
-//   }
-
-//   useEffect(() => {
-//     if(role !== "admin"){
-//     requestPermission();
-//     }
-//   }, []);
-
-
-//   return (
-//     <div className="flex h-screen bg-[#ffff]">
-//       {/* Sidebar */}
-//       <AdminSidebar
-//         sidebarOpen={sidebarOpen}
-//         setSidebarOpen={setSidebarOpen}
-//         role={role} // 👈 pass role to Sidebar
-//       />
-
-//       {/* Overlay for mobile */}
-//       {sidebarOpen && (
-//         <div
-//           className="fixed inset-0 bg-black/40 z-30 md:hidden"
-//           onClick={() => setSidebarOpen(false)}
-//         />
-//       )}
-
-//       {/* Main Content */}
-//       <main className="flex-1 flex flex-col overflow-hidden">
-//         <AdminHeader setSidebarOpen={setSidebarOpen} role={role} /> {/* 👈 optional role */}
-//         <div className="flex-1 p-4 md:p-0 overflow-auto">
-//           <Outlet />
-//         </div>
-//       </main>
-//     </div>
-//   );
-// };
-
-
-//=====================
 export const useApp = () => useContext(AppContext);
-
 
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 
-// function Sidebar({ isOpen, onClose }) {
-//   let profileCompletion = 90, credits = 500;
-//   function logout() {
-
-//   }
-//   const navigate = useNavigate();
-
-//   const navItems = [
-//     { to: "/vendor/dashboard", label: "Dashboard", icon: "⊞", end: true },
-//     { to: "/vendor/candidates", label: "Candidates", icon: "👥" },
-//     { to: "/vendor/results", label: "Test & Results", icon: "📋" },
-//     { to: "/vendor/subscription/view", label: "Subscription", icon: "💳" },
-//     { to: "/vendor/employee", label: "Employees", icon: "🧑‍💼" },
-//     { to: "/vendor/profile", label: "Campus Profile", icon: "🏛" },
-//   ];
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate("/login");
-//   };
-
-//   return (
-//     <>
-//       {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
-//       <aside className={`fixed overflow-scroll inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-100 flex flex-col transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
-//         {/* Logo */}
-//         <div className="p-6 py-5 border-b sticky top-0 bg-white z-20 border-gray-100">
-//           <div className="flex items-center gap-3">
-//             <div className="w-9 h-9 bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">CMS</div>
-//             <div>
-//               <div className="font-bold text-gray-900 text-sm leading-tight">Campus Manager</div>
-//               <div className="text-xs text-gray-400">Placement Portal</div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Profile warning */}
-//         {profileCompletion < 100 && (
-//           <div className="mx-4 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl cursor-pointer" onClick={() => { navigate("/dashboard/profile"); onClose?.(); }}>
-//             <div className="flex items-center gap-2 mb-2">
-//               <span className="text-amber-500 text-sm">⚠</span>
-//               <span className="text-xs font-semibold text-amber-800">Profile Incomplete</span>
-//             </div>
-//             <ProgressBar value={profileCompletion} color="amber" showLabel={false} />
-//             <p className="text-xs text-amber-700 mt-1.5">{profileCompletion}% complete — finish to unlock all features</p>
-//           </div>
-//         )}
-
-//         {/* Navigation */}
-//         <nav className="flex-1 p-4 space-y-1 mt-2">
-//           {navItems.map(item => (
-//             <NavLink
-//               key={item.to}
-//               to={item.to}
-//               end={item.end}
-//               onClick={onClose}
-//               className={({ isActive }) =>
-//                 `w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${isActive
-//                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-//                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-//                 }`
-//               }
-//             >
-//               <span className="text-base w-5 text-center">{item.icon}</span>
-//               <span className="flex-1">{item.label}</span>
-//             </NavLink>
-//           ))}
-//         </nav>
-
-//         {/* Credits */}
-//         <div className="p-4 border-t border-gray-100 space-y-3">
-//           <div className="bg-indigo-50 rounded-xl p-3">
-//             <div className="flex justify-between items-center mb-1.5">
-//               <span className="text-xs font-semibold text-indigo-700">Credits Remaining</span>
-//               <span className="text-xs text-indigo-500">💳</span>
-//             </div>
-//             <div className="text-2xl font-bold text-indigo-800">{credits.toLocaleString()}</div>
-//             <div className="mt-2 h-1.5 bg-indigo-100 rounded-full overflow-hidden">
-//               <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.min(100, (credits / 500) * 100)}%` }} />
-//             </div>
-//           </div>
-//           <button
-//             onClick={handleLogout}
-//             className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-//           >
-//             <span>🚪</span>
-//             <span>Logout</span>
-//           </button>
-//         </div>
-//         <button
-//           onClick={handleLogout}
-//           className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-//         >
-//           <span>🚪</span>
-//           <span>Logout</span>
-//         </button>
-//       </div>
-//     </aside>
-//   </>
-// );
-// }
-
 import { useLocation } from "react-router-dom";
-// import { useEffect } from "react";
 import eBenchLogo from "../../../assets/eBenchCampu.png";
 
 export function Sidebar({ isOpen, onClose }) {
@@ -183,17 +25,12 @@ export function Sidebar({ isOpen, onClose }) {
     };
   }, [getRemainsCredit]);
 
-  console.log("canAccess", canAccessManagement);
-  console.log("pp", profileCompletion)
-  // debuggers
-
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = async () => {
     try {
       const result = await logout();
-      // console.log("logout-response", result);
       if (result?.error) {
         return toast.error(result?.error?.data?.detail ?? "Something went wrong !")
       }
@@ -434,10 +271,10 @@ function Header({ onMenuToggle }) {
         </div>
       </div>
       <div className="flex cursor-pointer items-center gap-3">
-        <button className="relative w-9 cursor-pointer h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500">
+        {/* <button className="relative w-9 cursor-pointer h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500">
           🔔
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-        </button>
+        </button> */}
         <button
           onClick={() => navigate("/vendor/profile")}
           className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded-xl transition-colors"

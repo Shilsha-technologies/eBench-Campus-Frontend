@@ -362,9 +362,6 @@ export default function VendorDetailPage() {
   const navigate = useNavigate();
 
   const { data: vendorData, isLoading, error } = useGetCampusDetailsQuery(campusId);
-
-  console.log("Vendor Data:", vendorData);
-
   const vendor = vendorData?.vendor;
   const candidates = vendorData?.candidates || [];
   const staff = vendorData?.subvendor || [];
@@ -498,12 +495,6 @@ export default function VendorDetailPage() {
         {activeTab === "staff" && <StaffTab staff={staff} />}
         {activeTab === "activity" && <ActivityTab activities={vendor.recentActivity} />}
 
-        {/* Limited data notice */}
-        {vendorData.showingLimitedData && (
-          <p className="mt-4 text-xs text-amber-600 text-center">
-            ⚠️ Showing limited preview data. Connect to the full API to load all records.
-          </p>
-        )}
       </div>
     </div>
   );
