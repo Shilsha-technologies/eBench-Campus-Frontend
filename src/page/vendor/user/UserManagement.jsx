@@ -223,7 +223,7 @@ export default function CandidatesPage() {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
       if (result?.error) {
         // console.log("eww", result)
-        return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info")
+        return toast.error(result?.error?.data?.message ?? "Pls Fill Correct Info")
       }
       if (result?.data?.status) {
         setTimeout(() => {
@@ -236,8 +236,8 @@ export default function CandidatesPage() {
 
 
     } catch (err) {
-      console.log("first-err", err)
-      toast.error(err?.data?.detail ?? "Internal Server Error")
+      // console.log("first-err", err)
+      toast.error(result?.error?.data?.message ?? "Internal Server Error")
     }
   }
   const [showactiveInactiveModal, setShowActiveInactiveModal] = useState(false);
@@ -506,7 +506,7 @@ export default function CandidatesPage() {
                       setDeleteUserDetails(row);
                       setShowActiveInactiveModal(true);
                     }}
-                    className={`px-3 text-xs cursor-pointer py-2 rounded text-white font-semibold ${row?.status == "active"
+                    className={` text-xs cursor-pointer w-20 text-center py-2 rounded text-white font-semibold ${row?.status == "active"
                       ? "bg-red-600 hover:bg-red-700 shadow-red-200"
                       : "bg-green-500 hover:bg-green-600"
                       } transition-all transform hover:scale-105 shadow-md`}
@@ -600,7 +600,7 @@ export default function CandidatesPage() {
           <button onClick={() => setShowCalendar(p => !p)}
             className={`border rounded-xl px-3 py-2.5 text-sm bg-white min-w-[200px] text-left
         ${fromDate && toDate ? 'border-indigo-400 text-indigo-600' : 'border-gray-200 text-gray-500'}`}>
-            {fromDate && toDate ? `${fromDate} → ${toDate}` : '📅 Select date range'}
+            {fromDate && toDate ? `${fromDate} → ${toDate}` : '📅 Select a date range to view past dates'}
           </button>
 
           {showCalendar && (
@@ -681,7 +681,7 @@ export default function CandidatesPage() {
 
 
         {/* CGPA Range Dropdown */}
-        <select
+        {/* <select
           onChange={(e) => {
             const val = e.target.value;
             if (!val) { setMinCgpa(""); setMaxCgpa(""); }
@@ -696,7 +696,7 @@ export default function CandidatesPage() {
           <option value="7,8">7.0 – 8.0</option>
           <option value="8,9">8.0 – 9.0</option>
           <option value="9,10">9.0 – 10.0</option>
-        </select>
+        </select> */}
       </div>
 
       {/* ── Bulk action bar (visible only when rows are checked) ── */}
@@ -890,7 +890,7 @@ export default function CandidatesPage() {
                   <p className="text-sm text-gray-500">{deleteUserDetails?.email}</p>
                   <div className="flex items-center justify-center gap-4 text-xs text-gray-600">
                     <span>📍 {deleteUserDetails?.country || "—"}</span>
-                    <span>📞 +{deleteUserDetails?.mobile || "—"}</span>
+                    <span>📞 {deleteUserDetails?.mobile || "—"}</span>
                   </div>
                 </div>
               </div>
@@ -932,7 +932,7 @@ export default function CandidatesPage() {
 
         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
           <p className="font-semibold text-red-700">
-            {deleteUserDetails?.first_name} {deleteUserDetails?.last_name}
+            {deleteUserDetails?.name}
           </p>
           <p className="text-sm text-gray-600">
             {deleteUserDetails?.email}

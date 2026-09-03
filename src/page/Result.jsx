@@ -272,13 +272,15 @@ import toast from 'react-hot-toast';
 //                         <p className='text-sm text-blue-500 text-center mb-4'>OTP has been send in your test link Pls check your mail</p>
 //                         <input
 //                             type="text"
+//                             inputMode="numeric"
+//                             pattern="\d{6}"
 //                             maxLength={6}
 //                             value={otp}
-//                             onChange={(e) => setOtp(e.target.value)}
+//                             onChange={handleOtpChange}
 //                             placeholder="Enter 6 digit OTP"
 //                             className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
 //                         />
-
+//
 //                         <button
 //                             onClick={handleVerify}
 //                             className="w-full mt-4 bg-[#286a94] text-white font-semibold py-2 rounded-lg hover:bg-[#3b7aa7]"
@@ -456,6 +458,14 @@ export default function ProfilePage() {
         }
     };
 
+    // 🔐 OTP input validation handler
+    const handleOtpChange = (e) => {
+        // Remove any non-digit characters
+        const raw = e.target.value;
+        const cleaned = raw.replace(/\D/g, "");
+        setOtp(cleaned);
+    };
+
     // 📦 Fetch data ONLY AFTER verification
     useEffect(() => {
         if (!cookieData?.verified) return;
@@ -519,9 +529,11 @@ export default function ProfilePage() {
 
                     <input
                         type="text"
+                        inputMode="numeric"
+                        pattern="\d{6}"
                         maxLength={6}
                         value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
+                        onChange={handleOtpChange}
                         placeholder="Enter 6 digit OTP"
                         className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
                     />

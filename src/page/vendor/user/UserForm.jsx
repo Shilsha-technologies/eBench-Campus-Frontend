@@ -10,8 +10,8 @@ import { ClockFading, X } from "lucide-react";
 import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery } from "../../../redux/services/vendorApi";
 
 const validationSchema = yup.object().shape({
-    firstName: yup.string().required("First Name is required").max(30),
-    lastName: yup.string().required("Last Name is required").max(30),
+    firstName: yup.string().required("First Name is required").max(30, "First Name cannot exceed 30 characters.").matches(/^\S+$/, "First Name cannot contain spaces."),
+    lastName: yup.string().required("Last Name is required").max(30, "Last Name cannot exceed 30 characters.").matches(/^\S+$/, "Last Name cannot contain spaces."),
 
     // birthCountry: yup.object().nullable().required("Birth Country is required"),
     nationality: yup.object().nullable().required("Nationality is required"),
@@ -21,8 +21,17 @@ const validationSchema = yup.object().shape({
 
     mobileNumber: yup
         .string()
-        .required("Mobile number is required"),
-
+        .required("Mobile number is required")
+        .test(
+            "no-leading-zero",
+            "Mobile number cannot start with 0",
+            (value) => !!value && !value.startsWith("0")
+        )
+        .test(
+            "valid-10-digit",
+            "Enter a valid 10-digit mobile number",
+            (value) => !!value && /^[1-9][0-9]{9}$/.test(value)
+        ),  
     degree: yup.string().when([], {
         then: (schema) => schema.required("Degree is required"),
     }),
@@ -157,6 +166,8 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
 
     // console.log("specializations",specializations)
 
+    console.log("errr", errors)
+
     return (
         <motion.div
             className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -289,79 +300,75 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     </div>
 
                     {/* Mobile Number */}
-                    <div className="">
-                        <Controller
-                            name="mobileNumber"
-                            control={control}
-                            rules={{
-                                required: "Mobile number is required",
-                                validate: (value) => {
-                                    const mobile = String(value || "").trim();
+                    <Controller
+                        name="mobileNumber"
+                        control={control}
+                        rules={{
+                            required: "Mobile number is required",
+                            validate: (value) => {
+                                const mobile = String(value || "").trim();
 
-                                    if (!mobile) {
-                                        return "Mobile number is required";
+                                if (!mobile) {
+                                    return "Mobile number is required";
+                                }
+
+                                if (mobile.startsWith("0")) {
+                                    return "Mobile number cannot start with 0";
+                                }
+
+                                if (!/^[1-9][0-9]{9}$/.test(mobile)) {
+                                    return "Enter a valid 10-digit mobile number";
+                                }
+
+                                return true;
+                            },
+                        }}
+                        render={({ field }) => (
+                            <div className="flex flex-col gap-1">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Mobile Number{" "}
+                                    <span className="text-red-500 ml-0.5">*</span>
+                                </label>
+
+                                <PhoneInput
+                                    country="in"
+                                    value={
+                                        field.value
+                                            ? `${watch("countryCode") || "+91"}${field.value}`
+                                            : ""
                                     }
+                                    inputStyle={{
+                                        width: "100%",
+                                    }}
+                                    onChange={(val, countryData) => {
+                                        // Extract local number without country code
+                                        const localNumber = val.startsWith(countryData.dialCode)
+                                            ? val.substring(countryData.dialCode.length)
+                                            : val;
 
-                                    if (mobile.startsWith("0")) {
-                                        return "Mobile number cannot start with 0";
-                                    }
+                                        field.onChange(localNumber);
 
-                                    if (!/^[1-9][0-9]{9}$/.test(mobile)) {
-                                        return "Enter a valid 10-digit mobile number";
-                                    }
+                                        // Store country code separately with + symbol
+                                        setValue(
+                                            "countryCode",
+                                            `+${countryData.dialCode}`
+                                        );
+                                    }}
+                                    inputProps={{
+                                        required: true,
+                                        name: "mobileNumber",
+                                    }}
+                                />
 
-                                    return true;
-                                },
-                            }}
-                            render={({ field }) => (
-                                <div className="flex flex-col gap-1">
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Mobile Number <span className="text-red-500 ml-0.5">*</span>
-                                    </label>
-
-                                    <PhoneInput
-                                        country="in"
-                                        value={
-                                            field.value
-                                                ? `${watch("countryCode") || "+91"}${field.value}`
-                                                : ""
-                                        }
-                                        inputStyle={{
-                                            width: "100%",
-                                            borderRadius: "0.5rem",
-                                            borderColor: errors.mobileNumber
-                                                ? "#ef4444"
-                                                : "#d1d5db",
-                                        }}
-                                        onChange={(val, countryData) => {
-                                            // Extract only the local number
-                                            const localNumber = val.startsWith(countryData.dialCode)
-                                                ? val.substring(countryData.dialCode.length)
-                                                : val;
-
-                                            field.onChange(localNumber);
-
-                                            // Store country code separately with +
-                                            setValue(
-                                                "countryCode",
-                                                `+${countryData.dialCode}`
-                                            );
-                                        }}
-                                        inputProps={{
-                                            name: "mobileNumber",
-                                        }}
-                                    />
-
-                                    {errors.mobileNumber && (
-                                        <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
-                                            <span>⚠</span>
-                                            {errors.mobileNumber.message}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        />
-                    </div>
+                                {errors.mobileNumber && (
+                                    <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">
+                                        <span>⚠</span>
+                                        {errors.mobileNumber.message}
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                    />
 
                     <div>
                         <label className="font-medium text-sm text-gray-700 mb-1">Degree <span className="text-red-500 ml-0.5">*</span></label>
