@@ -407,8 +407,7 @@ export default function ProfilePage() {
     // console.log("candidateData--000", candidateData);
     const CANDIDATE = candidateData?.candidate || { name: "fjdkjf", age: "32", phone: "9876543210" };
 
-    const TEST = candidateData?.test || { levelName: "MERN", title: "Introduction Test", subtitle: "Self Introduction", icon: "fi-fi-rr-user", accentColor: "#286a94", accentBackground: "#f0f7fd", totalQuestions: 10, totalMarks: "N/A", cutoffPercentage: 80, isAiInterview: false };
-
+    const TEST = candidateData?.test;
     const lv = {
         key: candidateData?.level_id || '1',
         bc: TEST?.levelName,
@@ -483,7 +482,7 @@ export default function ProfilePage() {
 
         // Show loader while processing navigation
         setBeginLoader(true);
-        const res=await beginTest().unwrap()
+        const res = await beginTest().unwrap()
         // debugger;
 
         if (candidateData?.level_id == "LEVEL_001") {
@@ -729,8 +728,8 @@ export default function ProfilePage() {
 
                                 <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                                     Need help?{" "}
-                                    <a href="mailto:support@shilshatech.com" className="text-slate-500 hover:underline">
-                                        support@shilshatech.com
+                                    <a href="mailto:info@shilshatech.com" className="text-slate-500 hover:underline">
+                                        info@shilshatech.com
                                     </a>
                                 </p>
                             </div>

@@ -125,7 +125,7 @@ export default function SettingsPage() {
         <div className="fade-up d1" style={{ display:"flex", alignItems:"center", gap:14, marginBottom:28 }}>
           
           <div>
-            <h1 style={{ color:'green', fontWeight:800, fontSize:22, letterSpacing:"-0.4px" }}>Settings</h1>
+            <h1 style={{ color:'green', fontWeight:800, fontSize:22, letterSpacing:"-0.4px" }}>Admin Profile</h1>
             <p style={{ color:G.textMuted, fontSize:13, marginTop:2 }}>Manage your admin profile and platform preferences</p>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function SettingsPage() {
 
               {/* Avatar */}
               <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:22, padding:"14px 16px", background:"rgba(16,185,129,.07)", border:`1px solid ${G.accentBorder}`, borderRadius:14 }}>
-                <div style={{ width:52, height:52, borderRadius:"50%", background:"linear-gradient(135deg,rgba(16,185,129,.4),rgba(5,150,105,.3))", border:"2px solid rgba(16,185,129,.35)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, fontWeight:800, color:"#6ee7b7", flexShrink:0 }}>
+                <div style={{ width:52, height:52, borderRadius:"50%", border:"2px solid rgba(16,185,129,.35)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, fontWeight:800, color:"#6ee7b7", flexShrink:0 }}>
                   AU
                 </div>
                 <div>
