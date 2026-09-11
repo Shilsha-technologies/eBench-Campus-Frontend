@@ -570,7 +570,7 @@ export default function ExamPortal({
         if (state == null) {
             return;
         }
-        console.log("state", state)
+        // console.log("state", state)
 
         if (state.violations >= 3) {
             const handleViolation = async () => {
@@ -819,22 +819,18 @@ export default function ExamPortal({
 
                         } catch (err) {
                             // console.error('Submit failed', e);
-                            toast.error(
-                                err?.data?.message ||
-                                err?.message ||
-                                "Failed to submit test. Please try again."
-                            );
+                            showToast("⚠ Failed to submit test. Please try again", "danger");
                         }
                         finally {
                             setIsSubmitting(false);
                         }
                     }} />
             )}
-            {/* {modal === "submitted" && (
+            {modal === "submitted" && (
                 <Modal icon="🎉" title="Test Submitted!"
                     body={`All responses saved. ${totalAnswered()}/${totalQ} questions answered.`}
                     confirm={null} onCancel={null} onConfirm={null} />
-            )} */}
+            )}
 
             <style>{`
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
