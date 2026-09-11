@@ -1,12 +1,9 @@
-import CampusLogo from "../assets/ebenchCampu.png";
 
 export default function TestTerminated() { 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="bg-white border border-slate-200 rounded-2xl px-8 py-10">
-          {/* <img src={CampusLogo} alt="eBench Campus" className="h-32 mx-auto mb-8" /> */}
-
           <div className="mx-auto mb-6 h-14 w-14 rounded-full bg-red-50 flex items-center justify-center">
             <svg
               className="h-7 w-7 text-red-500"
