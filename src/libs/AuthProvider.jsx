@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       canAccessManagement: () => true,
       redirectToProfileIfIncomplete: () => false,
       getProfileCompleteness: () => 100,
-      updateProfileCompleteness: () => {},
+      updateProfileCompleteness: () => { },
       getMissingFields: () => [],
       getRemainsCredit: () => 0,
       role,
@@ -34,10 +34,10 @@ export const AuthProvider = ({ children }) => {
   const [profileCompleteness, setProfileCompleteness] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [storageUpdate, setStorageUpdate] = useState(0);
-  
+
   // Get user data from Redux store
   const { user, isLoggedIn } = useSelector((state) => state.auth);
-  
+
   // Get user details from localStorage (fallback)
   const getUserFromStorage = () => {
     try {
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
     // Add event listener for storage changes (cross-tab)
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Add custom event listener for same-tab changes
     window.addEventListener('localStorageUserUpdate', handleLocalStorageUpdate);
 
@@ -79,22 +79,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const updateProfileCompleteness = () => {
       setIsLoading(true);
-      
+
       let userData = user;
       // console.log("userData--check",userData);
-      
+
       // Fallback to localStorage if Redux user is not available
       if (!userData) {
         userData = getUserFromStorage();
       }
-      
+
       // Get completeness from backend response
       if (userData?.profile_complete_percentage !== undefined) {
         setProfileCompleteness(userData.profile_complete_percentage);
-      } else{
+      } else {
         setProfileCompleteness(0);
-      } 
-      
+      }
+
       setIsLoading(false);
     };
 
@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
     if (role !== 'campus') {
       return true;
     }
-    
+
     return isProfileComplete();
   };
 
@@ -155,7 +155,7 @@ export const AuthProvider = ({ children }) => {
     if (!userData) return [];
 
     const missingFields = [];
-    
+
     // Check common required fields for vendor profile
     const requiredFields = [
       { key: 'company_name', label: 'Company Name' },
@@ -191,19 +191,6 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn
   };
 
-  function fields(nums){
-    let posCount=0,negCount=0;
-    for(let i of nums){
-      if(i==0){
-        continue;
-      }else if(i>0){
-        posCount++;
-      }else{
-        negCount++
-      }
-    }
-    return Math.max(posCount,negCount);
-  }
 
   return (
     <AuthContext.Provider value={value}>

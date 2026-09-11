@@ -5,6 +5,7 @@ import { Table, Badge } from "../../libs/Ui";
 import toast from "react-hot-toast";
 import { Pagination } from "../../page/vendor/user/UserManagement";
 import useDebounce from "../../libs/useDebounce";
+import { TestLinkExpired } from "../../page/Result";
 
 // Helper function to get initials from name
 export const getInitials = (name) =>
@@ -88,15 +89,15 @@ export default function CampusManagement() {
         );
       }
     },
-    {
-      key: "total_students",
-      label: "Students",
-      render: (value) => (
-        <div className="text-sm text-[#1e293b] font-medium">
-          {value || 0}
-        </div>
-      )
-    },
+    // {
+    //   key: "total_students",
+    //   label: "Students",
+    //   render: (value) => (
+    //     <div className="text-sm text-[#1e293b] font-medium">
+    //       {value || 0}
+    //     </div>
+    //   )
+    // },
     {
       key: "candidate_count",
       label: "Candidates",

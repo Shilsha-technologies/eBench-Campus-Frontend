@@ -149,6 +149,8 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
   const [visible, setVisible] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
 
+
+  // console.log("sele", selectedLevelId)
   // ── Fetch levels ────────────────────────────────────────────────────────────
   const {
     data: levelsData,
@@ -215,6 +217,10 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
     onConfirm?.({ level: selectedLevel, difficulty: selectedDiff, skills: selectedSkills, closePopup: handleClose });
     // handleClose();
   }
+  const isValid =
+    !!selectedDiff &&
+    (selectedLevelId === "LEVEL_001" ||
+      (selectedSkills && selectedSkills.length > 0));
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
@@ -296,8 +302,8 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
             <span>Levels</span>
             <ChevronRight size={12} />
             <span className="text-violet-600 font-medium">{selectedLevel.name}</span>
-            <ChevronRight size={12} />
-            <span>Difficulties</span>
+            {selectedLevelId !== "LEVEL_001" && <ChevronRight size={12} />}
+            {selectedLevelId !== "LEVEL_001" && <span>Difficulties</span>}
           </div>
         )}
 
@@ -311,46 +317,50 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
             <EmptyState />
           ) : (
             <div>
-              <div className="mb-4">
-                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
-                  Select Technical Skills
-                </label>
-                <Select
-                  isMulti
-                  options={technicalSkills}
-                  value={selectedSkills}
-                  onChange={setSelectedSkills}
-                  placeholder="Choose skills (e.g. Java, C++, NodeJS...)"
-                  className="text-sm"
-                  classNamePrefix="react-select"
-                  isClearable
-                  styles={{
-                    control: (base, state) => ({
-                      ...base,
-                      borderColor: state.isFocused ? '#8b5cf6' : '#e5e7eb',
-                      boxShadow: state.isFocused ? '0 0 0 2px rgba(139, 92, 246, 0.2)' : 'none',
-                      '&:hover': {
-                        borderColor: state.isFocused ? '#8b5cf6' : '#c084fc',
-                      },
-                      borderRadius: '0.75rem',
-                      padding: '2px 4px',
-                      outline: 'none',
-                    }),
-                    option: (base, state) => ({
-                      ...base,
-                      backgroundColor: state.isSelected
-                        ? '#8b5cf6'
-                        : state.isFocused
-                          ? '#f3e8ff'
-                          : 'white',
-                      color: state.isSelected ? 'white' : '#374151',
-                      '&:active': {
-                        backgroundColor: '#8b5cf6',
-                      },
-                    }),
-                  }}
-                />
-              </div>
+              {
+                selectedLevelId !== "LEVEL_001" &&
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wider">
+                    Select Technical Skills
+                  </label>
+                  <Select
+                    isMulti
+                    options={technicalSkills}
+                    value={selectedSkills}
+                    onChange={setSelectedSkills}
+                    placeholder="Choose skills (e.g. Java, C++, NodeJS...)"
+                    className="text-sm"
+                    classNamePrefix="react-select"
+                    isClearable
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        borderColor: state.isFocused ? '#8b5cf6' : '#e5e7eb',
+                        boxShadow: state.isFocused ? '0 0 0 2px rgba(139, 92, 246, 0.2)' : 'none',
+                        '&:hover': {
+                          borderColor: state.isFocused ? '#8b5cf6' : '#c084fc',
+                        },
+                        borderRadius: '0.75rem',
+                        padding: '2px 4px',
+                        outline: 'none',
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        backgroundColor: state.isSelected
+                          ? '#8b5cf6'
+                          : state.isFocused
+                            ? '#f3e8ff'
+                            : 'white',
+                        color: state.isSelected ? 'white' : '#374151',
+                        '&:active': {
+                          backgroundColor: '#8b5cf6',
+                        },
+                      }),
+                    }}
+                  />
+                </div>
+              }
+
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {difficulties.map((diff, i) => (
@@ -394,9 +404,9 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
             </button>
             <button
               onClick={handleConfirm}
-              disabled={!selectedDiff || !selectedSkills || selectedSkills.length === 0}
+              disabled={!isValid}
               className={`px-4 py-2 cursor-pointer text-[13px] font-medium rounded-lg transition-all duration-150
-                ${(selectedDiff && selectedSkills && selectedSkills.length > 0)
+    ${isValid
                   ? "bg-violet-600 text-white hover:bg-violet-700 shadow-sm shadow-violet-200 active:scale-[0.98]"
                   : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
             >

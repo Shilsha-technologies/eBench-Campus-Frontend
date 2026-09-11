@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, Users, Building2, Shield, Settings, Activity,
-  Crown, Key, UserCheck, Server, Cloud, Database, Lock, Menu, X,
+  LayoutDashboard, Users, Building2, Shield, Activity,
+  Crown, Key, UserCheck, Server, Cloud, Database, Lock, Menu, X, User,
   ChevronRight, ChevronLeft, Search, Bell, LogOut, Eye
 } from "lucide-react";
 
@@ -54,9 +54,9 @@ const superAdminNavItems = [
     description: "Manage subscription plans"
 
   },
-  { 
-    id: "Assesement", 
-    label: "Assessment Management", 
+  {
+    id: "Assesement",
+    label: "Assessment Management",
     icon: Server,
     description: "manage assessment test"
   },
@@ -74,9 +74,9 @@ const superAdminNavItems = [
   // },
   {
     id: "settings",
-    label: "Settings",
-    icon: Settings,
-    description: "System settings"
+    label: "Profile Management",
+    icon: User,
+    description: "Profile details"
   },
 ];
 

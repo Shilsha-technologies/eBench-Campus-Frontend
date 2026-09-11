@@ -1,381 +1,18 @@
-import userImg from '../assets/userImg.jpg'
-// import { motion } from "framer-motion";
-// import { useNavigate } from "react-router-dom";
-// import Header from "./Header";
-
-// export default function ProfilePage() {
-//     const navigate = useNavigate();
-
-//     return (
-//         <>
-// <Header />
-// <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-100 flex flex-col items-center justify-center p-8">
-//     <motion.div
-//         initial={{ opacity: 0, y: 30 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 0.6 }}
-//         className="w-full max-w-5xl bg-white shadow-2xl rounded-3xl p-8 relative overflow-hidden"
-//     >
-//         {/* Decorative Background */}
-//         <div className="absolute top-0 left-0 w-60 h-60 rounded-full blur-3xl opacity-30 animate-pulse" />
-//         <div className="absolute bottom-0 right-0 w-60 h-60  rounded-full blur-3xl opacity-30 animate-pulse" />
-
-//         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10">
-//             {/* Left Section: User Profile */}
-//             <div className="flex flex-col items-center md:items-start">
-//                 <motion.img
-//                     src={userImg}
-//                     alt="Profile"
-//                     className="w-36 h-36 rounded-full border-2 border-[#dfe4e7] shadow-lg mb-4"
-//                     whileHover={{ scale: 1.05 }}
-//                 />
-//                 <h2 className="text-3xl font-bold text-[#286a94] mb-1">
-//                     Abhishek Yadav
-//                 </h2>
-//                 <p className="text-gray-600 mb-4">
-//                     MERN Stack Developer | 2+ years experience
-//                 </p>
-
-//                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-gray-700 shadow-inner w-full">
-//                     <h3 className="text-[#286a94] font-semibold mb-2">
-//                         Profile Details
-//                     </h3>
-//                     <ul className="space-y-1">
-//                         <li><strong>Email:</strong> abhishek@example.com</li>
-//                         <li><strong>Phone:</strong> +91 9876543210</li>
-//                         <li><strong>City:</strong> Delhi, India</li>
-//                         <li><strong>Member Since:</strong> March 2023</li>
-//                     </ul>
-//                 </div>
-//             </div>
-
-//             {/* Right Section: Test Description */}
-//             <div className="flex flex-col justify-center space-y-4">
-//                 <motion.h2
-//                     className="text-2xl font-bold text-[#286a94]"
-//                     initial={{ opacity: 0, y: 20 }}
-//                     animate={{ opacity: 1, y: 0 }}
-//                     transition={{ delay: 0.2 }}
-//                 >
-//                     🧩 Introduction Test Overview
-//                 </motion.h2>
-//                 <p className="text-gray-700 leading-relaxed">
-//                     In this test, you’ll record a short video introducing yourself.
-//                     Talk about your background, skills, and interests. This helps us
-//                     understand your communication style and personality better.
-//                 </p>
-
-//                 <div className="grid grid-cols-2 gap-4 text-sm">
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">📋 Duration</h4>
-//                         <p>60 seconds</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">🎯 Objective</h4>
-//                         <p>Self Introduction</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">🎥 Camera</h4>
-//                         <p>Required (Video + Audio)</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">💾 Format</h4>
-//                         <p>MP4 Upload</p>
-//                     </div>
-//                 </div>
-
-//                 <motion.button
-//                     onClick={() => navigate("/record")}
-//                     whileHover={{ scale: 1.05 }}
-//                     whileTap={{ scale: 0.95 }}
-//                     className="bg-[#286a94] hover:bg-[#5992b6] text-white font-semibold py-3 px-6 rounded-xl shadow-lg mt-6"
-//                 >
-//                     🚀 Start Your Introduction
-//                 </motion.button>
-//             </div>
-//         </div>
-//     </motion.div>
-// </div>
-//         </>
-
-//     );
-// }
-
-// new code
-
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "./Header";
+import CampusLogo from '../assets/ebenchCampu.png';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useBeginTestMutation, useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
+import { motion } from "framer-motion";
 import toast from 'react-hot-toast';
 
-// export default function ProfilePage() {
-//     const navigate = useNavigate();
-//     const [searchParams] = useSearchParams();
-//     const candidate_id = searchParams.get("candidate_id"); 
-//     const token = searchParams.get("token");
-//     const [isOtpOpen, setIsOtpOpen] = useState(false);
-//     const [otp, setOtp] = useState("");
-//     const [verifyOtp] = useVerifyUserOtpMutation();
-//     // console.log("verify",verifyOtp);
 
-//     const { data: cookieData, isSuccess: cookieReady, isError, isLoading: dataLoading } =
-//         useCookiesGenerateQuery({ candidate_id, token });
-
-//     const [fetchCandidate, { data: candidateData, isLoading, isError: fetchDetailError }] = useLazyGetProfileQuery();
-
-//     const handleVerify = async () => {
-//         // console.log("first", otp.length<6);
-//         if (otp.length < 6) {
-//             toast.warning("Enter valid 6 digit OTP")
-//             return;
-//         }
-//         const form = new FormData();
-//         form.append('candidate_id', candidate_id)
-//         form.append('otp', otp)
-//         try {
-//             const res = await verifyOtp(form).unwrap();
-//             if (res?.status) {
-//                 toast.success("Authentication Successully")
-//                 setIsOtpOpen(false);
-//                 setTimeout(() => {
-//                     navigate("/record", { state: { data: token } });
-//                 }, 1000)
-//             } else {
-//                 setOtp("")
-//             }
-//         } catch (err) {
-//             // console.log("err", err)
-//             toast.error(err?.data?.detail ?? "Something went wrong")
-//         }
-//     };
-
-//     useEffect(() => {
-//         if (!cookieReady) return;
-
-//         fetchCandidate({
-//             id: candidate_id,
-//             token: cookieData?.token
-//         }).unwrap()
-
-//     }, [cookieReady, candidate_id]);
-
-//     if (isLoading || dataLoading) {
-//         return <FullScreenLoader />
-//     }
-
-//     if (fetchDetailError || isError) {
-//         return <Unauthorized />
-//     }
-
-//     return (
-//         <>
-//             <Header />
-//             {/* Main Profile UI (unchanged) */}
-// <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-blue-100 flex flex-col items-center justify-center p-8">
-//     <motion.div
-//         initial={{ opacity: 0, y: 30 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 0.6 }}
-//         className="w-full max-w-5xl bg-white shadow-2xl rounded-3xl p-8 relative overflow-hidden"
-//     >
-//         <div className="absolute top-0 left-0 w-60 h-60 rounded-full blur-3xl opacity-30 animate-pulse" />
-//         <div className="absolute bottom-0 right-0 w-60 h-60 rounded-full blur-3xl opacity-30 animate-pulse" />
-
-//         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10">
-
-//             {/* Left Profile Section */}
-//             <div className="flex flex-col items-center md:items-start">
-//                 <motion.img
-//                     src={userImg}
-//                     alt="Profile"
-//                     className="w-36 h-36 rounded-full border-2 border-[#dfe4e7] shadow-lg mb-4"
-//                     whileHover={{ scale: 1.05 }}
-//                 />
-//                 <h2 className="text-3xl font-bold text-[#286a94] mb-3">{candidateData?.candidate?.first_name + " " + candidateData?.candidate?.last_name}</h2>
-//                 {/* Left Profile Section
-//                                         */}
-//                 {/* <p className="text-gray-600 mb-4">MERN Stack Developer | 2+ years experience</p>                                                     */}
-
-//                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-gray-700 shadow-inner w-full">
-//                     <h3 className="text-[#286a94] font-semibold mb-2">Profile Details</h3>
-//                     <ul className="space-y-1">
-//                         <li><strong>Email:</strong> {candidateData?.candidate?.email ?? "N/A"}</li>
-//                         <li><strong>Phone:</strong> {'+' + candidateData?.candidate?.mobile ?? "N/A"}</li>
-//                         <li><strong>Nationality:</strong> {candidateData?.candidate?.nationality ?? "N/A"} </li>
-//                         <li><strong>Country of Residence:</strong> {candidateData?.candidate?.country_of_residence ?? "N/A"} </li>
-//                         <li><strong>Birth Country:</strong> {candidateData?.candidate?.birth_country ?? "N/A"} </li>
-//                     </ul>
-//                 </div>
-//             </div>
-
-//             {/* Right Test Section */}
-//             <div className="flex flex-col justify-center space-y-4">
-//                 <motion.h2
-//                     className="text-2xl font-bold text-[#286a94]"
-//                     initial={{ opacity: 0, y: 20 }}
-//                     animate={{ opacity: 1, y: 0 }}
-//                 >
-//                     🧩 Introduction Test Overview
-//                 </motion.h2>
-
-//                 <p className="text-gray-700 leading-relaxed">
-//                     In this test, you’ll record a short video introducing yourself.
-//                     Talk about your background, skills, and interests.
-//                 </p>
-
-//                 <div className="grid grid-cols-2 gap-4 text-sm">
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">📋 Duration</h4>
-//                         <p>60 seconds</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">🎯 Objective</h4>
-//                         <p>Self Introduction</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">🎥 Camera</h4>
-//                         <p>Required</p>
-//                     </div>
-//                     <div className="bg-gray-50 border rounded-xl p-4">
-//                         <h4 className="text-[#286a94] font-semibold mb-1">💾 Format</h4>
-//                         <p>MP4 Upload</p>
-//                     </div>
-//                 </div>
-
-//                 {/* Start Test → open OTP popup */}
-//                 <motion.button
-//                     onClick={() => setIsOtpOpen(true)}
-//                     whileHover={{ scale: 1.05 }}
-//                     whileTap={{ scale: 0.95 }}
-//                     className="bg-[#286a94] hover:bg-[#5992b6] text-white font-semibold py-3 px-6 rounded-xl shadow-lg mt-6"
-//                 >
-//                     🚀 Start Your Introduction
-//                 </motion.button>
-//             </div>
-//         </div>
-//     </motion.div>
-// </div>
-
-//             {/* OTP Popup Over Same UI */}
-//             {isOtpOpen && (
-//                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-//                     <motion.div
-//                         initial={{ scale: 0.8, opacity: 0 }}
-//                         animate={{ scale: 1, opacity: 1 }}
-//                         className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6"
-//                     >
-//                         <h2 className="text-xl font-semibold text-[#286a94] text-center mb-4">
-//                             🔐 Verify OTP
-//                         </h2>
-//                         <p className='text-sm text-blue-500 text-center mb-4'>OTP has been send in your test link Pls check your mail</p>
-//                         <input
-//                             type="text"
-//                             maxLength={6}
-//                             value={otp}
-//                             onChange={(e) => setOtp(e.target.value)}
-//                             placeholder="Enter 6 digit OTP"
-//                             className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
-//                         />
-
-//                         <button
-//                             onClick={handleVerify}
-//                             className="w-full mt-4 bg-[#286a94] text-white font-semibold py-2 rounded-lg hover:bg-[#3b7aa7]"
-//                         >
-//                             Verify OTP
-//                         </button>
-
-//                         <button
-//                             onClick={() => [setIsOtpOpen(false), setOtp("")]}
-//                             className="w-full mt-2 text-gray-600 hover:text-gray-800 text-sm"
-//                         >
-//                             Cancel
-//                         </button>
-//                     </motion.div>
-//                 </div>
-//             )}
-//         </>
-//     );
-// }
-
-// import React, { useEffect, useState } from "react";
-// import { useNavigate, useSearchParams } from "react-router-dom";
-// import { motion } from "framer-motion";
-// // import { toast } from "react-toastify";
-
-
-// ── Small primitives ──────────────────────────────────────────────────────────
-function Chip({ children }) {
-    return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 text-xs text-slate-500 whitespace-nowrap">
-            {children}
-        </span>
-    );
-}
-
-function Tag({ children, accent }) {
-    return (
-        <span
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border"
-            style={accent ? { background: accent + "18", color: accent, borderColor: accent + "40" } : { background: "#f1f5f9", color: "#64748b", borderColor: "#e2e8f0" }}
-        >
-            {children}
-        </span>
-    );
-}
-
-function DarkTag({ children }) {
-    return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-900 text-slate-100 border border-slate-900">
-            {children}
-        </span>
-    );
-}
-
-function StatBox({ val, label }) {
-    return (
-        <div className="bg-slate-50 rounded-lg px-3.5 py-2.5 text-center min-w-[72px]">
-            <div className="text-base font-semibold text-slate-900 leading-tight">{val}</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">{label}</div>
-        </div>
-    );
-}
-
-// ── Section card ──────────────────────────────────────────────────────────────
-function SectionCard({ sec, accent }) {
-    return (
-        <div
-            className={`bg-white rounded-xl border p-4 flex flex-col gap-2 hover:border-slate-300 transition-colors`}
-            style={sec.star ? { borderColor: "#FDE68A" } : { borderColor: "#e2e8f0" }}
-        >
-            <div className="flex items-start gap-2">
-                <span className="text-[11px] text-slate-300 font-semibold mt-0.5 w-5 flex-shrink-0">{sec.sectionId}</span>
-                <span className="text-base leading-none mt-0.5">{sec.icon}</span>
-                <span className="text-[13px] font-medium text-slate-800 leading-snug flex-1">{sec?.name || sec?.title}</span>
-            </div>
-            <p className="text-[12px] text-slate-500 leading-relaxed pl-7">{sec.description}</p>
-            <div className="flex flex-wrap items-center gap-1.5 pl-7">
-                {sec.qs && <Tag>{sec.qs}</Tag>}
-                <Tag accent={accent}>⏱ {sec.timeLimit}</Tag>
-                {/* {sec.marks && <DarkTag>{sec.marks}</DarkTag>} */}
-                {sec.star && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold" style={{ background: "#FFFBEB", color: "#B45309", border: "0.5px solid #FDE68A" }}>
-                        ★ Highest weightage
-                    </span>
-                )}
-            </div>
-        </div>
-    );
-}
 
 export default function ProfilePage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [agreed, setAgreed] = useState(false);
 
-    const candidate_id = searchParams.get("candidate_id");
-    const token = searchParams.get("token");
+    const token = searchParams.get("t")
 
     const [isOtpOpen, setIsOtpOpen] = useState(true);
     const [otp, setOtp] = useState("");
@@ -390,7 +27,8 @@ export default function ProfilePage() {
         isError,
         isLoading: dataLoading,
         refetch
-    } = useCookiesGenerateQuery({ candidate_id, token });
+    } = useCookiesGenerateQuery({ token });
+
 
     const [
         fetchCandidate,
@@ -401,14 +39,16 @@ export default function ProfilePage() {
         }
     ] = useLazyGetProfileQuery();
 
+    // console.log(cookieData, "000")
+
 
     // console.log("candidateData--000", candidateData);
-    const CANDIDATE = candidateData?.candidate || { name: "fjdkjf", age: "32", phone: "9876543210" };
+    const CANDIDATE = candidateData?.candidate;
 
-    const TEST = candidateData?.test || { levelName: "MERN", title: "Introduction Test", subtitle: "Self Introduction", icon: "fi-fi-rr-user", accentColor: "#286a94", accentBackground: "#f0f7fd", totalQuestions: 10, totalMarks: "N/A", cutoffPercentage: 80, isAiInterview: false };
 
+    const TEST = candidateData?.test;
     const lv = {
-        key: candidateData?.level_id || '1',
+        key: candidateData?.level_id,
         bc: TEST?.levelName,
         title: TEST?.title,
         sub: TEST?.subtitle,
@@ -416,12 +56,23 @@ export default function ProfilePage() {
         accent: TEST?.accentColor,
         accentBg: TEST?.accentBackground,
         dotColor: TEST?.accentColor,
-        duration: TEST?.duration || "N/A",
-        questions: TEST?.totalQuestions || 0,
-        marks: TEST?.totalMarks || "N/A",
-        cutoff: TEST?.cutoffPercentage
-            ? `${TEST.cutoffPercentage}%`
-            : "N/A",
+
+        ...(TEST?.duration && {
+            duration: TEST.duration,
+        }),
+
+        ...(TEST?.totalQuestions && {
+            questions: TEST.totalQuestions,
+        }),
+
+        ...(TEST?.totalMarks && {
+            marks: TEST.totalMarks,
+        }),
+
+        ...(TEST?.cutoffPercentage && {
+            cutoff: `${TEST.cutoffPercentage}%`,
+        }),
+
         isAI: TEST?.isAiInterview,
         sections: TEST?.sections || [],
         rules: TEST?.guidelines?.map(item => item.rule) || [],
@@ -435,7 +86,6 @@ export default function ProfilePage() {
         }
 
         const form = new FormData();
-        form.append("candidate_id", candidate_id);
         form.append("otp", otp);
 
         try {
@@ -443,11 +93,9 @@ export default function ProfilePage() {
 
             if (res?.status) {
                 toast.success("Authentication Successfully");
-
-                // 🔥 Refetch cookie to update verified status
-                await refetch();
-
+                const res = await fetchCandidate();
                 setIsOtpOpen(false);
+
             } else {
                 setOtp("");
             }
@@ -456,25 +104,21 @@ export default function ProfilePage() {
         }
     };
 
-    // 📦 Fetch data ONLY AFTER verification
-    useEffect(() => {
-        if (!cookieData?.verified) return;
 
-        fetchCandidate({
-            id: candidate_id,
-            token: token
-        });
-    }, [cookieData?.verified, candidate_id, token]);
+    // 🔐 OTP input validation handler
+    const handleOtpChange = (e) => {
+        // Remove any non-digit characters
+        const raw = e.target.value;
+        const cleaned = raw.replace(/\D/g, "");
+        setOtp(cleaned);
+    };
+
 
     const [beginTest] = useBeginTestMutation();
 
     async function startHandler() {
-        // console.log("bajjj", candidateData)
-
-        // Show loader while processing navigation
         setBeginLoader(true);
-        const res=await beginTest().unwrap()
-        // debugger;
+        const res = await beginTest().unwrap()
 
         if (candidateData?.level_id == "LEVEL_001") {
             setTimeout(() => {
@@ -497,7 +141,7 @@ export default function ProfilePage() {
 
     // ❌ Unauthorized
     if (fetchDetailError || isError) {
-        return <Unauthorized />;
+        return <TestLinkExpired />;
     }
 
     // 🔐 OTP SCREEN FIRST
@@ -519,9 +163,11 @@ export default function ProfilePage() {
 
                     <input
                         type="text"
+                        inputMode="numeric"
+                        pattern="\d{6}"
                         maxLength={6}
                         value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
+                        onChange={handleOtpChange}
                         placeholder="Enter 6 digit OTP"
                         className="w-full border px-4 py-2 rounded-lg text-center text-lg tracking-widest"
                     />
@@ -621,11 +267,23 @@ export default function ProfilePage() {
                                     <div className="text-[13px] text-slate-500 mt-0.5">{lv?.sub}</div>
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
-                                    <StatBox val={lv.duration} label="Duration" />
-                                    <StatBox val={lv.questions} label="Questions" />
-                                    <StatBox val={lv.marks} label="Marks" />
-                                    <StatBox val={lv.cutoff} label="Cutoff" />
+                                    {lv.duration != null && (
+                                        <StatBox val={lv.duration} label="Duration" />
+                                    )}
+
+                                    {lv.questions != null && (
+                                        <StatBox val={lv.questions} label="Questions" />
+                                    )}
+
+                                    {lv.marks != null && (
+                                        <StatBox val={lv.marks} label="Marks" />
+                                    )}
+
+                                    {lv.cutoff != null && (
+                                        <StatBox val={lv.cutoff} label="Cutoff" />
+                                    )}
                                 </div>
+
                             </div>
                         </div>
 
@@ -717,8 +375,13 @@ export default function ProfilePage() {
 
                                 <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                                     Need help?{" "}
-                                    <a href="mailto:support@shilshatech.com" className="text-slate-500 hover:underline">
-                                        support@shilshatech.com
+                                    <a
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-slate-500 hover:underline"
+                                    >
+                                        info@shilshatech.com
                                     </a>
                                 </p>
                             </div>
@@ -740,24 +403,100 @@ const FullScreenLoader = () => {
 };
 
 
-function Unauthorized() {
+export function TestLinkExpired() {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 px-6">
-            <div className="bg-white shadow-lg rounded-xl p-10 text-center max-w-md w-full">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+            <div className="w-full max-w-md">
+                <div className="bg-white border border-slate-200 rounded-2xl px-8 py-10">
+                    <img src={CampusLogo} alt="eBench Campus" className="h-32 mx-auto mb-8" />
 
-                <div className="text-red-500 text-7xl font-bold">401</div>
 
-                <h1 className="text-2xl font-semibold text-gray-800 mt-4">
-                    Unauthorized Access
-                </h1>
+                    <h1 className="text-xl font-semibold text-slate-900 text-center">
+                        This test link has expired
+                    </h1>
 
-                <p className="text-gray-500 mt-2">
-                    Your access link has expired or you do not have permission to view this page.
+                    <p className="text-slate-500 text-sm text-center mt-2 leading-relaxed">
+                        Test links are only valid for a limited time. Yours is no longer active,
+                        so this assessment can't be opened.
+                    </p>
+
+                    <div className="mt-8 pt-6 border-t border-slate-100">
+                        <p className="text-slate-400 text-xs text-center mb-4">
+                            If you were expecting to take this test, reach out to your admin
+                            or campus coordinator for a new link.
+                        </p>
+
+                    </div>
+                </div>
+
+                <p className="text-center text-xs text-slate-400 mt-6">
+                    eBench Campus &middot; Assessment Platform
                 </p>
+            </div>
+        </div>
+    );
+}
 
-                <p className="text-gray-400 text-sm mt-6">
-                    Please contact support if you believe this is a mistake.
-                </p>
+
+// ── Small primitives ──────────────────────────────────────────────────────────
+export function Chip({ children }) {
+    return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 text-xs text-slate-500 whitespace-nowrap">
+            {children}
+        </span>
+    );
+}
+
+function Tag({ children, accent }) {
+    return (
+        <span
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border"
+            style={accent ? { background: accent + "18", color: accent, borderColor: accent + "40" } : { background: "#f1f5f9", color: "#64748b", borderColor: "#e2e8f0" }}
+        >
+            {children}
+        </span>
+    );
+}
+
+function DarkTag({ children }) {
+    return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-900 text-slate-100 border border-slate-900">
+            {children}
+        </span>
+    );
+}
+
+function StatBox({ val, label }) {
+    return (
+        <div className="bg-slate-50 rounded-lg px-3.5 py-2.5 text-center min-w-[72px]">
+            <div className="text-base font-semibold text-slate-900 leading-tight">{val}</div>
+            <div className="text-[11px] text-slate-400 mt-0.5">{label}</div>
+        </div>
+    );
+}
+
+// ── Section card ──────────────────────────────────────────────────────────────
+function SectionCard({ sec, accent }) {
+    return (
+        <div
+            className={`bg-white rounded-xl border p-4 flex flex-col gap-2 hover:border-slate-300 transition-colors`}
+            style={sec.star ? { borderColor: "#FDE68A" } : { borderColor: "#e2e8f0" }}
+        >
+            <div className="flex items-start gap-2">
+                <span className="text-[11px] text-slate-300 font-semibold mt-0.5 w-5 flex-shrink-0">{sec.sectionId}</span>
+                <span className="text-base leading-none mt-0.5">{sec.icon}</span>
+                <span className="text-[13px] font-medium text-slate-800 leading-snug flex-1">{sec?.name || sec?.title}</span>
+            </div>
+            <p className="text-[12px] text-slate-500 leading-relaxed pl-7">{sec.description}</p>
+            <div className="flex flex-wrap items-center gap-1.5 pl-7">
+                {sec.qs && <Tag>{sec.qs}</Tag>}
+                <Tag accent={accent}>⏱ {sec.timeLimit}</Tag>
+                {/* {sec.marks && <DarkTag>{sec.marks}</DarkTag>} */}
+                {sec.star && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold" style={{ background: "#FFFBEB", color: "#B45309", border: "0.5px solid #FDE68A" }}>
+                        ★ Highest weightage
+                    </span>
+                )}
             </div>
         </div>
     );

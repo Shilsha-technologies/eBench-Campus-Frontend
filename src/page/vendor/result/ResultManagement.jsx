@@ -347,6 +347,17 @@ export default function ResultsPage() {
           }
         </div>
       </div>
+      <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+        Need help?{" "}
+        <a
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-slate-500 hover:underline"
+        >
+          info@shilshatech.com
+        </a>
+      </p>
 
       <Modal isOpen={!!selectedResult} onClose={() => setSelectedResult(null)} title="Result Details" size="sm">
         {selectedResult && (

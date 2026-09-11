@@ -3,12 +3,11 @@ import { api } from './api';
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getProfile: builder.query({
-      query: ({ id, token }) => {
-        // console.log("Fetching profile for ID:", token);
+      query: () => {
         return {
-          url: `/candidate/details?candidate_id=${id}`,
+          url: `/candidate/details`,
           method: "GET",
-          // credentials:'include'
+          credentials: "include",
         };
       },
       providesTags: ["User"],
@@ -21,8 +20,8 @@ export const userApi = api.injectEndpoints({
       }),
     }),
     cookiesGenerate: builder.query({
-      query: ({ candidate_id, token }) => ({
-        url: `/candidate/start_test?candidate_id=${candidate_id}&token=${token}`,
+      query: ({ token }) => ({
+        url: `/candidate/start_test?t=${token}`,
         method: "GET",
         // no credentials here either
       }),
@@ -95,6 +94,13 @@ export const userApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    submitTest: builder.mutation({
+      query: () => ({
+        url: `/candidate/test/submit`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
     runCodingStatus: builder.query({
       query: ({ submission_id }) => ({
         url: `/candidate/coding/run-status`,
@@ -108,7 +114,15 @@ export const userApi = api.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-    })
+    }),
+      reportViolation: builder.mutation({
+      query: (data) => ({
+        url: '/candidate/violations',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -124,8 +138,10 @@ export const {
   useSubmitScenarioAnswerMutation,
   useSubmitMcqAnswersMutation,
   useSubmitCodingMutation,
+  useSubmitTestMutation,
   useRunCodingStatusQuery,
   useRunCodingMutation,
   useLazyRunCodingStatusQuery,
-  useUploadTestMutation
+  useUploadTestMutation,
+  useReportViolationMutation
 } = userApi;

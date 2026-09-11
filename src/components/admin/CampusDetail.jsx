@@ -80,7 +80,7 @@ function InfoRow({ label, value }) {
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0 text-sm">
       <span className="text-gray-500">{label}</span>
-      <span className="font-medium text-gray-800 text-right max-w-[55%] break-words">{value}</span>
+      <span className="font-medium text-gray-800 text-right max-w-[55%] break-words">{value ?? "-"}</span>
     </div>
   );
 }
@@ -106,20 +106,29 @@ function OverviewTab({ vendor }) {
           <div className="p-5">
             <h3 className="text-sm font-bold text-gray-800 mb-2">Campus Details</h3>
             <div>
-              <InfoRow label="Campus name" value={vendor.campus_name} />
-              <InfoRow label="University" value={vendor.university} />
-              <InfoRow label="Established" value={vendor.established} />
-              <InfoRow label="Address" value={vendor.campus_address} />
-              <InfoRow label="City / State" value={`${vendor.city}, ${vendor.state}`} />
-              <InfoRow label="Pincode" value={vendor.pincode} />
-              <InfoRow label="Total students" value={vendor.total_students?.toLocaleString()} />
-              <InfoRow label="Contact phone" value={vendor.contact_phone} />
+              <InfoRow label="Campus name" value={vendor?.campus_name} />
+              <InfoRow label="University" value={vendor?.university} />
+              <InfoRow label="Established" value={vendor?.established} />
+              <InfoRow label="Address" value={vendor?.campus_address} />
+              <InfoRow label="City / State" value={
+                vendor?.city && vendor?.state
+                  ? `${vendor.city}, ${vendor.state}`
+                  : '-'
+              } />
+              <InfoRow label="Pincode" value={vendor?.pincode} />
+              <InfoRow label="Total students" value={vendor?.total_students ?? 0} />
+              <InfoRow label="Contact phone"
+                value={
+                  vendor?.country_code && vendor?.contact_phone
+                    ? `${vendor.country_code} ${vendor.contact_phone}`
+                    : "-"
+                } />
               <InfoRow
                 label="Website"
                 value={
                   <a href={vendor.website} target="_blank" rel="noreferrer"
                     className="text-green-600 hover:underline break-all">
-                    {vendor.website}
+                    {vendor?.website}
                   </a>
                 }
               />
@@ -135,8 +144,8 @@ function OverviewTab({ vendor }) {
             <h3 className="text-sm font-bold text-gray-800 mb-2">Account Details</h3>
             <div>
               <InfoRow label="Email" value={vendor.email} />
-              <InfoRow label="Plan ID" value={`#${vendor.selected_plan_id}`} />
-              <InfoRow label="Plan price" value={`₹${vendor.selected_plan_price?.toLocaleString()}`} />
+              <InfoRow label="Plan ID" value={`${vendor?.selected_plan_id ?? "-"}`} />
+              <InfoRow label="Plan price" value={`${vendor?.selected_plan_price ? "₹" : "-"}`} />
               <InfoRow label="Subscribed" value={<Badge variant="success">{vendor.is_subscribed ? "Yes" : "No"}</Badge>} />
               <InfoRow label="Verified" value={<Badge variant="success">{vendor.is_verified ? "Yes" : "No"}</Badge>} />
               <InfoRow label="Disabled" value={<Badge variant={vendor.is_disabled ? "danger" : "neutral"}>{vendor.is_disabled ? "Yes" : "No"}</Badge>} />
@@ -362,9 +371,6 @@ export default function VendorDetailPage() {
   const navigate = useNavigate();
 
   const { data: vendorData, isLoading, error } = useGetCampusDetailsQuery(campusId);
-
-  console.log("Vendor Data:", vendorData);
-
   const vendor = vendorData?.vendor;
   const candidates = vendorData?.candidates || [];
   const staff = vendorData?.subvendor || [];
@@ -498,12 +504,6 @@ export default function VendorDetailPage() {
         {activeTab === "staff" && <StaffTab staff={staff} />}
         {activeTab === "activity" && <ActivityTab activities={vendor.recentActivity} />}
 
-        {/* Limited data notice */}
-        {vendorData.showingLimitedData && (
-          <p className="mt-4 text-xs text-amber-600 text-center">
-            ⚠️ Showing limited preview data. Connect to the full API to load all records.
-          </p>
-        )}
       </div>
     </div>
   );

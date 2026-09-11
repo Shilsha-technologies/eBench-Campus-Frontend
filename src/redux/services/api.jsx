@@ -5,10 +5,10 @@ import toast from 'react-hot-toast';
 export const base = import.meta.env.VITE_BASE_URL;
 
 const baseQueryWith401Handling = async (args, api, extraOptions) => {
+  // debugger;
   const result = await rawBaseQuery(args, api, extraOptions);
   let localValue = null
-  if ((result?.error?.status === 401 || result?.error?.status === 403) && (window.location.pathname !== "/login" && window.location.pathname !== '/admin-login' && window.location.pathname !== '/employee/login')) {
-    // ✅ Clear storage
+  if ((result?.error?.status === 401 || result?.error?.status === 403) && (window.location.pathname !== "/login" && window.location.pathname !== '/admin-login' && window.location.pathname !== '/employee/login' && window.location.pathname !== '/record')) {
     // debugger;
     // toast.error("Your session has expired. Please sign in again.")
     if (localStorage.getItem('role') == "sub_vendor") {

@@ -93,14 +93,18 @@ export default function CandidatesPage() {
         name: `${item.first_name} ${item.last_name}`,
         email: item.email,
         country: item.nationality || "—",
-        mobile: item?.mobile && `+${item.mobile}` || "—",
+        mobile: item?.mobile && `${item.mobile}` || "—",
         status: item?.is_active ? "active" : "inactive",
         testSent: item.test_sent_count > 0,
         testCompleted: item?.test_status,
         score: item?.final_score ? item?.final_score * 100 : "-",
         cooldown_active: item?.cooldown_active,
         cooldown_remaining_minutes: item?.cooldown_remaining_minutes,
-        testCount: item?.test_sent_count
+        testCount: item?.test_sent_count,
+        is_active: item?.is_active,
+        LEVEL_001: item?.LEVEL_001,
+        LEVEL_002: item?.LEVEL_002,
+        LEVEL_003: item?.LEVEL_003,
       }))
       : [];
 
@@ -182,9 +186,6 @@ export default function CandidatesPage() {
 
 
   async function handleFormSubmit(data, status = false) {
-    // debugger
-    // console.log("jojo", data)
-
     const formdata = new FormData();
     if (status) {
       formdata.append('file', data);
@@ -198,7 +199,7 @@ export default function CandidatesPage() {
         roll_number,
         department,
         is_persuing,
-        skills
+        skills, country_code
       } = data;
       formdata.append('first_name', first_name);
       formdata.append('last_name', last_name);
@@ -212,6 +213,7 @@ export default function CandidatesPage() {
       formdata.append("graduation_year", graduation_year);
       formdata.append("cgpa", cgpa);
       formdata.append("roll_number", roll_number);
+      formdata.append("country_code", country_code);
       formdata.append("department", department);
       formdata.append("is_pursuing", is_persuing ? true : false);
 
@@ -223,6 +225,7 @@ export default function CandidatesPage() {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
       if (result?.error) {
         // console.log("eww", result)
+
         return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info")
       }
       if (result?.data?.status) {
@@ -236,8 +239,8 @@ export default function CandidatesPage() {
 
 
     } catch (err) {
-      console.log("first-err", err)
-      toast.error(err?.data?.detail ?? "Internal Server Error")
+      // console.log("first-err", err)
+      toast.error(result?.error?.data?.message ?? "Internal Server Error")
     }
   }
   const [showactiveInactiveModal, setShowActiveInactiveModal] = useState(false);
@@ -260,6 +263,7 @@ export default function CandidatesPage() {
         }, 100)
         setShowActiveInactiveModal(false)
         setDeleteUserDetails(null)
+        setSelectedIds([])
       }
     } catch (err) {
       toast.error(err?.message ?? "Something went wrong")
@@ -267,7 +271,7 @@ export default function CandidatesPage() {
     }
   }
 
-  // console.log("deactive-model", deleteUserDetails);
+  console.log("deactive-model", deleteUserDetails);
 
   const openAdd = () => {
     setEditCandidate(null);
@@ -329,33 +333,54 @@ export default function CandidatesPage() {
               className="w-3 h-3 m-auto accent-indigo-600 cursor-pointer"
             />
           ),
-          render: (_, row) => (
-            <>
-              <input
-                type="checkbox"
-                id={`not-clickable-${row.id}`}
-                checked={selectedIds.includes(row.id)}
-                onChange={() => toggleSelectOne(row.id)}
-                disabled={row?.cooldown_active}
-                className={`w-3 h-3 accent-indigo-600 
-                  ${row?.cooldown_active
+          render: (_, row) => {
+            // debugger;
+            return (
+              <>
+                <input
+                  type="checkbox"
+                  id={`not-clickable-${row.id}`}
+                  checked={selectedIds.includes(row.id)}
+                  onChange={() => {
+                    console.log("☑️ Checkbox changed:", {
+                      id: row.id,
+                      row,
+                      currentlySelected: selectedIds.includes(row.id),
+                    });
+
+                    toggleSelectOne(row.id);
+                  }}
+                  disabled={row?.cooldown_active || !row?.is_active}
+                  className={`w-3 h-3 accent-indigo-600 ${row?.cooldown_active || !row?.is_active
                     ? "cursor-not-allowed opacity-50"
                     : "cursor-pointer"
-                  }`}
-              />
+                    }`}
+                />
 
-              {row?.cooldown_active && (
-                <Tooltip
-                  key={row.id}
-                  anchorSelect={`#not-clickable-${row.id}`}
-                  style={{ zIndex: "999999" }}
-                  place="bottom"
-                >
-                  {`You have already sent the link. Please try after ${row?.cooldown_remaining_minutes} minutes`}
-                </Tooltip>
-              )}
-            </>
-          ),
+                {row?.cooldown_active && row?.is_active && (
+                  <Tooltip
+                    key={`cooldown-${row.id}`}
+                    anchorSelect={`#not-clickable-${row.id}`}
+                    style={{ zIndex: "999999" }}
+                    place="bottom"
+                  >
+                    {`You have already sent the link. Please try after ${row?.cooldown_remaining_minutes} minutes`}
+                  </Tooltip>
+                )}
+
+                {!row?.is_active && (
+                  <Tooltip
+                    key={`inactive-${row.id}`}
+                    anchorSelect={`#not-clickable-${row.id}`}
+                    style={{ zIndex: "999999" }}
+                    place="bottom"
+                  >
+                    Candidate is inactive, cannot send test.
+                  </Tooltip>
+                )}
+              </>
+            );
+          },
         },
       ]
       : []),
@@ -363,12 +388,27 @@ export default function CandidatesPage() {
     {
       key: "name",
       label: "Name",
-      render: (v, row) => (
-        <div>
-          <div className="font-medium text-gray-900">{v}</div>
-          <div className="text-xs text-gray-400">{row.email}</div>
-        </div>
-      ),
+      render: (v, row) => {
+        const email = row.email || "";
+        const isLong = email.length > 20;
+
+        return (
+          <div>
+            <div className="font-medium text-gray-900">{v}</div>
+
+            {isLong ? (
+              <div
+                className="text-xs text-gray-400 truncate max-w-[200px]"
+                title={email}
+              >
+                {email}
+              </div>
+            ) : (
+              <div className="text-xs text-gray-400">{email}</div>
+            )}
+          </div>
+        );
+      },
     },
 
     { key: "country", label: "Country" },
@@ -416,20 +456,42 @@ export default function CandidatesPage() {
         );
       },
     },
+    // {
+    //   key: "score",
+    //   label: "Score",
+    //   render: (v) =>
+    //     v != null ? (
+    //       <span
+    //         className={`font-semibold ${v >= 60 ? "text-emerald-600" : "text-red-600"
+    //           }`}
+    //       >
+    //         {v}
+    //       </span>
+    //     ) : (
+    //       "—"
+    //     ),
+    // },
+
     {
-      key: "score",
-      label: "Score",
-      render: (v) =>
-        v != null ? (
-          <span
-            className={`font-semibold ${v >= 60 ? "text-emerald-600" : "text-red-600"
-              }`}
-          >
-            {v}
-          </span>
-        ) : (
-          "—"
-        ),
+      key: "Score",
+      label: (
+        <div className="text-center">
+          Score
+          <hr className="my-1 border-t border-dotted border-gray-500" />          {/* <br /> */}
+          <span className="text-xs text-gray-500">Level 1 | Level 2 | Level 3</span>
+        </div>
+      ),
+      render: (v, row) => {
+        return (
+          <div className="flex items-center justify-between text-xs">
+            <div className="font-medium">{row?.LEVEL_001 ?? '-'}</div>
+            <div className="border-l border-gray-300 h-4 mx-2" />
+            <div className="font-medium">{row?.LEVEL_002 ?? '-'}</div>
+            <div className="border-l border-gray-300 h-4 mx-2" />
+            <div className="font-medium">{row?.LEVEL_003 ?? "-"}   </div>
+          </div>
+        );
+      },
     },
 
     {
@@ -470,13 +532,13 @@ export default function CandidatesPage() {
             <div className="flex items-center gap-2">
               {/* Send Test (only if not bulk mode & not sent) */}
               {/* {!row.testSent && !bulkMode && (
-          <button
-            onClick={() => sendTestLink(row.id)}
-            className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-2.5 py-1 rounded-lg font-medium"
-          >
-            Send Test
-          </button>
-        )} */}
+            <button
+              onClick={() => sendTestLink(row.id)}
+              className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-2.5 py-1 rounded-lg font-medium"
+            >
+              Send Test
+            </button>
+          )} */}
 
               <button
                 onClick={() => {
@@ -491,13 +553,13 @@ export default function CandidatesPage() {
 
               {/* <button
 
-                className={`text-xs px-2.5 py-1 rounded-lg font-medium ${row.status === "active"
-                  ? "bg-red-50 text-red-700"
-                  : "bg-emerald-50 text-emerald-700"
-                  }`}
-              >
-                {row.status === "active" ? "Deactivate" : "Activate"}
-              </button> */}
+                  className={`text-xs px-2.5 py-1 rounded-lg font-medium ${row.status === "active"
+                    ? "bg-red-50 text-red-700"
+                    : "bg-emerald-50 text-emerald-700"
+                    }`}
+                >
+                  {row.status === "active" ? "Deactivate" : "Activate"}
+                </button> */}
 
               {
                 row?.testCount > 0 ? (
@@ -506,7 +568,7 @@ export default function CandidatesPage() {
                       setDeleteUserDetails(row);
                       setShowActiveInactiveModal(true);
                     }}
-                    className={`px-3 text-xs cursor-pointer py-2 rounded text-white font-semibold ${row?.status == "active"
+                    className={` text-xs cursor-pointer w-20 text-center py-2 rounded text-white font-semibold ${row?.status == "active"
                       ? "bg-red-600 hover:bg-red-700 shadow-red-200"
                       : "bg-green-500 hover:bg-green-600"
                       } transition-all transform hover:scale-105 shadow-md`}
@@ -600,7 +662,7 @@ export default function CandidatesPage() {
           <button onClick={() => setShowCalendar(p => !p)}
             className={`border rounded-xl px-3 py-2.5 text-sm bg-white min-w-[200px] text-left
         ${fromDate && toDate ? 'border-indigo-400 text-indigo-600' : 'border-gray-200 text-gray-500'}`}>
-            {fromDate && toDate ? `${fromDate} → ${toDate}` : '📅 Select date range'}
+            {fromDate && toDate ? `${fromDate} → ${toDate}` : '📅 Select a date range to view past data'}
           </button>
 
           {showCalendar && (
@@ -681,7 +743,7 @@ export default function CandidatesPage() {
 
 
         {/* CGPA Range Dropdown */}
-        <select
+        {/* <select
           onChange={(e) => {
             const val = e.target.value;
             if (!val) { setMinCgpa(""); setMaxCgpa(""); }
@@ -696,7 +758,7 @@ export default function CandidatesPage() {
           <option value="7,8">7.0 – 8.0</option>
           <option value="8,9">8.0 – 9.0</option>
           <option value="9,10">9.0 – 10.0</option>
-        </select>
+        </select> */}
       </div>
 
       {/* ── Bulk action bar (visible only when rows are checked) ── */}
@@ -884,13 +946,13 @@ export default function CandidatesPage() {
               <div className="border-b border-gray-100 pb-3">
                 <h4 className={`text-lg font-semibold text-center ${deleteUserDetails?.status == "active" ? "text-red-900" : "text-green-900"
                   }`}>
-                  {deleteUserDetails?.first_name} {deleteUserDetails?.last_name}
+                  {deleteUserDetails?.name}
                 </h4>
                 <div className="text-center mt-2 space-y-1">
                   <p className="text-sm text-gray-500">{deleteUserDetails?.email}</p>
                   <div className="flex items-center justify-center gap-4 text-xs text-gray-600">
                     <span>📍 {deleteUserDetails?.country || "—"}</span>
-                    <span>📞 +{deleteUserDetails?.mobile || "—"}</span>
+                    <span>📞 {deleteUserDetails?.mobile || "—"}</span>
                   </div>
                 </div>
               </div>
@@ -932,7 +994,7 @@ export default function CandidatesPage() {
 
         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
           <p className="font-semibold text-red-700">
-            {deleteUserDetails?.first_name} {deleteUserDetails?.last_name}
+            {deleteUserDetails?.name}
           </p>
           <p className="text-sm text-gray-600">
             {deleteUserDetails?.email}

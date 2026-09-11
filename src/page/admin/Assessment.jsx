@@ -240,14 +240,6 @@ const DiffModal = ({ diff, levelNum, onSave, onClose, isSaving }) => {
   );
 };
 
-//             Save Changes
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
 
 // ─── Level Edit / Add Modal ───────────────────────────────────────────────────
 

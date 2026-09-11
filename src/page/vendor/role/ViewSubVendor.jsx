@@ -129,10 +129,10 @@ const EmployeeView = () => {
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <span className={`px-2 py-1 text-xs rounded-full font-medium ${candidate.test_status === 'completed'
-                                                                ? 'bg-green-100 text-green-700'
-                                                                : candidate.test_status === 'pending'
-                                                                    ? 'bg-yellow-100 text-yellow-700'
-                                                                    : 'bg-gray-100 text-gray-700'
+                                                            ? 'bg-green-100 text-green-700'
+                                                            : candidate.test_status === 'pending'
+                                                                ? 'bg-yellow-100 text-yellow-700'
+                                                                : 'bg-gray-100 text-gray-700'
                                                             }`}>
                                                             {candidate.test_status}
                                                         </span>
@@ -171,7 +171,7 @@ const EmployeeView = () => {
                     <div className="col-span-12 md:col-span-4 space-y-6">
 
                         <Card title="Employee Summary">
-                            <Info label="Employee ID" value={emp.id} />
+                            {/* <Info label="Employee ID" value={emp.id} /> */}
                             <Info label="Vendor ID" value={emp.vendor_id} />
                             <Info label="Plan" value={emp.plan_name || "Not Assigned"} />
                             <Info

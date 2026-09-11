@@ -12,7 +12,10 @@ import { validateEmailByRole, getEmailPlaceholder } from "../utils/emailValidati
 export default function CreateAccount() {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
-
+  // Geolocation state for vendor login
+  const [showGeoModal, setShowGeoModal] = useState(false);
+  const [geoError, setGeoError] = useState("");
+  const [geoLoading, setGeoLoading] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +42,34 @@ export default function CreateAccount() {
       setValue("email", "");
     }
   }, [watchedModule, setValue]);
+
+  // Request geolocation when modal opens
+  const requestGeo = () => {
+    setGeoLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setGeoLoading(false);
+          setShowGeoModal(false);
+          // After successful location, navigate to vendor dashboard
+          navigate("/vendor/dashboard");
+          toast.success("Location access granted. Redirecting to dashboard...");
+          setTimeout(() => {
+            navigate("/vendor/dashboard");
+          }, 500);
+        },
+        (err) => {
+          setGeoLoading(false);
+          setGeoError("Unable to retrieve location. Please enable location services and try again.");
+        }
+      );
+    } else {
+      setGeoLoading(false);
+      setGeoError("Geolocation is not supported by this browser.");
+    }
+  };
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -106,15 +137,7 @@ export default function CreateAccount() {
             },
           })
         );
-        toast.success("Login Success..");
-        setTimeout(() => {
-          // Navigate based on module/role
-          if (result?.module === "student") {
-            navigate("/student/dashboard");
-          } else {
-            navigate("/vendor/dashboard");
-          }
-        }, 1000);
+        setShowGeoModal(true);
       }
 
     } catch (err) {
@@ -679,6 +702,80 @@ export default function CreateAccount() {
                 ))}
               </div>
             </form>
+
+            {/* Geolocation Modal */}
+            {showGeoModal && (
+              <div style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(8px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1000,
+              }}>
+                <div style={{
+                  background: "#fff",
+                  borderRadius: 12,
+                  padding: "24px 32px",
+                  maxWidth: 360,
+                  width: "90%",
+                  boxShadow: "0 12px 30px rgba(0,0,0,0.2)",
+                  textAlign: "center",
+                }}>
+                  <h2 style={{ marginBottom: 12, color: "#111", fontSize: 20, fontWeight: "600" }}>Enable Geolocation</h2>
+                  <p style={{ marginBottom: 16, color: "#555", fontSize: 14 }}>
+                    {geoError || "We need your location to provide personalized services. Please allow location access."}
+                  </p>
+                  <button
+                    onClick={requestGeo}
+                    disabled={geoLoading}
+                    style={{
+                      background: geoLoading ? "#a5b4fc" : "#6366f1",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "8px 16px",
+                      cursor: geoLoading ? "not-allowed" : "pointer",
+                      fontSize: 14,
+                      fontWeight: "500",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      width: '100%'
+                    }}
+                  >
+                    {geoLoading ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ margin: "0", height: "16px", width: "16px" }}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="animate-spin"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          opacity="0.25"
+                        />
+                        <path
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+                    ) : null}
+                    {geoError ? "Retry" : "Allow Location"}
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         </motion.div>
       </div>
