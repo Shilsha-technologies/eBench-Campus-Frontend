@@ -1,4 +1,4 @@
-import CampusLogo from '../assets/ebenchCampu.png';
+import CampusLogo from '../assets/eBenchCampu.png';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useBeginTestMutation, useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
@@ -93,7 +93,7 @@ export default function ProfilePage() {
 
             if (res?.status) {
                 toast.success("Authentication Successfully");
-                const res = await fetchCandidate();
+                await fetchCandidate();
                 setIsOtpOpen(false);
 
             } else {
