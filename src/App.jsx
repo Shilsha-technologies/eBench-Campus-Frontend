@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, useEffect } from "react";
 import "./App.css";
 import ProtectedRoute from "./libs/ProtectedRoute";
 import PageLoader from "./libs/PageLoader";
@@ -13,7 +13,6 @@ import { AuthProvider } from "./libs/AuthProvider";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { StudentProvider } from "./context/StudentContext";
-import CodingAssessment from "./page/coding/CodingAssessment";
 import AssessmentManagement from "./page/admin/Assessment";
 import CodingTest from "./page/coding/CodingTest";
 
@@ -102,6 +101,7 @@ const CheckoutPage = lazy(() => import("./libs/CheckoutPage"));
 const Cancel = lazy(() => import("./libs/Cancel"));
 const Success = lazy(() => import("./libs/PaymentSuccess"));
 const SuccessPageTest = lazy(() => import("./page/TestSuccess"));
+const CheatingMessage = lazy(() => import("./page/CheatingMessage"));
 const ProcessingPayment = lazy(() =>
   import("./page/vendor/subscription/VerifyPayments")
 );
@@ -187,12 +187,6 @@ function App() {
               <CodingTest />
             }
           />
-          <Route
-            path="/code"
-            element={
-              <CodingAssessment />
-            }
-          />
           <Route path="/res" element={<IntroAnalysis />} />
           <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
           <Route path="/admin-login" element={<AdminLoginPage />} />
@@ -209,6 +203,7 @@ function App() {
           <Route path="/record" element={<RecordPage />} />
           <Route path="/success" element={<Success />} />
           <Route path="/test-success" element={<SuccessPageTest />} />
+          <Route path="/cheating" element={<CheatingMessage />} />
           <Route path="/cancel" element={<Cancel />} />
           <Route path="/payment/cancel" element={<Cancel />} />
           <Route path="/checkout-page" element={<CheckoutPage />} />

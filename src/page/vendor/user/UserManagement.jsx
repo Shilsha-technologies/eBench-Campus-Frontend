@@ -93,7 +93,7 @@ export default function CandidatesPage() {
         name: `${item.first_name} ${item.last_name}`,
         email: item.email,
         country: item.nationality || "—",
-        mobile: item?.mobile && `+${item.mobile}` || "—",
+        mobile: item?.mobile && `${item.mobile}` || "—",
         status: item?.is_active ? "active" : "inactive",
         testSent: item.test_sent_count > 0,
         testCompleted: item?.test_status,
@@ -101,7 +101,10 @@ export default function CandidatesPage() {
         cooldown_active: item?.cooldown_active,
         cooldown_remaining_minutes: item?.cooldown_remaining_minutes,
         testCount: item?.test_sent_count,
-        is_active: item?.is_active
+        is_active: item?.is_active,
+        LEVEL_001: item?.LEVEL_001,
+        LEVEL_002: item?.LEVEL_002,
+        LEVEL_003: item?.LEVEL_003,
       }))
       : [];
 
@@ -183,9 +186,6 @@ export default function CandidatesPage() {
 
 
   async function handleFormSubmit(data, status = false) {
-    // debugger
-    // console.log("jojo", data)
-
     const formdata = new FormData();
     if (status) {
       formdata.append('file', data);
@@ -199,7 +199,7 @@ export default function CandidatesPage() {
         roll_number,
         department,
         is_persuing,
-        skills
+        skills, country_code
       } = data;
       formdata.append('first_name', first_name);
       formdata.append('last_name', last_name);
@@ -213,6 +213,7 @@ export default function CandidatesPage() {
       formdata.append("graduation_year", graduation_year);
       formdata.append("cgpa", cgpa);
       formdata.append("roll_number", roll_number);
+      formdata.append("country_code", country_code);
       formdata.append("department", department);
       formdata.append("is_pursuing", is_persuing ? true : false);
 
@@ -224,7 +225,8 @@ export default function CandidatesPage() {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
       if (result?.error) {
         // console.log("eww", result)
-        return toast.error(result?.error?.data?.message ?? "Pls Fill Correct Info")
+
+        return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info")
       }
       if (result?.data?.status) {
         setTimeout(() => {
@@ -454,20 +456,42 @@ export default function CandidatesPage() {
         );
       },
     },
+    // {
+    //   key: "score",
+    //   label: "Score",
+    //   render: (v) =>
+    //     v != null ? (
+    //       <span
+    //         className={`font-semibold ${v >= 60 ? "text-emerald-600" : "text-red-600"
+    //           }`}
+    //       >
+    //         {v}
+    //       </span>
+    //     ) : (
+    //       "—"
+    //     ),
+    // },
+
     {
-      key: "score",
-      label: "Score",
-      render: (v) =>
-        v != null ? (
-          <span
-            className={`font-semibold ${v >= 60 ? "text-emerald-600" : "text-red-600"
-              }`}
-          >
-            {v}
-          </span>
-        ) : (
-          "—"
-        ),
+      key: "Score",
+      label: (
+        <div className="text-center">
+          Score
+          <hr className="my-1 border-t border-dotted border-gray-500" />          {/* <br /> */}
+          <span className="text-xs text-gray-500">Level 1 | Level 2 | Level 3</span>
+        </div>
+      ),
+      render: (v, row) => {
+        return (
+          <div className="flex items-center justify-between text-xs">
+            <div className="font-medium">{row?.LEVEL_001 ?? '-'}</div>
+            <div className="border-l border-gray-300 h-4 mx-2" />
+            <div className="font-medium">{row?.LEVEL_002 ?? '-'}</div>
+            <div className="border-l border-gray-300 h-4 mx-2" />
+            <div className="font-medium">{row?.LEVEL_003 ?? "-"}   </div>
+          </div>
+        );
+      },
     },
 
     {

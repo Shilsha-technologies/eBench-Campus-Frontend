@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetCandidateByIdQuery } from "../../../redux/services/vendorApi";
 import { useGetCandidateByIdBySubVendorQuery } from "../../../redux/services/subvendorApi";
-import { ArrowLeft, User, Mail, Phone, Calendar, GraduationCap, Award, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, PlayCircle, Download, Eye } from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, Calendar, GraduationCap, Award, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, PlayCircle, Download, Eye, AlertTriangle } from "lucide-react";
 
 export default function CandidateDetailsPage() {
   const { candidateId } = useParams();
@@ -91,6 +91,9 @@ export default function CandidateDetailsPage() {
     if (score >= 0.5) return 'text-yellow-600';
     return 'text-red-600';
   };
+
+  {/* Helper: renders a titled list if items is an array, or a single message if it's a string */}
+
 
   return (<>
     <div className="p-6 pt-3 bg-gray-50 min-h-screen">
@@ -189,7 +192,7 @@ export default function CandidateDetailsPage() {
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</label>
               <div className="flex items-center gap-2 mt-2">
                 <Phone className="h-4 w-4 text-gray-400" />
-                <p className="text-base font-medium text-gray-900">{candidate.mobile ? `+${candidate.mobile}` : 'N/A'}</p>
+                <p className="text-base font-medium text-gray-900">{candidate.mobile ? `${candidate.mobile}` : 'N/A'}</p>
               </div>
             </div>
 
@@ -375,7 +378,7 @@ export default function CandidateDetailsPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        
+
                         <span className="font-medium text-gray-900">{test?.level_id} : {test?.level_name}</span>
                       </div>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(test.successful ? 'completed' : 'failed')}`}>
@@ -387,7 +390,7 @@ export default function CandidateDetailsPage() {
                       <div className="text-right">
                         <div className="text-sm text-gray-500">Score</div>
                         <div className={`text-lg font-bold ${getScoreColor(test.final_score)}`}>
-                          {test.final_score}%
+                          {test?.final_score ?? 0}%
                         </div>
                       </div>
 
@@ -428,29 +431,166 @@ export default function CandidateDetailsPage() {
                     </div>
                   )}
 
-                  {/* AI Feedback */}
-                  {test.metrics_json?.feedback?.vendor && (
+
+                  {/* AI Feedback — error state OR full feedback, never both */}
+                  {test?.ai_feedback && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
-                      <div className="text-sm font-medium text-gray-900 mb-2">AI Feedback</div>
-                      <div className="bg-blue-50 rounded-lg p-3">
-                        <div className="text-sm text-blue-800">
-                          <div className="font-medium mb-1">Summary:</div>
-                          <p>{test.metrics_json.feedback.vendor.performance_summary}</p>
-                          {test.metrics_json.feedback.vendor.recommendations && (
-                            <div className="mt-2">
-                              <div className="font-medium">Recommendations:</div>
-                              <ul className="list-disc list-inside text-sm mt-1">
-                                {test.metrics_json.feedback.vendor.recommendations.map((rec, idx) => (
-                                  <li key={idx}>{rec}</li>
-                                ))}
-                              </ul>
+                      <div className="text-sm font-semibold text-gray-900 mb-3">AI Feedback</div>
+
+                      {test?.ai_feedback?.error ? (
+                        /* ---- Error / could-not-evaluate state ---- */
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-1">
+                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                            <span className="text-sm font-semibold text-red-800">Evaluation Failed</span>
+                          </div>
+                          <p className="text-sm text-red-700">
+                            {test?.ai_feedback?.error?.message || 'Unable to evaluate this attempt.'}
+                          </p>
+                        </div>
+                      ) : (
+                        /* ---- Normal feedback (only shown if the object exists) ---- */
+                        <div className="space-y-3">
+                          {/* Candidate-facing feedback */}
+                          
+                          {test.ai_feedback.candidate && (
+                            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                              <div className="text-xs font-semibold text-purple-900 uppercase tracking-wide mb-1">
+                                For Student
+                              </div>
+                              <FeedbackList
+                                title="Strengths"
+                                items={test?.ai_feedback?.candidate?.strengths}
+                                dotColor="bg-green-500"
+                              />
+                              <FeedbackList
+                                title="Areas to Improve"
+                                items={test?.ai_feedback?.candidate?.areas_to_improve}
+                                dotColor="bg-amber-500"
+                              />
+                              <FeedbackList
+                                title="Recommendations"
+                                items={test?.ai_feedback?.candidate?.recommendations}
+                                dotColor="bg-blue-500"
+                              />
+                              <FeedbackList
+                                title="Tips"
+                                items={test?.ai_feedback?.candidate?.tips}
+                                dotColor="bg-indigo-500"
+                              />
+                            </div>
+                          )}
+
+                          {/* Vendor / evaluator feedback */}
+                          {test.ai_feedback.vendor && (
+                            <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
+                              <div className="text-xs font-semibold text-purple-900 uppercase tracking-wide mb-1">
+                                For Campus
+                              </div>
+                              {test.ai_feedback.vendor.performance_summary && (
+                                <p className="text-sm text-purple-800 mt-1">
+                                  {test?.ai_feedback?.vendor?.performance_summary}
+                                </p>
+                              )}
+                              <FeedbackList
+                                title="Key Strengths"
+                                items={test?.ai_feedback?.vendor?.key_strengths}
+                                dotColor="bg-green-500"
+                              />
+                              <FeedbackList
+                                title="Critical Issues"
+                                items={test?.ai_feedback?.vendor?.critical_issues}
+                                dotColor="bg-red-500"
+                              />
+                              <FeedbackList
+                                title="Training Focus"
+                                items={test?.ai_feedback?.vendor?.training_focus}
+                                dotColor="bg-amber-500"
+                              />
+                              <FeedbackList
+                                title="Recommendations"
+                                items={test?.ai_feedback?.vendor?.recommendations}
+                                dotColor="bg-purple-500"
+                              />
+
+                              {test?.ai_feedback?.vendor?.skill_assessment && (
+                                <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                  {Object.entries(test.ai_feedback.vendor.skill_assessment).map(
+                                    ([key, value]) => (
+                                      <div key={key} className="bg-white rounded-md p-2 border border-purple-100">
+                                        <div className="text-[10px] font-semibold text-purple-500 uppercase">
+                                          {key.replace(/_/g, ' ')}
+                                        </div>
+                                        <div className="text-xs text-gray-700 mt-0.5">{value}</div>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              )}
+
+                              {test?.ai_feedback?.vendor?.hire_recommendation && (
+                                <div className="mt-3 pt-3 border-t border-purple-200 flex items-center gap-2">
+                                  <span className="text-xs font-semibold text-purple-600">Recommendation:</span>
+                                  <span className="text-sm text-purple-900">
+                                    {test?.ai_feedback?.vendor?.hire_recommendation}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Parent-facing feedback */}
+                          {test?.ai_feedback?.parent && (
+                            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-4">
+                              <div className="text-xs font-semibold text-emerald-900 uppercase tracking-wide mb-1">
+                                For Parents
+                              </div>
+                              {test?.ai_feedback?.parent?.overall_summary && (
+                                <p className="text-sm text-emerald-800 mt-1">
+                                  {test?.ai_feedback?.parent?.overall_summary}
+                                </p>
+                              )}
+
+                              <div className="flex flex-wrap gap-2 mt-3">
+                                {test?.ai_feedback?.parent?.conceptual_knowledge_level && (
+                                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                    {test?.ai_feedback?.parent?.conceptual_knowledge_level}
+                                  </span>
+                                )}
+                                {test?.ai_feedback?.parent?.problem_solving_level && (
+                                  <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                    {test.ai_feedback.parent.problem_solving_level}
+                                  </span>
+                                )}
+                              </div>
+
+                              <FeedbackList
+                                title="Strengths"
+                                items={test?.ai_feedback?.parent?.strengths}
+                                dotColor="bg-green-500"
+                              />
+                              <FeedbackList
+                                title="Areas of Improvement"
+                                items={test?.ai_feedback?.parent?.areas_of_improvement}
+                                dotColor="bg-amber-500"
+                              />
+                              <FeedbackList
+                                title="Guidance"
+                                items={test?.ai_feedback?.parent?.parent_guidance}
+                                dotColor="bg-emerald-500"
+                              />
+
+                              {test?.ai_feedback?.parent?.encouragement && (
+                                <p className="text-xs italic text-emerald-700 mt-3 pt-3 border-t border-emerald-200">
+                                  {test?.ai_feedback?.parent?.encouragement}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
-
                   {/* Transcript */}
                   {test.transcript && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
@@ -571,6 +711,32 @@ export default function CandidateDetailsPage() {
     </div>
   </>);
 }
+
+export function FeedbackList({ title, items, dotColor = 'bg-gray-400' }) {
+  if (!items || (Array.isArray(items) && items.length === 0)) return null;
+
+  return (
+    <div className="mt-3">
+      <div className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1.5">{title}</div>
+
+      {Array.isArray(items) ? (
+        <ul className="space-y-1">
+          {items.map((item, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+              <span className={`mt-1.5 h-1.5 w-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="flex items-start gap-2 text-sm text-gray-700">
+          <span className={`mt-1.5 h-1.5 w-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
+          <span>{items}</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const InputField = ({ label, type = "text", placeholder, value, onChange, icon }) => (
   <div>

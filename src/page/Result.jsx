@@ -29,6 +29,7 @@ export default function ProfilePage() {
         refetch
     } = useCookiesGenerateQuery({ token });
 
+
     const [
         fetchCandidate,
         {
@@ -38,9 +39,12 @@ export default function ProfilePage() {
         }
     ] = useLazyGetProfileQuery();
 
+    // console.log(cookieData, "000")
+
 
     // console.log("candidateData--000", candidateData);
     const CANDIDATE = candidateData?.candidate;
+
 
     const TEST = candidateData?.test;
     const lv = {
@@ -52,12 +56,23 @@ export default function ProfilePage() {
         accent: TEST?.accentColor,
         accentBg: TEST?.accentBackground,
         dotColor: TEST?.accentColor,
-        duration: TEST?.duration || "N/A",
-        questions: TEST?.totalQuestions || 0,
-        marks: TEST?.totalMarks || "N/A",
-        cutoff: TEST?.cutoffPercentage
-            ? `${TEST.cutoffPercentage}%`
-            : "N/A",
+
+        ...(TEST?.duration && {
+            duration: TEST.duration,
+        }),
+
+        ...(TEST?.totalQuestions && {
+            questions: TEST.totalQuestions,
+        }),
+
+        ...(TEST?.totalMarks && {
+            marks: TEST.totalMarks,
+        }),
+
+        ...(TEST?.cutoffPercentage && {
+            cutoff: `${TEST.cutoffPercentage}%`,
+        }),
+
         isAI: TEST?.isAiInterview,
         sections: TEST?.sections || [],
         rules: TEST?.guidelines?.map(item => item.rule) || [],
@@ -78,8 +93,8 @@ export default function ProfilePage() {
 
             if (res?.status) {
                 toast.success("Authentication Successfully");
+                const res = await fetchCandidate();
                 setIsOtpOpen(false);
-                await fetchCandidate();
 
             } else {
                 setOtp("");
@@ -102,12 +117,8 @@ export default function ProfilePage() {
     const [beginTest] = useBeginTestMutation();
 
     async function startHandler() {
-        // console.log("bajjj", candidateData)
-
-        // Show loader while processing navigation
         setBeginLoader(true);
         const res = await beginTest().unwrap()
-        // debugger;
 
         if (candidateData?.level_id == "LEVEL_001") {
             setTimeout(() => {
@@ -256,11 +267,23 @@ export default function ProfilePage() {
                                     <div className="text-[13px] text-slate-500 mt-0.5">{lv?.sub}</div>
                                 </div>
                                 <div className="flex gap-2 flex-wrap">
-                                    <StatBox val={lv.duration} label="Duration" />
-                                    <StatBox val={lv.questions} label="Questions" />
-                                    <StatBox val={lv.marks} label="Marks" />
-                                    <StatBox val={lv.cutoff} label="Cutoff" />
+                                    {lv.duration != null && (
+                                        <StatBox val={lv.duration} label="Duration" />
+                                    )}
+
+                                    {lv.questions != null && (
+                                        <StatBox val={lv.questions} label="Questions" />
+                                    )}
+
+                                    {lv.marks != null && (
+                                        <StatBox val={lv.marks} label="Marks" />
+                                    )}
+
+                                    {lv.cutoff != null && (
+                                        <StatBox val={lv.cutoff} label="Cutoff" />
+                                    )}
                                 </div>
+
                             </div>
                         </div>
 
@@ -352,7 +375,12 @@ export default function ProfilePage() {
 
                                 <p className="text-[11px] text-slate-400 text-center leading-relaxed">
                                     Need help?{" "}
-                                    <a href="mailto:info@shilshatech.com" className="text-slate-500 hover:underline">
+                                    <a
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-slate-500 hover:underline"
+                                    >
                                         info@shilshatech.com
                                     </a>
                                 </p>

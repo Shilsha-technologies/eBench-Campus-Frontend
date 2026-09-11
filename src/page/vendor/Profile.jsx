@@ -9,7 +9,7 @@ import "react-phone-input-2/lib/style.css";
 
 
 // Determine user's country from timezone
-function getCountryFromTimeZone() {
+export function getCountryFromTimeZone() {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const timeZoneMap = {
     // Asia

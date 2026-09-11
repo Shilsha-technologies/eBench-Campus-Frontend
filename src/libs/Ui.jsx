@@ -23,41 +23,6 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }) {
   );
 }
 
-// ─── Table ────────────────────────────────────────────────────────────────────
-// export function Table({ columns, data, emptyMessage = "No data found" }) {
-//   if (!data.length) return (
-//     <div className="text-center py-16 text-gray-400">
-//       <div className="text-5xl mb-3">📭</div>
-//       <p className="font-medium">{emptyMessage}</p>
-//     </div>
-//   );
-//   return (
-//     <div className="overflow-x-auto rounded-xl border border-gray-100">
-//       <table className="w-full text-sm">
-//         <thead>
-//           <tr className="bg-gray-50 border-b border-gray-100">
-//             {columns.map(col => (
-//               <th key={col.key} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
-//                 {col.label}
-//               </th>
-//             ))}
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.map((row, i) => (
-//             <tr key={row.id || i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-//               {columns.map(col => (
-//                 <td key={col.key} className="px-4 py-3 text-gray-700 whitespace-nowrap">
-//                   {col.render ? col.render(row[col.key], row) : row[col.key] ?? "—"}
-//                 </td>
-//               ))}
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
 export function Table({ columns, data, emptyMessage = "No data found", headerBg = "bg-gray-50", headerTextColor = "text-gray-500" }) {
   if (!data.length) return (
     <div className="text-center py-16 text-gray-400">

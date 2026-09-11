@@ -384,10 +384,9 @@ export const vendorApi = api.injectEndpoints({
       }),
     }),
     getDepartmentCampusDetails: builder.query({
-      query: (degreeId) => ({
+      query: () => ({
         url: `/campus/departments`,
         method: "GET",
-        params: { degree_id: degreeId },
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem('token')}`
         // },
@@ -415,10 +414,9 @@ export const vendorApi = api.injectEndpoints({
     }),
 
     getSpecializationCampusDetails: builder.query({
-      query: (departmentId) => ({
+      query: () => ({
         url: `/campus/specializations`,
         method: "GET",
-        params: departmentId ? { department_id: departmentId } : {},
         // headers: {
         //   Authorization: `Bearer ${localStorage.getItem('token')}`
         // },

@@ -94,6 +94,13 @@ export const userApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    submitTest: builder.mutation({
+      query: () => ({
+        url: `/candidate/test/submit`,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
     runCodingStatus: builder.query({
       query: ({ submission_id }) => ({
         url: `/candidate/coding/run-status`,
@@ -107,7 +114,15 @@ export const userApi = api.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-    })
+    }),
+      reportViolation: builder.mutation({
+      query: (data) => ({
+        url: '/candidate/violations',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -123,8 +138,10 @@ export const {
   useSubmitScenarioAnswerMutation,
   useSubmitMcqAnswersMutation,
   useSubmitCodingMutation,
+  useSubmitTestMutation,
   useRunCodingStatusQuery,
   useRunCodingMutation,
   useLazyRunCodingStatusQuery,
-  useUploadTestMutation
+  useUploadTestMutation,
+  useReportViolationMutation
 } = userApi;

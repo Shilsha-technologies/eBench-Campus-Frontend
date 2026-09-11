@@ -3,6 +3,7 @@ import { Pagination } from '../user/UserManagement'
 import { Eye, KeyRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useGetCountryDataQuery } from '../../../redux/services/externalApi'
+import { getStatesByCountry, getCitiesByState } from '../../../services/locationApi'
 import { useActiveDeactiveSubVendorMutation, useAssignSubVendorSubscriptionMutation, useListofSubscriptionQuery, useListofSubVendorQuery, useRegisterSubVendorMutation } from '../../../redux/services/vendorApi'
 import { useForm, Controller } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
@@ -17,7 +18,144 @@ import PortalModal from '../../../libs/PortalModal'
 import Select from "react-select";
 import Loader from '../../../libs/Loader'
 import { Input } from '../../../libs/Ui'
+import { getCountryFromTimeZone } from '../Profile'
 
+// Shared react-select styling so country/state/city match the app's normal
+// input look (border, radius, red border on validation error).
+const getSelectStyles = (hasError) => ({
+  control: (base, state) => ({
+    ...base,
+    minHeight: "42px",
+    borderRadius: "0.25rem",
+    borderColor: hasError ? "#ef4444" : state.isFocused ? "#9ca3af" : "#d1d5db",
+    boxShadow: "none",
+    "&:hover": { borderColor: hasError ? "#ef4444" : "#9ca3af" },
+  }),
+  placeholder: (base) => ({ ...base, color: "#6b7280", fontSize: "0.875rem" }),
+  singleValue: (base) => ({ ...base, color: "#6b7280", fontSize: "0.875rem" }),
+  option: (base) => ({ ...base, fontSize: "0.875rem" }),
+});
+
+// ─── Shared Google Maps script loader (avoids injecting the script twice when
+// two AddressAutocomplete inputs are mounted in the same modal) ──────────────
+let googleMapsLoaderPromise = null;
+const loadGoogleMapsScript = () => {
+  if (typeof window !== 'undefined' && window.google?.maps?.places) {
+    return Promise.resolve();
+  }
+  if (googleMapsLoaderPromise) return googleMapsLoaderPromise;
+
+  googleMapsLoaderPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-google-maps-places]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', reject);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places`;
+    script.async = true;
+    script.dataset.googleMapsPlaces = 'true';
+    script.onload = () => resolve();
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  return googleMapsLoaderPromise;
+};
+
+// ─── Google Places address input ─────────────────────────────────────────────
+// Reusable across Branch Address / POC Address. Pass `onPlaceSelected` to react
+// to country/state/city/pincode/lat-lng once the user picks a place; pass
+// `countryRestriction` (ISO2, e.g. "IN") to scope suggestions to that country.
+const AddressAutocomplete = ({
+  value,
+  setAddress,
+  setLocation,
+  onPlaceSelected,
+  countryRestriction,
+  disabled,
+  placeholder = "Enter address",
+}) => {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current && value !== undefined && inputRef.current.value !== value) {
+      inputRef.current.value = value || "";
+    }
+  }, [value]);
+
+  useEffect(() => {
+    let autocomplete;
+    let listener;
+    let cancelled = false;
+
+    loadGoogleMapsScript().then(() => {
+      if (cancelled || !inputRef.current || !window.google) return;
+
+      autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
+        componentRestrictions: countryRestriction
+          ? { country: countryRestriction.toLowerCase() }
+          : undefined,
+        fields: ["formatted_address", "address_components", "geometry"],
+      });
+
+      listener = autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+
+        const getComponent = (type) =>
+          place.address_components?.find((component) => component.types.includes(type));
+
+        const country = getComponent("country");
+        const state = getComponent("administrative_area_level_1");
+        const city =
+          getComponent("locality") ||
+          getComponent("administrative_area_level_2") ||
+          getComponent("sublocality");
+        const postal = getComponent("postal_code");
+
+        const locationData = {
+          address: place.formatted_address || "",
+          countryCode: country?.short_name || "",
+          stateCode: state?.short_name || "",
+          city: city?.long_name || "",
+          pincode: postal?.long_name || "",
+          latitude: place.geometry?.location?.lat(),
+          longitude: place.geometry?.location?.lng(),
+        };
+
+        setAddress(locationData.address);
+        setLocation?.({ lat: locationData.latitude, lng: locationData.longitude });
+        onPlaceSelected?.(locationData);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      if (listener) window.google?.maps?.event?.removeListener(listener);
+    };
+  }, [countryRestriction]);
+
+  const handleManualChange = (e) => {
+    const newVal = e.target.value;
+    setAddress(newVal);
+    if (!newVal) {
+      setLocation?.({ lat: undefined, lng: undefined });
+    }
+  };
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      placeholder={placeholder}
+      disabled={disabled}
+      onChange={handleManualChange}
+      className={`border outline-none rounded px-3 text-gray-500 py-2 w-full ${disabled ? "bg-gray-50 cursor-default border-gray-100" : "border-gray-300"
+        }`}
+    />
+  );
+};
 
 const RoleManagement = () => {
   const [page, setPage] = useState(1)
@@ -25,25 +163,28 @@ const RoleManagement = () => {
   const [editing, setEditing] = useState(false)
   const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
 
+  const userCountry = getCountryFromTimeZone() || 'IN';
   const [query, setQuery] = useState({
     search: '',
     active: '',
     plan: '',
-    page: 1,
-    size: 10,
+    page: page,
+    size: pageSize,
   });
 
   const { data: users, isLoading, isError } = useListofSubVendorQuery(query)
+
+  useEffect(() => {
+    setQuery((prev) => ({ ...prev, page, size: pageSize }));
+  }, [page, pageSize]);
+
   const { data: subscriptionList } = useListofSubscriptionQuery()
   const [registerSubVendor, { isLoading: subVendorLoading, isError: subVendorError }] = useRegisterSubVendorMutation()
   const [activeInactiveSubVendor, { isLoading: aciveLoading, isError: activeError }] = useActiveDeactiveSubVendorMutation()
-  // console.log("useListofSubscriptionQuery", subscriptionList)
   const globalId = subscriptionList?.subscriptions?.find((item) => item?.country === "global")
-  console.log("globalId", globalId)
 
   const filteredSubscription = subscriptionList?.subscriptions?.filter((item) => item?.country !== "global")
 
-  // console.log("filteredSubscription", filteredSubscription)
   if (isError) {
     return <>Something went wrong</>
   }
@@ -54,55 +195,150 @@ const RoleManagement = () => {
     register,
     handleSubmit,
     control,
-    reset,                                                                       
+    reset,
+    watch,
+    setValue,
     formState: { errors }
   } = useForm({
     defaultValues: {
       country: "",
+      state: "",
+      city: "",
       address: "",
+      latitude: "",
+      longitude: "",
       pocName: "",
       pocEmail: "",
+      pocCountryCode: "+91",
       pocMobile: "",
       pocGender: "",
       pocAddress: "",
     }
   });
 
+  const [stateOptions, setStateOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [statesCache, setStatesCache] = useState({});
+  const [citiesCache, setCitiesCache] = useState({});
+  const [loadingState, setLoadingState] = useState(false);
+  const [loadingCity, setLoadingCity] = useState(false);
+
+  // ── ISO-keyed state/city loaders, shared by the country/state selects and
+  // the Google autocomplete on Branch Address ──────────────────────────────
+  const loadStatesForCountry = async (countryIso) => {
+    if (!countryIso) return;
+    if (statesCache[countryIso]) {
+      setStateOptions(statesCache[countryIso]);
+      return;
+    }
+    setLoadingState(true);
+    try {
+      const states = await getStatesByCountry(countryIso);
+      setStateOptions(states);
+      setStatesCache((prev) => ({ ...prev, [countryIso]: states }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  const loadCitiesForState = async (countryIso, stateIso) => {
+    if (!countryIso || !stateIso) return;
+    const countryCache = citiesCache[countryIso] || {};
+    if (countryCache[stateIso]) {
+      setCityOptions(countryCache[stateIso]);
+      return;
+    }
+    setLoadingCity(true);
+    try {
+      const cities = await getCitiesByState(countryIso, stateIso);
+      setCityOptions(cities);
+      setCitiesCache((prev) => ({
+        ...prev,
+        [countryIso]: {
+          ...(prev[countryIso] || {}),
+          [stateIso]: cities,
+        },
+      }));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingCity(false);
+    }
+  };
+
   const save = async (data) => {
-    console.log("Form Data:", data);
     const {
       country,
+      state,
+      city,
       address,
+      latitude,
+      longitude,
       pocName,
       pocEmail,
+      pocCountryCode,
       pocMobile,
       pocGender,
       pocAddress,
     } = data;
+
+    // country/state are stored as ISO2 in the form for the cascading APIs —
+    // resolve them back to display names for submission.
+    const countryName = countryData?.data?.find((c) => c.iso2 === country)?.name || country;
+    const stateName = stateOptions?.find((s) => s.iso2 === state)?.name || state;
+    const countryCode = pocCountryCode || "+91";
+
+
+    // Final shape: country/state as full names, phone split into
+    // countryCode + a plain local number.
+    const submissionData = {
+      country: countryName,
+      state: stateName,
+      city,
+      address,
+      latitude,
+      longitude,
+      pocName,
+      pocEmail,
+      pocCountryCode: countryCode,
+      pocMobile,
+      pocGender,
+      pocAddress,
+    };
+    console.log(submissionData);
+
     const formdata = new FormData()
+    formdata.append('state', stateName)
+    formdata.append('city', city)
     formdata.append('email', pocEmail)
     formdata.append('name', pocName)
-    formdata.append('country', country)
+    formdata.append('country', countryName)
     formdata.append('company_address', address)
     formdata.append('gender', pocGender)
     formdata.append('sub_vendor_address', pocAddress)
     formdata.append('phone', pocMobile)
+    formdata.append('country_code', countryCode)
+    // if (latitude) formdata.append('latitude', latitude)
+    // if (longitude) formdata.append('longitude', longitude)
 
     try {
       const data = await registerSubVendor(formdata)
-      console.log(data, "hello-data");
-      if (subVendorError) {
-        return toast.error(data?.error?.data?.detail ?? "Something went wrong")
+
+      if (data?.error) {
+        return toast.error(data?.error?.data?.detail)
       }
       if (data?.data) {
         setTimeout(() => {
           setEditing(false);
           reset();
+          setStateOptions([]);
+          setCityOptions([]);
         }, 500)
       }
     } catch (err) {
-      console.log("ererer", err)
-      toast.error(err?.message ?? "Something went wrong")
+      toast.error(err?.message)
     }
 
   };
@@ -110,6 +346,8 @@ const RoleManagement = () => {
   function handleClose() {
     setAssignPermission(false);
     reset();
+    setStateOptions([]);
+    setCityOptions([]);
   }
 
   const [openId, setOpenId] = useState(null);
@@ -127,11 +365,36 @@ const RoleManagement = () => {
         setOpenId(null);
       }
     }
+    // Watch country selection to load states (ISO2-keyed)
+    const subscription = watch((value, { name }) => {
+      if (name === "country") {
+        const selectedCountry = value.country;
+        if (selectedCountry) {
+          loadStatesForCountry(selectedCountry);
+        } else {
+          setStateOptions([]);
+        }
+        // Reset state and city when country changes
+        setValue('state', '');
+        setValue('city', '');
+        setCityOptions([]);
+        setLoadingCity(false);
+      }
+      if (name === "state") {
+        const selectedState = value.state;
+        const selectedCountry = value.country;
+        if (selectedState && selectedCountry) {
+          loadCitiesForState(selectedCountry, selectedState);
+        }
+        setValue('city', '');
+      }
+    });
 
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      subscription.unsubscribe && subscription.unsubscribe();
     };
   }, []);
 
@@ -147,7 +410,6 @@ const RoleManagement = () => {
 
     try {
       const result = await activeInactiveSubVendor({ id, formdata })
-      console.log("resi", result);
       if (result?.data) {
         setTimeout(() => {
           setSelectedUser(null)
@@ -182,27 +444,19 @@ const RoleManagement = () => {
   const [assignPermissionFunction, { isLoading: assignisLoading, assignisError }] = useAssignSubVendorSubscriptionMutation()
 
   const subscriptionSave = async (data) => {
-    console.log("saving", data)
-    // console.log(data);
-    let subscriptionId = null;
     const details = {}
     if (data?.subscriptionType == "global") {
-      details.selected_country=data?.subscriptionCountry?.map((item) => item?.value)
-      details.subscription_ids =[globalId?.subscription_id]
+      details.selected_country = data?.subscriptionCountry?.map((item) => item?.value)
+      details.subscription_ids = [globalId?.subscription_id]
 
     } else {
       details.subscription_ids = data?.subscriptionCountry?.map((item) => item?.value)
     }
-    // console.log("ooo",subscriptionId)
-    // console.log("uu",selectedUser)
     let id = selectedUser?.id;
-    // console.log("popopop", details, id)
 
     try {
       const result = await assignPermissionFunction({ id, details }).unwrap();
-      // console.log("resdd", result);
       if (result?.status) {
-        assignPermission
         setAssignPermission(!assignPermission)
         setSelectedUser(null)
         setTimeout(() => {
@@ -210,8 +464,8 @@ const RoleManagement = () => {
         }, 1000)
       }
     } catch (err) {
-      if(err?.data){
-        toast.error(err?.data?.detail??"Internal Server Error")
+      if (err?.data) {
+        toast.error(err?.data?.detail ?? "Internal Server Error")
       }
       console.log(err)
     }
@@ -224,41 +478,45 @@ const RoleManagement = () => {
       label: c.name,
     })) || [];
 
+  // ISO2 of the currently selected employee country — scopes the Branch
+  // Address autocomplete to that country's places.
+  const selectedCountryIso = watch("country");
+
   return (
     <div className="p-6 pt-3 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
-        
-         <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Sub Admin (Employee)</h2>
-          <p className="text-sm text-gray-500 mt-0.5">
-            {total??0} total sub admin added
-          </p>
-        </div>
-       <div className="flex gap-2">   
-          <button
-            onClick={() => setEditing(true)}
-            className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
-          >
-            + Add Sub Admin
-          </button>
 
-        </div>
-      </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Sub Admin (Employee)</h2>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {total ?? 0} total sub admin added
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setEditing(true)}
+              className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold"
+            >
+              + Add Sub Admin
+            </button>
 
-       
+          </div>
+        </div>
+
+
         <div className="bg-white my-5 rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-wrap gap-3">
-  {/* Search */}
-  <div className="flex-1 min-w-48">
-    <input placeholder="&#x1f50d; Search by name or email..." value={query.search}
-      onChange={(e) => setQuery({...query, search: e.target.value})}
-      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-50" />
-  </div>
+          {/* Search */}
+          <div className="flex-1 min-w-48">
+            <input placeholder="&#x1f50d; Search by name or email..." value={query.search}
+              onChange={(e) => setQuery({ ...query, search: e.target.value })}
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-50" />
+          </div>
 
- 
-</div>
+
+        </div>
 
         {/* TABLE */}
         <div className="bg-white rounded-lg shadow">
@@ -295,7 +553,7 @@ const RoleManagement = () => {
                 {isLoading ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-8 text-center">
-                      <Loader/>
+                      <Loader />
                     </td>
                   </tr>
                 ) : users?.sub_vendors?.length == 0 ? (
@@ -333,7 +591,7 @@ const RoleManagement = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        {'+'+ u?.phone}
+                        {'+' + u?.phone}
                       </td>
 
                       <td className="px-6 py-4">
@@ -464,7 +722,7 @@ const RoleManagement = () => {
 
                 <Pagination
                   page={page}
-                  totalPages={1}
+                  totalPages={users?.total_pages}
                   setPage={setPage}
                 />
               </div>
@@ -484,7 +742,7 @@ const RoleManagement = () => {
 
             {/* Modal Content */}
             <div className="relative w-full max-w-xl overflow-y-auto max-h-80 md:max-h-full p-6 bg-white rounded-lg shadow-lg">
-              <h2 className="mb-2 text-lg font-semibold">Add Sub-Admin (Employee)</h2>
+              <h2 className="mb-2 text-lg font-semibold">Add Employee</h2>
               <hr className=" text-gray-300 mb-4" />
               <form className="space-y-4" onSubmit={handleSubmit(save)}>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -493,32 +751,140 @@ const RoleManagement = () => {
                     <label className="text-sm text-gray-600 font-semibold mb-1" htmlFor="country">
                       Country
                     </label>
-                    <select
-                      {...register("country", { required: "Country is required" })}
-                      className={`border outline-none rounded px-3 text-gray-500 py-2 ${errors.country ? "border-red-500" : "border-gray-300"
-                        } ${false ? "bg-gray-100" : ""}`}
-                    >
-                      <option value="">Select Country</option>
-                      {countryData?.data?.length > 0 &&
-                        countryData?.data?.map((item) => (
-                          <option key={item?.name} value={item?.name}>
-                            {item?.name}
-                          </option>
-                        ))}
-                    </select>
+                    <Controller
+                      name="country"
+                      control={control}
+                      rules={{ required: "Country is required" }}
+                      render={({ field }) => {
+                        const options =
+                          countryData?.data?.map((item) => ({
+                            value: item?.iso2,
+                            label: item?.name,
+                          })) || [];
+                        return (
+                          <Select
+                            inputId="country"
+                            options={options}
+                            isClearable
+                            isLoading={countryLoading}
+                            placeholder="Select Country"
+                            classNamePrefix="rs"
+                            styles={getSelectStyles(!!errors.country)}
+                            value={options.find((opt) => opt.value === field.value) || null}
+                            onChange={(selected) => field.onChange(selected?.value || "")}
+                            onBlur={field.onBlur}
+                          />
+                        );
+                      }}
+                    />
                     {errors.country && (
                       <span className="text-red-500 text-xs mt-1">
                         {errors.country.message}
                       </span>
                     )}
                   </div>
-
+                  {/* State Select — value is ISO2, used directly in getCitiesByState */}
                   <div className="flex flex-col">
-                    <Input
-                      label="Branch Address"
+                    <label className="text-sm text-gray-600 font-semibold mb-1" htmlFor="state">
+                      State
+                    </label>
+                    <Controller
+                      name="state"
+                      control={control}
+                      rules={{ required: "State is required" }}
+                      render={({ field }) => {
+                        const options = stateOptions?.map((st) => ({ value: st.iso2, label: st.name })) || [];
+                        return (
+                          <Select
+                            inputId="state"
+                            options={options}
+                            isClearable
+                            isLoading={loadingState}
+                            isDisabled={!watch("country")}
+                            placeholder="Select State"
+                            classNamePrefix="rs"
+                            styles={getSelectStyles(!!errors.state)}
+                            value={options.find((opt) => opt.value === field.value) || null}
+                            onChange={(selected) => field.onChange(selected?.value || "")}
+                            onBlur={field.onBlur}
+                          />
+                        );
+                      }}
+                    />
+                    {errors.state && (
+                      <span className="text-red-500 text-xs mt-1">
+                        {errors.state.message}
+                      </span>
+                    )}
+                  </div>
+                  {/* City Select */}
+                  <div className="flex flex-col">
+                    <label className="text-sm text-gray-600 font-semibold mb-1" htmlFor="city">
+                      City
+                    </label>
+                    <Controller
+                      name="city"
+                      control={control}
+                      rules={{ required: "City is required" }}
+                      render={({ field }) => {
+                        const options = cityOptions?.map((c) => ({ value: c.name, label: c.name })) || [];
+                        return (
+                          <Select
+                            inputId="city"
+                            options={options}
+                            isClearable
+                            isLoading={loadingCity}
+                            isDisabled={!watch("state")}
+                            placeholder="Select City"
+                            classNamePrefix="rs"
+                            styles={getSelectStyles(!!errors.city)}
+                            value={options.find((opt) => opt.value === field.value) || null}
+                            onChange={(selected) => field.onChange(selected?.value || "")}
+                            onBlur={field.onBlur}
+                          />
+                        );
+                      }}
+                    />
+                    {errors.city && (
+                      <span className="text-red-500 text-xs mt-1">
+                        {errors.city.message}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Branch Address — Google Places autocomplete, scoped to the
+                      selected country, also drives country/state/city above */}
+                  <div className="flex flex-col">
+                    <label className="text-sm text-gray-600 font-semibold mb-1">
+                      Branch Address
+                    </label>
+                    <Controller
                       name="address"
-                      placeholder="Branch Location"
-                      {...register("address", { required: "Branch Address is required" })}
+                      control={control}
+                      rules={{ required: "Branch Address is required" }}
+                      render={({ field }) => (
+                        <AddressAutocomplete
+                          value={field.value}
+                          placeholder="Branch Location"
+                          countryRestriction={selectedCountryIso}
+                          setAddress={(addr) => field.onChange(addr)}
+                          setLocation={(loc) => {
+                            setValue('latitude', loc.lat);
+                            setValue('longitude', loc.lng);
+                          }}
+                          onPlaceSelected={(loc) => {
+                            if (loc.countryCode) {
+                              setValue('country', loc.countryCode);
+                              loadStatesForCountry(loc.countryCode);
+                            }
+                            if (loc.stateCode) {
+                              setValue('state', loc.stateCode);
+                              loadCitiesForState(loc.countryCode, loc.stateCode);
+                            }
+                            if (loc.city) setValue('city', loc.city);
+                          }}
+                        />
+                      )}
                     />
                     {errors.address && (
                       <span className="text-red-500 text-xs">
@@ -532,7 +898,7 @@ const RoleManagement = () => {
                       label="POC Name"
                       name="pocName"
                       placeholder="Employee Name"
-                      {...register("pocName", { required: "POC Name is required" })}
+                      {...register("pocName", { required: "POC Name is required", minLength: { value: 2, message: "Name must be at least 2 characters" }, maxLength: { value: 50, message: "Name must be at most 50 characters" }, validate: (value) => value.trim() === value || "Name cannot have leading or trailing spaces" })}
                     />
                     {errors.pocName && (
                       <span className="text-red-500 text-xs">
@@ -582,14 +948,24 @@ const RoleManagement = () => {
                     )}
                   </div>
 
+                  {/* POC Address — Google Places autocomplete, unrestricted
+                      (this is the employee's own address, independent of the
+                      branch's country/state/city) */}
                   <div className="flex flex-col">
-                    <Input
-                      label="POC Address"
+                    <label className="text-sm text-gray-600 font-semibold mb-1">
+                      POC Address
+                    </label>
+                    <Controller
                       name="pocAddress"
-                      placeholder="Employee Address"
-                      {...register("pocAddress", {
-                        required: "POC Address is required",
-                      })}
+                      control={control}
+                      rules={{ required: "POC Address is required" }}
+                      render={({ field }) => (
+                        <AddressAutocomplete
+                          value={field.value}
+                          placeholder="Employee Address"
+                          setAddress={(addr) => field.onChange(addr)}
+                        />
+                      )}
                     />
                     {errors.pocAddress && (
                       <span className="text-red-500 text-xs">
@@ -605,12 +981,41 @@ const RoleManagement = () => {
                     <Controller
                       name="pocMobile"
                       control={control}
-                      rules={{ required: "Phone number is required" }}
+                      rules={{
+                        required: "Phone number is required",
+                        validate: (value) => {
+                          const phone = String(value || "").trim();
+
+                          if (!phone) {
+                            return "Phone number is required";
+                          }
+
+                          if (phone.startsWith("0")) {
+                            return "Phone number cannot start with 0";
+                          }
+                          return true;
+                        },
+                      }}
+
                       render={({ field }) => (
                         <PhoneInput
-                          country="in"
-                          {...field}
+                          country={userCountry.toLowerCase()}
+                          value={
+                            field.value
+                              ? `${(watch("pocCountryCode") || "+91").replace("+", "")}${field.value}`
+                              : ""
+                          }
                           inputStyle={{ width: "100%" }}
+                          onChange={(val, countryData) => {
+                            // Split the dial code from the local number so
+                            // `pocMobile` and `pocCountryCode` stay separate.
+                            const localNumber = val.startsWith(countryData.dialCode)
+                              ? val.substring(countryData.dialCode.length)
+                              : val;
+                            field.onChange(localNumber);
+                            setValue("pocCountryCode", `+${countryData.dialCode}`);
+                          }}
+
                         />
                       )}
                     />
@@ -628,12 +1033,12 @@ const RoleManagement = () => {
                     type="submit"
                     className="px-4 cursor-pointer py-1.5 rounded-md bg-[#1b68c0]  text-white hover:bg-blue-500 transition"
                   >
-                    Save
+                    {subVendorLoading ? 'Saving...' : 'Save'}
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setEditing(false)}
+                    onClick={() => { handleClose(); setEditing(false) }}
                     className="px-4 cursor-pointer py-1.5 rounded-md bg-red-500 text-white hover:bg-red-700 transition"
                   >
                     Cancel
@@ -730,37 +1135,6 @@ const RoleManagement = () => {
                   )}
                 </div>
 
-                {/* REGION */}
-                {/* {subscriptionType === "global" && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      Select Region
-                    </label>
-
-                    <select
-                      {...subscriptionRegister("subscriptionCountry", {
-                        validate: (value) =>
-                          subscriptionType === "global"
-                            ? !!value || "Region is required"
-                            : true,
-                      })}
-                      className="mt-2 w-full border border-gray-200 rounded-lg p-2"
-                    >
-                      <option value="">Select Region</option>
-                      {countryData?.data?.map((item) => (
-                        <option key={item.name} value={item.name}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    {subscriptionErrors.subscriptionCountry && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {subscriptionErrors.subscriptionCountry.message}
-                      </p>
-                    )}
-                  </div>
-                )} */}
                 {subscriptionType === "global" && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">
@@ -888,131 +1262,3 @@ const RoleManagement = () => {
 }
 
 export default RoleManagement
-
-
-//================================
-
-// import { useState } from "react";
-// import { Input, Modal, Select, Table } from "../../../libs/Ui";
-
-
-// export default function EmployeesPage() {
-//   const [ employees, setEmployees ] =useState([])
-//   const [showModal, setShowModal] = useState(false);
-//   const [editEmployee, setEditEmployee] = useState(null);
-//   const [form, setForm] = useState({ name: "", email: "", phone: "", role: "Coordinator", department: "Training & Placement" });
-//   const [errors, setErrors] = useState({});
-//   const [search, setSearch] = useState("");
-
-//   const validate = () => {
-//     const e = {};
-//     if (!form.name.trim()) e.name = "Name is required";
-//     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email required";
-//     if (!form.phone.trim()) e.phone = "Phone is required";
-//     setErrors(e);
-//     return Object.keys(e).length === 0;
-//   };
-
-//   const handleSubmit = () => {
-//     if (!validate()) return;
-//     if (editEmployee) {
-//       setEmployees(prev => prev.map(e => e.id === editEmployee.id ? { ...e, ...form } : e));
-//       addToast("Employee updated!");
-//     } else {
-//       setEmployees(prev => [...prev, { id: Date.now(), ...form, status: "active", joinDate: new Date().toISOString().split("T")[0] }]);
-//       addToast("Employee added!");
-//     }
-//     setShowModal(false);
-//     setEditEmployee(null);
-//     setForm({ name: "", email: "", phone: "", role: "Coordinator", department: "Training & Placement" });
-//   };
-
-//   const openEdit = (emp) => {
-//     setEditEmployee(emp);
-//     setForm({ name: emp.name, email: emp.email, phone: emp.phone, role: emp.role, department: emp.department });
-//     setErrors({});
-//     setShowModal(true);
-//   };
-
-//   const toggleStatus = (id) => {
-//     setEmployees(prev => prev.map(e => e.id === id ? { ...e, status: e.status === "active" ? "inactive" : "active" } : e));
-//     addToast("Employee status updated.");
-//   };
-
-//   const filtered = employees.filter(e =>
-//     e.name.toLowerCase().includes(search.toLowerCase()) || e.email.toLowerCase().includes(search.toLowerCase())
-//   );
-
-//   const columns = [
-//     {
-//       key: "name", label: "Employee", render: (v, row) => (
-//         <div className="flex items-center gap-3">
-//           <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-sm font-bold text-indigo-600">
-//             {v.split(" ").map(w => w[0]).slice(0, 2).join("")}
-//           </div>
-//           <div><div className="font-medium text-gray-900">{v}</div><div className="text-xs text-gray-400">{row.email}</div></div>
-//         </div>
-//       )
-//     },
-//     { key: "role", label: "Role", render: v => <Badge variant="indigo">{v}</Badge> },
-//     { key: "department", label: "Department" },
-//     { key: "joinDate", label: "Joined", render: v => new Date(v).toLocaleDateString("en-IN") },
-//     { key: "status", label: "Status", render: v => <Badge variant={v === "active" ? "green" : "red"}>{v}</Badge> },
-//     {
-//       key: "actions", label: "Actions", render: (_, row) => (
-//         <div className="flex gap-2">
-//           <button onClick={() => openEdit(row)} className="text-xs bg-gray-50 text-gray-700 hover:bg-gray-100 px-2.5 py-1 rounded-lg font-medium">Edit</button>
-//           <button onClick={() => toggleStatus(row.id)} className={`text-xs px-2.5 py-1 rounded-lg font-medium ${row.status === "active" ? "bg-red-50 text-red-700 hover:bg-red-100" : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"}`}>
-//             {row.status === "active" ? "Deactivate" : "Activate"}
-//           </button>
-//         </div>
-//       )
-//     },
-//   ];
-  
-
-
-//   return (
-//     <div className="p-2 space-y-6">
-//       <div className="flex items-center justify-between">
-//         <div>
-//           <h2 className="text-xl font-bold text-gray-900">Employees</h2>
-//           <p className="text-sm text-gray-500 mt-0.5">{employees.length} employees in your team</p>
-//         </div>
-//         <button
-//           onClick={() => { setEditEmployee(null); setForm({ name: "", email: "", phone: "", role: "Coordinator", department: "Training & Placement" }); setErrors({}); setShowModal(true); }}
-//           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md shadow-indigo-200"
-//         >
-//           + Add Employee
-//         </button>
-//       </div>
-
-//       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-//         <input placeholder="🔍  Search employees..." value={search} onChange={e => setSearch(e.target.value)}
-//           className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-50" />
-//       </div>
-
-//       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-//         <Table columns={columns} data={filtered} emptyMessage="No employees found" />
-//       </div>
-
-//       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editEmployee ? "Edit Employee" : "Add Employee"}>
-//         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-//           <Input label="Full Name" required placeholder="Dr. Suresh Verma" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} error={errors.name} className="sm:col-span-2" />
-//           <Input label="Email" required type="email" placeholder="suresh@college.edu" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} error={errors.email} />
-//           <Input label="Phone" required placeholder="9700000001" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} error={errors.phone} />
-//           <Select label="Role" value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
-//             options={["Placement Officer","Coordinator","Admin","HR Manager","Faculty","Support Staff"].map(r => ({ value: r, label: r }))} />
-//           <Select label="Department" value={form.department} onChange={e => setForm(p => ({ ...p, department: e.target.value }))}
-//             options={["Training & Placement","Administration","HR","Faculty","IT Support"].map(d => ({ value: d, label: d }))} />
-//         </div>
-//         <div className="flex gap-3 mt-6">
-//           <button onClick={() => setShowModal(false)} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">Cancel</button>
-//           <button onClick={handleSubmit} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-indigo-200">
-//             {editEmployee ? "Update" : "Add Employee"}
-//           </button>
-//         </div>
-//       </Modal>
-//     </div>
-//   );
-// }

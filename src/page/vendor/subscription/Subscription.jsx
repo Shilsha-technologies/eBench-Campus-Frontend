@@ -358,129 +358,6 @@ export const Modal = ({ plan, isLoadingCheckout, isOpen, onClose, onConfirm }) =
 
 import { Tag } from "lucide-react"
 
-// function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
-
-//     const { data, isLoading, isError } = useGetAddonCreditsQuery(undefined, {
-//         skip: !isOpen, // only fetch when modal is open
-//     })
-//         if (!isOpen) return null
-
-
-
-//     const addons = data?.data || []
-
-//     return (
-//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-//             <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl p-6">
-
-//                 {/* Close */}
-//                 <button
-//                     onClick={onClose}
-//                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-//                 >
-//                     <X size={20} />
-//                 </button>
-
-//                 {/* Title */}
-//                 <h2 className="text-xl font-bold text-[#286a94] mb-1">Add Credits</h2>
-//                 <p className="text-sm text-gray-500 mb-6">
-//                     Purchase additional credits for your active plan
-//                 </p>
-
-//                 {/* Loading */}
-//                 {isLoading && (
-//                     <div className="flex justify-center py-10">
-//                         <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#286a94] border-t-transparent" />
-//                     </div>
-//                 )}
-
-//                 {/* Error */}
-//                 {isError && (
-//                     <p className="text-center text-red-500 py-6">
-//                         Failed to load addon credits. Please try again.
-//                     </p>
-//                 )}
-
-//                 {/* Addon Cards */}
-//                 {!isLoading && !isError && addons.map((item) => (
-//                     <div
-//                         key={item.subscription_id}
-//                         className="rounded-xl border border-gray-200 p-5 space-y-4 mb-4"
-//                     >
-//                         {/* Plan Name */}
-//                         <div className="flex items-center justify-between">
-//                             <div>
-//                                 <p className="text-xs text-gray-400 uppercase tracking-wide">Plan</p>
-//                                 <p className="text-base font-semibold capitalize text-gray-800">
-//                                     {item.plan_name}
-//                                 </p>
-//                             </div>
-//                             <span className="text-xs bg-blue-50 text-[#286a94] border border-blue-100 px-2 py-1 rounded-full">
-//                                 {item.country}
-//                             </span>
-//                         </div>
-
-//                         {/* Credits Info */}
-//                         <div className="grid grid-cols-2 gap-3">
-//                             <div className="rounded-lg bg-yellow-50 border border-yellow-100 p-3">
-//                                 <p className="text-xs text-gray-400 mb-1">Remaining Credits</p>
-//                                 <div className="flex items-center gap-1.5">
-//                                     <Coins size={16} className="text-yellow-500" />
-//                                     <span className="font-bold text-gray-800">{item.remaining_credits}</span>
-//                                 </div>
-//                             </div>
-//                             <div className="rounded-lg bg-blue-50 border border-blue-100 p-3">
-//                                 <p className="text-xs text-gray-400 mb-1">Addon Credits</p>
-//                                 <div className="flex items-center gap-1.5">
-//                                     <Zap size={16} className="text-[#286a94]" />
-//                                     <span className="font-bold text-gray-800">+{item.addon.credits}</span>
-//                                 </div>
-//                             </div>
-//                         </div>
-
-//                         {/* Pricing */}
-//                         <div className="rounded-lg bg-green-50 border border-green-100 p-4 space-y-2">
-//                             <div className="flex justify-between text-sm">
-//                                 <span className="text-gray-500">Original Price</span>
-//                                 <span className="line-through text-gray-400">
-//                                     {item.addon.currency} {item.addon.original_price.toFixed(2)}
-//                                 </span>
-//                             </div>
-//                             <div className="flex justify-between text-sm">
-//                                 <span className="flex items-center gap-1 text-green-600">
-//                                     <Tag size={14} />
-//                                     Discount
-//                                 </span>
-//                                 <span className="text-green-600 font-semibold">
-//                                     -{item.addon.discount_percent}%
-//                                 </span>
-//                             </div>
-//                             <hr className="border-green-200" />
-//                             <div className="flex justify-between text-base font-bold">
-//                                 <span className="text-gray-800">Final Price</span>
-//                                 <span className="text-[#286a94]">
-//                                     {item.addon.currency} {item.addon.final_price.toFixed(2)}
-//                                 </span>
-//                             </div>
-//                         </div>
-
-//                         {/* Purchase Button */}
-//                         <button
-//                             onClick={() => onPurchase(item)}
-//                             className="w-full bg-[#286a94] hover:bg-[#1f5478] text-white py-2.5 rounded-lg font-medium transition-all active:scale-95"
-//                         >
-//                             Purchase for {item.addon.currency} {item.addon.final_price.toFixed(2)}
-//                         </button>
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     )
-// }
-
-
-// export default Modal;
-
 
 function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
 
@@ -519,8 +396,6 @@ function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
             setPurchasingId(null)
         }
     }
-
-    // console.log("errorro",error);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -644,11 +519,3 @@ function AddonCreditsModal({ isOpen, onClose, onPurchase }) {
         </div>
     )
 }
-
-
-// You are given an integer array nums. The range of a subarray of nums is the
-//  difference between the largest and smallest element in the subarray.
-
-// Return the sum of all subarray ranges of nums.
-
-// A subarray is a contiguous non-empty sequence of elements within an array.

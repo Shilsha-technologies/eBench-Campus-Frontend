@@ -47,7 +47,6 @@ export default function CreateAccount() {
   const requestGeo = () => {
     setGeoLoading(true);
     if (navigator.geolocation) {
-      debugger;
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setGeoLoading(false);

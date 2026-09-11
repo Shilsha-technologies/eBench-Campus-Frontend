@@ -21,7 +21,7 @@
     "firebase": "^12.10.0",
     "framer-motion": "^12.23.24",
     "install": "^0.13.0",
-    "libphonenumber-js": "^1.12.26",
+    "libphonenumber-js": "^1.13.12",
     "lucide-react": "^0.552.0",
     "npm": "^11.12.1",
     "react": "^19.1.1",

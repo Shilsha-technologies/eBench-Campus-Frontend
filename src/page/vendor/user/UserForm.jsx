@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
 import { ClockFading, X } from "lucide-react";
 import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery } from "../../../redux/services/vendorApi";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").max(50, "First Name cannot exceed 50 characters.").min(2, "First Name must be at least 2 characters.")
@@ -30,9 +31,15 @@ const validationSchema = yup.object().shape({
             (value) => !!value && !value.startsWith("0")
         )
         .test(
-            "valid-10-digit",
-            "Enter a valid 10-digit mobile number",
-            (value) => !!value && /^[1-9][0-9]{9}$/.test(value)
+            "valid-phone-for-country",
+            "Enter a valid mobile number",
+            function (value) {
+                const { selectedCountry } = this.options.context || {};
+                if (!value || !selectedCountry?.countryCode) return true;
+
+                const fullNumber = `+${selectedCountry.dialCode}${value}`;
+                return isValidPhoneNumber(fullNumber, selectedCountry.countryCode.toUpperCase());
+            }
         ),
     degree: yup.string().when([], {
         then: (schema) => schema.required("Degree is required"),
@@ -47,10 +54,27 @@ const validationSchema = yup.object().shape({
     }),
 
 
-    cgpa: yup.string().when([], {
-        then: (schema) => schema.required("CGPA required"),
-    }),
+    // cgpa: yup.string().when([], {
+    //     then: (schema) => schema.required("CGPA required"),
+    // }),
 
+    cgpa: yup
+        .string()
+        .required("CGPA is required")
+        .test(
+            "valid-cgpa",
+            "CGPA must be between 1.0 and 10",
+            (value) => {
+                if (!value) return false;
+                const num = Number(value);
+                return !isNaN(num) && num >= 1.0 && num <= 10;
+            }
+        )
+        .test(
+            "valid-format",
+            "Enter a valid CGPA (e.g. 8.5)",
+            (value) => !!value && /^\d{1,2}(\.\d{1,2})?$/.test(value)
+        ),
 
 
     department: yup.string().when([], {
@@ -61,11 +85,12 @@ const validationSchema = yup.object().shape({
     }),
 });
 
-const moduleType = localStorage.getItem('module')
+// const moduleType = localStorage.getItem('module')
 
 export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
     const [skills, setSkills] = useState([]);
     const [skillInput, setSkillInput] = useState("");
+    const [selectedCountry, setSelectedCountry] = useState({});
 
     const addSkill = (e) => {
         if (e) e.preventDefault();
@@ -75,6 +100,8 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
             setSkillInput("");
         }
     };
+
+    // console.log("ff", sele)
 
     const removeSkill = (skillToRemove) => {
         setSkills(skills.filter((s) => s !== skillToRemove));
@@ -97,6 +124,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
     } = useForm({
         resolver: yupResolver(validationSchema),
         mode: "onBlur",
+        context: { selectedCountry }
     });
 
     const isFirstRender = useRef(true);
@@ -150,6 +178,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
             birth_country: data.birthCountry?.value,
             nationality: data.nationality?.value,
             country_of_residence: data.countryOfResidence?.value,
+            country_code: countryCode,
             university_name: data.universityName,
             college_name: data.collegeName,
             degree: data.degree,
@@ -318,10 +347,6 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                     return "Mobile number cannot start with 0";
                                 }
 
-                                if (!/^[1-9][0-9]{9}$/.test(mobile)) {
-                                    return "Enter a valid 10-digit mobile number";
-                                }
-
                                 return true;
                             },
                         }}
@@ -339,22 +364,19 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                                             ? `${watch("countryCode") || "+91"}${field.value}`
                                             : ""
                                     }
-                                    inputStyle={{
-                                        width: "100%",
+                                    inputStyle={{ width: "100%" }}
+                                    onMount={(value, countryData) => {
+                                        setSelectedCountry(countryData);
+                                        setValue("countryCode", `+${countryData.dialCode}`);
                                     }}
                                     onChange={(val, countryData) => {
-                                        // Extract local number without country code
                                         const localNumber = val.startsWith(countryData.dialCode)
                                             ? val.substring(countryData.dialCode.length)
                                             : val;
 
                                         field.onChange(localNumber);
-
-                                        // Store country code separately with + symbol
-                                        setValue(
-                                            "countryCode",
-                                            `+${countryData.dialCode}`
-                                        );
+                                        setValue("countryCode", `+${countryData.dialCode}`);
+                                        setSelectedCountry(countryData);
                                     }}
                                     inputProps={{
                                         required: true,
@@ -478,7 +500,9 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Graduation (Month / Year)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Graduation (Month / Year)
+                            <span className="text-red-500 ml-0.5">*</span>
+                        </label>
                         <MonthInput
                             name="graduationYear"
                             register={register}
