@@ -6,8 +6,8 @@ import PhoneInput from "react-phone-input-2";
 import Select from "react-select";
 import { motion } from 'framer-motion'
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
-import { ClockFading, X } from "lucide-react";
-import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery } from "../../../redux/services/vendorApi";
+import { X } from "lucide-react";
+import { useGetDegreeCampusDetailsQuery, useGetDepartmentCampusDetailsQuery, useGetSpecializationByDepartmentQuery } from "../../../redux/services/vendorApi";
 import { isValidPhoneNumber } from "libphonenumber-js";
 
 const validationSchema = yup.object().shape({
@@ -49,8 +49,10 @@ const validationSchema = yup.object().shape({
         then: (schema) => schema.required("Specialization is required"),
     }),
 
-    enrollmentYear: yup.string().when([], {
-        then: (schema) => schema.required("Enrollment year required"),
+    graduationYear: yup.string().when("isPursuing", {
+        is: true,
+        then: (schema) => schema.notRequired(),
+        otherwise: (schema) => schema.required("Graduation year is required"),
     }),
 
 
@@ -142,6 +144,14 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         setValue("skills", skills, { shouldValidate: true });
     }, [skills, setValue]);
 
+    // When a graduation month/year is selected, ensure "isPursuing" is false
+    useEffect(() => {
+        const gradYear = watch('graduationYear');
+        if (gradYear) {
+            setValue('isPursuing', false);
+        }
+    }, [watch('graduationYear')]);
+
     const countryCode = watch("countryCode") || "in";
     const { data: countryData, isLoading: countryLoading } = useGetCountryDataQuery();
     // const 
@@ -155,16 +165,18 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
         data: degrees = [],
         isLoading: degLoading,
     } = useGetDegreeCampusDetailsQuery();
+    const selectedDegreeId = watch('degree');
 
     const {
         data: departments = [],
         isLoading: deptLoading,
-    } = useGetDepartmentCampusDetailsQuery();
+    } = useGetDepartmentCampusDetailsQuery(selectedDegreeId, { skip: !selectedDegreeId });
 
+    const selectedDepartmentId = watch('department');
     const {
         data: specializations = [],
         isLoading: specLoading,
-    } = useGetSpecializationCampusDetailsQuery();
+    } = useGetSpecializationByDepartmentQuery(selectedDepartmentId, { skip: !selectedDepartmentId });
 
 
     const handleFormSubmit = (data) => {
@@ -406,7 +418,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                             </option>
 
                             {degrees?.data?.length > 0 && degrees?.data?.map((deg) => (
-                                <option key={deg.id} value={deg.name}>
+                                <option key={deg.id} value={deg.id}>
                                     {deg.name}
                                 </option>
                             ))}
@@ -440,7 +452,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                             </option>
 
                             {departments?.data?.length > 0 && departments?.data?.map((dept) => (
-                                <option key={dept.name} value={dept.name}>
+                                <option key={dept.id} value={dept.id}>
                                     {dept.name}
                                 </option>
                             ))}
@@ -475,7 +487,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                             </option>
 
                             {specializations?.data?.length > 0 && specializations?.data?.map((spec) => (
-                                <option key={spec.name} value={spec.name}>
+                                <option key={spec.id} value={spec.id}>
                                     {spec.name}
                                 </option>
                             ))}

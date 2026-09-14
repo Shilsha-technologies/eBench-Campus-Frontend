@@ -383,13 +383,20 @@ export const vendorApi = api.injectEndpoints({
         // },
       }),
     }),
+    // Department list filtered by optional degreeId
     getDepartmentCampusDetails: builder.query({
-      query: () => ({
+      query: (degreeId) => ({
         url: `/campus/departments`,
         method: "GET",
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem('token')}`
-        // },
+        params: degreeId ? { degree_id: degreeId } : undefined,
+      }),
+    }),
+    // Specializations filtered by departmentId
+    getSpecializationByDepartment: builder.query({
+      query: (departmentId) => ({
+        url: `/campus/specializations`,
+        method: "GET",
+        params: departmentId ? { department_id: departmentId } : undefined,
       }),
     }),
     getAddonCredits: builder.query({
@@ -466,13 +473,48 @@ export const vendorApi = api.injectEndpoints({
   }),
 });
 
-export const { useAddonCreditsCheckoutMutation, useChangePasswordMutation, useGetAddonCreditsQuery, useListofSubscriptionQuery, useGetDepartmentCampusDetailsQuery, useLazyGetDepartmentCampusDetailsQuery, useGetSpecializationCampusDetailsQuery, useGetDegreeCampusDetailsQuery, useLazyGetDegreeCampusDetailsQuery, useViewSubVendorDetailsQuery, useAssignSubVendorSubscriptionMutation, useGetAllUserByVendorQuery, useAddVendorMutation, useListofSubVendorQuery,
-  useSendTestLinkToUserMutation, useImportVendorMutation, useRegisterSubVendorMutation, useActiveDeactiveSubVendorMutation,
-  useGetVendorProfileQuery, useUpdateVendorProfileMutation, useAddCompanyProfileMutation, useDeleteCandidateByCandidateIdMutation,
-  useUpdateCompanyProfileMutation, useAddBranchDetailsMutation, useDeleteBranchDetailsMutation,
-  useUpdateBranchDetailsMutation, useGetSubscriptionDetailQuery, useLazyGetSubscriptionDetailQuery,
-  useSelectVendorSubscriptionMutation, useViewSubscriptionListQuery, useVendorDashboardApiQuery,
-  useResultManagementDataQuery, useViewResultByUserIdQuery, useDownloadCandidateResultMutation,
-  useLogoutMutation, useAddCampusVendorMutation, useImportCampusVendorMutation, useActiveInactiveCandidateMutation, useGetCandidateByIdQuery, useGetCandidateOwnerDropdownQuery,
-  useGetLevelsQuery, useGetDifficultiesByLevelQuery
+export const {
+  useAddonCreditsCheckoutMutation,
+  useChangePasswordMutation,
+  useGetAddonCreditsQuery,
+  useListofSubscriptionQuery,
+  useGetDepartmentCampusDetailsQuery,
+  useLazyGetDepartmentCampusDetailsQuery,
+  useGetSpecializationCampusDetailsQuery,
+  useGetSpecializationByDepartmentQuery,
+  useGetDegreeCampusDetailsQuery,
+  useLazyGetDegreeCampusDetailsQuery,
+  useViewSubVendorDetailsQuery,
+  useAssignSubVendorSubscriptionMutation,
+  useGetAllUserByVendorQuery,
+  useAddVendorMutation,
+  useListofSubVendorQuery,
+  useSendTestLinkToUserMutation,
+  useImportVendorMutation,
+  useRegisterSubVendorMutation,
+  useActiveDeactiveSubVendorMutation,
+  useGetVendorProfileQuery,
+  useUpdateVendorProfileMutation,
+  useAddCompanyProfileMutation,
+  useDeleteCandidateByCandidateIdMutation,
+  useUpdateCompanyProfileMutation,
+  useAddBranchDetailsMutation,
+  useDeleteBranchDetailsMutation,
+  useUpdateBranchDetailsMutation,
+  useGetSubscriptionDetailQuery,
+  useLazyGetSubscriptionDetailQuery,
+  useSelectVendorSubscriptionMutation,
+  useViewSubscriptionListQuery,
+  useVendorDashboardApiQuery,
+  useResultManagementDataQuery,
+  useViewResultByUserIdQuery,
+  useDownloadCandidateResultMutation,
+  useLogoutMutation,
+  useAddCampusVendorMutation,
+  useImportCampusVendorMutation,
+  useActiveInactiveCandidateMutation,
+  useGetCandidateByIdQuery,
+  useGetCandidateOwnerDropdownQuery,
+  useGetLevelsQuery,
+  useGetDifficultiesByLevelQuery,
 } = vendorApi;
