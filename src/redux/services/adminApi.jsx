@@ -236,7 +236,7 @@ export const adminApi = api.injectEndpoints({
     }),
     getCampusDetails: builder.query({
       query: (campusId) => ({
-        url: `/admin/vendors/${campusId}/details`,
+        url: `/admin/vendors/${campusId}`,
         method: 'GET',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -244,6 +244,34 @@ export const adminApi = api.injectEndpoints({
       }),
       providesTags: ["Admin"],
     }),
+    // Paginated candidates for a vendor
+    getVendorCandidates: builder.query({
+      query: ({ vendorId, page = 1, limit = 10 }) => ({
+        url: `/admin/vendors/${vendorId}/candidates?page=${page}&limit=${limit}`,
+        method: 'GET',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+      providesTags: (result, error, arg) => [{ type: 'Candidates', id: arg.vendorId }],
+    }),
+
+    // Paginated sub‑vendors (staff) for a vendor
+    getVendorSubvendors: builder.query({
+      query: ({ vendorId, page = 1, limit = 10 }) => ({
+        url: `/admin/vendors/${vendorId}/subvendors?page=${page}&limit=${limit}`,
+        method: 'GET',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+      providesTags: (result, error, arg) => [{ type: 'Subvendors', id: arg.vendorId }],
+    }),
+    getRecentActivitySubvendors: builder.query({
+      query: ({ vendorId }) => ({
+        url: `/admin/vendors/${vendorId}/recent-activities`,
+        method: 'GET',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+      providesTags: (result, error, arg) => [{ type: 'Subvendors', id: arg.vendorId }],
+    })
+
 
   }),
 });
@@ -258,6 +286,8 @@ export const { useAdminChangePasswordMutation, useGetAllVendorQuery, useActiveIn
   useAddPlanByAdminMutation,
   useUpdatePlanByAdminMutation,
   useLazyGetAllOptionPlanQuery,
+  useGetVendorCandidatesQuery,
+  useGetVendorSubvendorsQuery,
   useSetAddonPriceMutation,
   useGetCampusDetailsQuery,
   useAddTestConfigLevelMutation,
@@ -267,7 +297,7 @@ export const { useAdminChangePasswordMutation, useGetAllVendorQuery, useActiveIn
   useAddDifficultyMutation,
   useEditDifficultyMutation,
   useToggleLevelStatusMutation,
-  useToggleDifficultyStatusMutation,
+  useToggleDifficultyStatusMutation, useGetRecentActivitySubvendorsQuery
 
 } = adminApi;
 

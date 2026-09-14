@@ -1,7 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useGetCampusDetailsQuery } from "../../redux/services/adminApi";
+import { useGetCampusDetailsQuery, useGetRecentActivitySubvendorsQuery, useGetVendorCandidatesQuery, useGetVendorSubvendorsQuery } from "../../redux/services/adminApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Pagination } from "../../page/vendor/user/UserManagement";
+import { Loader } from "lucide-react";
+
+const PAGE_LIMIT = 10; 
 
 
 // ─── Helper utils ────────────────────────────────────────────────────────────
@@ -204,8 +208,17 @@ function OverviewTab({ vendor }) {
 }
 
 // ─── Students Tab ────────────────────────────────────────────────────────────
-function StudentsTab({ candidates }) {
+function StudentsTab() {
   const [search, setSearch] = useState("");
+  const [studentsPage, setStudentsPage] = useState(1);
+  const { campusId } = useParams();
+
+
+  const { data: candidatesData, isLoading: candidatesLoading } = useGetVendorCandidatesQuery({ vendorId: campusId, page: studentsPage, limit: PAGE_LIMIT });
+
+  console.log("candidatesData", candidatesData);
+
+  const candidates = candidatesData?.candidates || [];
 
   const filtered = candidates.filter((c) =>
     [c.name, c.email, c.phone, c.branch, c.addedBy]
@@ -213,6 +226,12 @@ function StudentsTab({ candidates }) {
       .toLowerCase()
       .includes(search.toLowerCase())
   );
+
+  if (candidatesLoading) {
+    return <div className="flex items-center justify-center h-32">
+      <Loader className="animate-spin" />
+    </div>;
+  }
 
   return (
     <div>
@@ -260,18 +279,27 @@ function StudentsTab({ candidates }) {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={c.name} index={i} />
-                        <span className="font-medium text-gray-800 capitalize">{c.name}</span>
-                      </div>
+                        <span
+                          className="font-medium text-gray-800 capitalize"
+                          title={c.name.length > 25 ? c.name : undefined}
+                        >
+                          {c.name.length > 25 ? `${c.name.slice(0, 25)}...` : c.name}
+                        </span>                      </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{c.email}</td>
+                    <td
+                      className="px-4 py-3 text-gray-500 max-w-[200px] truncate"
+                      title={c.email.length > 25 ? c.email : undefined}
+                    >
+                      {c.email.length > 25 ? `${c.email.slice(0, 25)}...` : c.email}
+                    </td>
                     <td className="px-4 py-3 text-gray-500">{c.phone}</td>
                     <td className="px-4 py-3">
-                      <Badge variant="info">Branch {c.branch}</Badge>
+                      <Badge variant="info"> {c.branch}</Badge>
                     </td>
                     <td className="px-4 py-3 capitalize text-gray-600">{c.addedBy}</td>
                     <td className="px-4 py-3">
                       {c.testCompleted ? (
-                        <Badge variant="success">Done — {c.testScore}%</Badge>
+                        <Badge variant="success">Done — {c?.testScore ? c?.testScore + '%' : 'N/A'}</Badge>
                       ) : (
                         <Badge variant="warning">Pending</Badge>
                       )}
@@ -287,8 +315,8 @@ function StudentsTab({ candidates }) {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-right">
-          {filtered.length} of {candidates.length} students
+        <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 w-full flex justify-end text-right">
+          <Pagination totalPages={candidatesData?.totalPages} page={studentsPage} setPage={setStudentsPage} />
         </div>
       </div>
     </div>
@@ -296,8 +324,26 @@ function StudentsTab({ candidates }) {
 }
 
 // ─── SubVendor Tab ───────────────────────────────────────────────────────────────
-function StaffTab({ staff }) {
-  return (
+function StaffTab() {
+
+  const { campusId } = useParams();
+  const [staffPage, setStaffPage] = useState(1);
+  // Paginated staff (subvendors)
+  const { data: staffData, isLoading: staffLoading } = useGetVendorSubvendorsQuery({ vendorId: campusId, page: staffPage, limit: PAGE_LIMIT });
+  const staff = staffData?.subvendors || [];
+  const staffTotal = staffData?.totalPages || 0;
+
+  if(staffLoading){
+    return (
+      <div className="flex items-center justify-center ">
+        <div className="text-center">
+          <Loader className="animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  return (  
     <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -314,7 +360,7 @@ function StaffTab({ staff }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {staff.map((s, i) => (
+            {staff?.map((s, i) => (
               <tr key={s._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
@@ -337,18 +383,44 @@ function StaffTab({ staff }) {
                 </td>
               </tr>
             ))}
+            {staff?.length === 0 && (
+              <tr>
+                <td colSpan={8} className="text-center py-8 text-gray-400 text-sm">
+                  No SubVendor Present
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+        <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 w-full flex justify-end text-right">
+          <Pagination 
+            totalPages={staffTotal} 
+            page={staffPage} 
+            setPage={setStaffPage} 
+          />
+        </div>
       </div>
     </div>
   );
 }
 
 // ─── Activity Tab ────────────────────────────────────────────────────────────
-function ActivityTab({ activities }) {
+function ActivityTab() {
+  const { campusId } = useParams();
+  const { data: recentActivityData, isLoading: recentActivityLoading } = useGetRecentActivitySubvendorsQuery({ vendorId: campusId });
+  const recentActivity = recentActivityData?.recentActivity || [];
+
+  if(recentActivityLoading){
+    return (
+      <div className="flex items-center justify-center h-32">
+        <Loader className="w-8 h-8 animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white border border-gray-100 rounded-xl px-4 divide-y divide-gray-100">
-      {activities.map(([title, desc, time, icon], i) => (
+      {recentActivity.map(([title, desc, time, icon], i) => (
         <div key={i} className="flex items-start gap-4 py-4">
           <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-lg shrink-0">
             {icon}
@@ -367,20 +439,27 @@ function ActivityTab({ activities }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function VendorDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [studentsPage, setStudentsPage] = useState(1);
   const { campusId } = useParams();
   const navigate = useNavigate();
 
-  const { data: vendorData, isLoading, error } = useGetCampusDetailsQuery(campusId);
+  const { data: vendorData, isLoading: vendorLoading, error } = useGetCampusDetailsQuery(campusId);
   const vendor = vendorData?.vendor;
-  const candidates = vendorData?.candidates || [];
-  const staff = vendorData?.subvendor || [];
-  const stats = vendorData?.statistics || {};
+
+  // Paginated candidates (students)
+
+  const stats = {};
+
+
+
+
+
 
   const onBack = () => {
     navigate(-1);
   };
 
-  if (isLoading) {
+  if (vendorLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
@@ -455,7 +534,7 @@ export default function VendorDetailPage() {
               { label: "Tests sent", value: stats.totalTestSent || 0, icon: "📤" },
               { label: "Tests pending", value: stats.totalTestPending || 0, icon: "⏳" },
               { label: "Completed", value: stats.totalTestCompleted || 0, icon: "✅" },
-              { label: "SubVendor", value: vendorData?.subvendorCount || staff.length, icon: "🧑‍💼" },
+              { label: "SubVendor", value: vendorData?.subvendorCount || 0, icon: "🧑‍💼" },
               { label: "Plan credits", value: vendor.subscription_credits || 0, icon: "💳" },
             ].map(({ label, value, icon }) => (
               <div key={label} className="px-5 py-4">
@@ -473,10 +552,10 @@ export default function VendorDetailPage() {
         <div className="border-b border-green-100/30 mb-6">
           <div className="flex gap-1 -mb-px overflow-x-auto">
             {TABS.map((tab) => {
-              const counts = {
-                students: ` (${candidates.length})`,
-                staff: ` (${staff.length})`,
-              };
+              // const counts = {
+              //   students: ` (${candidates?.length??0})`,
+              //   staff: ` (${staff?.length??0})`,
+              // };
               return (
                 <button
                   key={tab.key}
@@ -487,11 +566,11 @@ export default function VendorDetailPage() {
                     }`}
                 >
                   {tab.label}
-                  {counts[tab.key] && (
+                  {/* {counts[tab.key] && (
                     <span className="ml-1.5 text-xs bg-gray-100 text-gray-500 rounded-full px-1.5 py-0.5">
                       {tab.key === "students" ? candidates.length : staff.length}
                     </span>
-                  )}
+                  )} */}
                 </button>
               );
             })}
@@ -500,9 +579,9 @@ export default function VendorDetailPage() {
 
         {/* ── Tab Content ── */}
         {activeTab === "overview" && <OverviewTab vendor={vendor} />}
-        {activeTab === "students" && <StudentsTab candidates={candidates} />}
-        {activeTab === "staff" && <StaffTab staff={staff} />}
-        {activeTab === "activity" && <ActivityTab activities={vendor.recentActivity} />}
+        {activeTab === "students" && <StudentsTab />}
+        {activeTab === "staff" && <StaffTab />}
+        {activeTab === "activity" && <ActivityTab />}
 
       </div>
     </div>

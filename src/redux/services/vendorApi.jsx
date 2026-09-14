@@ -66,6 +66,15 @@ export const vendorApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Vendor'],
     }),
+    // Get import status by ID
+    getImportStatus: builder.query({
+      query: (importId) => ({
+        url: `/campus/import_candidates/status/${importId}`,
+        method: 'GET',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      }),
+      providesTags: (result, error, arg) => [{ type: 'ImportStatus', id: arg }],
+    }),
     addCampusVendor: builder.mutation({
       query: (vendor) => ({
         url: '/campus/add_candidate',
@@ -517,4 +526,5 @@ export const {
   useGetCandidateOwnerDropdownQuery,
   useGetLevelsQuery,
   useGetDifficultiesByLevelQuery,
+  useLazyGetImportStatusQuery
 } = vendorApi;
