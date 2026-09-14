@@ -29,9 +29,9 @@ export default function ContactPage() {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    
+
     setStatus("sending");
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.CONTACT_US, {
         method: 'POST',
@@ -50,7 +50,7 @@ export default function ContactPage() {
       }
 
       const data = await response.json();
-      
+
       setStatus("success");
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
@@ -280,7 +280,7 @@ export default function ContactPage() {
                   className="text-3xl font-extrabold mb-3"
                   style={{ color: "#0f2848", letterSpacing: "-0.025em" }}
                 >
-                  Something went wrong
+                  Server Error
                 </h3>
                 <p className="text-base font-light leading-relaxed mb-8 mx-auto max-w-xs" style={{ color: "#64748b" }}>
                   We couldn't send your message. Please try again later or contact us directly.
@@ -353,6 +353,7 @@ export default function ContactPage() {
                       focused={focused}
                       setFocused={setFocused}
                     />
+
                     <InputField
                       label="Email Address"
                       name="email"
@@ -393,8 +394,8 @@ export default function ContactPage() {
                         border: focused === "message"
                           ? "1.5px solid #38bdf8"
                           : errors.message
-                          ? "1.5px solid #fca5a5"
-                          : "1.5px solid #e2e8f0",
+                            ? "1.5px solid #fca5a5"
+                            : "1.5px solid #e2e8f0",
                         boxShadow: focused === "message" ? "0 0 0 4px rgba(56,189,248,0.12)" : "none",
                       }}
                     />
@@ -452,8 +453,46 @@ export default function ContactPage() {
   );
 }
 
-function InputField({ label, name, type, placeholder, value, onChange, error, focused, setFocused }) {
+function InputField({
+  label,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  error,
+  focused,
+  setFocused,
+}) {
   const isFocused = focused === name;
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+
+    // Name validation
+    if (name === "name") {
+      // Maximum 100 characters
+      if (newValue.length > 100) {
+        return;
+      }
+
+      // Only letters and spaces
+      if (!/^[a-zA-Z\s]*$/.test(newValue)) {
+        return;
+      }
+    }
+
+    // Email validation
+    if (name === "email") {
+      // Allow valid email characters
+      if (!/^[a-zA-Z0-9._%+-@]*$/.test(newValue)) {
+        return;
+      }
+    }
+
+    onChange(e);
+  };
+
   return (
     <div>
       <label
@@ -464,15 +503,17 @@ function InputField({ label, name, type, placeholder, value, onChange, error, fo
       >
         {label}
       </label>
+
       <input
         type={type}
         name={name}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         onFocus={() => setFocused(name)}
         onBlur={() => setFocused(null)}
         autoComplete="off"
+        maxLength={name === "name" ? 100 : undefined}
         className="w-full rounded-xl outline-none transition-all"
         style={{
           padding: "13px 16px",
@@ -484,11 +525,14 @@ function InputField({ label, name, type, placeholder, value, onChange, error, fo
           border: isFocused
             ? "1.5px solid #38bdf8"
             : error
-            ? "1.5px solid #fca5a5"
-            : "1.5px solid #e2e8f0",
-          boxShadow: isFocused ? "0 0 0 4px rgba(56,189,248,0.12)" : "none",
+              ? "1.5px solid #fca5a5"
+              : "1.5px solid #e2e8f0",
+          boxShadow: isFocused
+            ? "0 0 0 4px rgba(56,189,248,0.12)"
+            : "none",
         }}
       />
+
       {error && (
         <p className="mt-1.5 text-xs font-medium" style={{ color: "#ef4444" }}>
           {error}

@@ -581,7 +581,7 @@ export default function CandidatesPage() {
                       setDeleteUserDetails(row);
                       setShowDeleteModal(true);
                     }}
-                    className="px-3 text-xs cursor-pointer py-2 rounded text-white bg-red-500 hover:bg-red-600"
+                    className="px-3 text-xs w-20 text-center py-2  cursor-pointer py-2 rounded text-white bg-red-500 hover:bg-red-600"
                   >
                     Delete
                   </button>
@@ -993,10 +993,10 @@ export default function CandidatesPage() {
         Are you sure you want to delete this candidate?
 
         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
-          <p className="font-semibold text-red-700">
+          <p className="font-semibold text-red-700 break-words">
             {deleteUserDetails?.name}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 break-words">
             {deleteUserDetails?.email}
           </p>
         </div>

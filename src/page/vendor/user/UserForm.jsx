@@ -44,6 +44,9 @@ const validationSchema = yup.object().shape({
     degree: yup.string().when([], {
         then: (schema) => schema.required("Degree is required"),
     }),
+    enrollmentYear: yup
+    .string()
+    .required("Enrollment Year is required"),
 
     specialization: yup.string().when([], {
         then: (schema) => schema.required("Specialization is required"),
