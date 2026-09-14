@@ -208,7 +208,7 @@ const OtpVerification = () => {
             style={{ fontSize: "clamp(26px, 3.5vw, 40px)", fontWeight: 800, color: "white", marginBottom: 16, letterSpacing: "-0.8px", lineHeight: 1.2 }}>
             Verify Your Identity<br />
             <span style={{ background: "linear-gradient(135deg, #60A5FA, #38BDF8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              with eBench
+              with eBench Campus
             </span>
           </motion.h1>
 

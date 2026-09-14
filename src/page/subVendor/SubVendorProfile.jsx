@@ -422,7 +422,7 @@ function EmployeeChangePasswordModal({ onClose }) {
         confirm_password: confirmPassword
       });
       if (result?.error) {
-        throw new Error(result?.error?.data?.detail);
+        throw new Error(result?.error?.data?.message);
       }
       if (result?.data) {
         setSuccess(true);
