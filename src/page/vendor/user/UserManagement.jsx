@@ -192,7 +192,6 @@ export default function CandidatesPage() {
   useEffect(() => {
     let timer;
     if (isPolling && importId) {
-      debugger;
       if (importStatusData?.status && importStatusData.status !== "pending") {
         // Finished
         setIsPolling(false);

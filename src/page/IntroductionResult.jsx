@@ -169,7 +169,7 @@ function scoreBand(pct) {
   return { label: "Weak", color: "#C4432B", bg: "#FBEAE6" };
 }
 
-function StatBar({ label, passed, total }) {
+export function StatBar({ label, passed, total }) {
   const pct = total > 0 ? Math.round((passed / total) * 100) : 0;
   return (
     <div className="flex items-center gap-3">
@@ -192,9 +192,9 @@ function StatBar({ label, passed, total }) {
 
 function FeedbackTabs({ feedback }) {
   const tabs = [
-    { key: "vendor", label: "Vendor view" },
-    { key: "candidate", label: "Candidate view" },
-    { key: "parent", label: "Parent view" },
+    { key: "vendor", label: "Vendor feedback" },
+    { key: "candidate", label: "Candidate feedback" },
+    { key: "parent", label: "Parent feedback" },
   ].filter((t) => feedback?.[t.key]);
 
   const [active, setActive] = useState(tabs[0]?.key);
@@ -283,7 +283,8 @@ function AttemptCard({ test, index, defaultOpen }) {
   const d = test.details || {};
   const pct = d.overall_score_percentage ?? 0;
   const band = scoreBand(pct);
-  const flagged = d.tab_switch_count > 0 || d.auto_submitted;
+  const flagged = d?.tab_switch_count > 0 || d.auto_submitted;
+  // debugger;
 
   return (
     <div className="relative pl-6">

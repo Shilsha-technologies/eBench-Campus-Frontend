@@ -422,7 +422,7 @@ function StaffTab() {
                 </td>
                 <td className="px-4 py-3 text-gray-500">{s.phone}</td>
                 <td className="px-4 py-3">
-                  <Badge variant="info">{s.role}</Badge>
+                  <Badge variant="info">{s?.role}</Badge>
                 </td>
                 <td className="px-4 py-3 text-gray-600">{s.department}</td>
                 <td className="px-4 py-3 text-gray-500">{s.joinDate}</td>

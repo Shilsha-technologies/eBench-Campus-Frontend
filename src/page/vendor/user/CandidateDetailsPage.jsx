@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetCandidateByIdQuery } from "../../../redux/services/vendorApi";
 import { useGetCandidateByIdBySubVendorQuery } from "../../../redux/services/subvendorApi";
 import { ArrowLeft, User, Mail, Phone, Calendar, GraduationCap, Award, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, PlayCircle, Download, Eye, AlertTriangle } from "lucide-react";
+import { StatBar } from "../../IntroductionResult";
 
 export default function CandidateDetailsPage() {
   const { candidateId } = useParams();
@@ -92,7 +93,7 @@ export default function CandidateDetailsPage() {
     return 'text-red-600';
   };
 
-  {/* Helper: renders a titled list if items is an array, or a single message if it's a string */}
+  {/* Helper: renders a titled list if items is an array, or a single message if it's a string */ }
 
 
   return (<>
@@ -378,20 +379,22 @@ export default function CandidateDetailsPage() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
-
                         <span className="font-medium text-gray-900">{test?.level_id} : {test?.level_name}</span>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(test.successful ? 'completed' : 'failed')}`}>
+                      {/* <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(test.successful ? 'completed' : 'failed')}`}>
                         {test.successful ? 'Completed' : 'Failed'}
-                      </span>
+                      </span> */}
+                     
                     </div>
+                    
 
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <div className="text-sm text-gray-500">Score</div>
-                        <div className={`text-lg font-bold ${getScoreColor(test.final_score)}`}>
-                          {test?.final_score ?? 0}%
+                        <div className={`text-lg font-bold`}>
+                          {test?.level_id == "LEVEL_002" ? test?.overall_score_percentage : test?.final_score ?? 0}%
                         </div>
+
                       </div>
 
                       <div className="text-right">
@@ -408,6 +411,23 @@ export default function CandidateDetailsPage() {
                       </div>
                     </div>
                   </div>
+                   {test?.level_id == "LEVEL_002" &&
+                        <div className="space-y-2.5">
+                          <StatBar label="MCQ" passed={test?.mcq_correct} total={test?.total_mcq} />
+                          <StatBar
+                            label="Coding"
+                            passed={test?.coding_passed_cases}
+                            total={test?.coding_total_cases}
+                          />
+                          {test.attempted_scenario != null && (
+                            <StatBar
+                              label="Scenario"
+                              passed={test?.scenario_correct ?? 0}
+                              total={test?.total_scenario ?? 0}
+                            />
+                          )}
+                        </div>
+                      }
 
                   {/* Performance Metrics */}
                   {test.successful && (
@@ -452,7 +472,7 @@ export default function CandidateDetailsPage() {
                         /* ---- Normal feedback (only shown if the object exists) ---- */
                         <div className="space-y-3">
                           {/* Candidate-facing feedback */}
-                          
+
                           {test.ai_feedback.candidate && (
                             <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
                               <div className="text-xs font-semibold text-purple-900 uppercase tracking-wide mb-1">
