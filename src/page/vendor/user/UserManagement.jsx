@@ -179,7 +179,7 @@ export default function CandidatesPage() {
     }
   }
 
-  console.log("importStatusData",importStatusData)
+  console.log("importStatusData", importStatusData)
 
 
 
@@ -254,10 +254,9 @@ export default function CandidatesPage() {
     }
     try {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
-      debugger; 
       if (result?.error) {
         // console.log("eww", result)
-        return toast.error(result?.error?.data?.detail?.message ?? "Pls Fill Correct Info");
+        return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info");
       }
       // If import API returns an import ID, start polling
       const importIdFromResp = result?.data?.import_id;
@@ -477,23 +476,27 @@ export default function CandidatesPage() {
       label: "Test",
       render: (_, row) => {
         const status = row.testCompleted;
+        const statusMap = {
+          completed: "Completed",
+          pending: "Pending",
+          not_sent: "Not Sent",
+          auto_submitted: "Auto Submitted",
+          expired: "Expired",
+        };
+        const variantMap = {
+          completed: "green",
+          pending: "amber",
+          not_sent: "gray",
+          auto_submitted: "blue",
+          expired: "red",
+        };
+        const label = statusMap[status] || status;
+        const variant = variantMap[status] || "gray";
 
         return (
           <div className="flex items-center gap-2">
-            <Badge
-              variant={
-                status === "completed"
-                  ? "green"
-                  : status === "pending"
-                    ? "amber"
-                    : "gray"
-              }
-            >
-              {status === "completed"
-                ? "Completed"
-                : status === "pending"
-                  ? "Pending"
-                  : "Not Sent"}
+            <Badge variant={variant}>
+              {label}
             </Badge>
           </div>
         );

@@ -568,10 +568,20 @@ const RoleManagement = () => {
                       key={u.id}
                       className={`text-sm text-gray-600 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}
                     >
-                      <td className="px-6 py-4">{u?.name}</td>
+                      <td className="px-6 py-4" title={u?.name?.length > 20 ? u.name : undefined}>
+                        {u?.name
+                          ? u.name.length > 20
+                            ? `${u.name.slice(0, 20)}...`
+                            : u.name
+                          : "-"}
+                      </td>
 
-                      <td className="px-6 py-2">
-                        {u?.email}
+                      <td className="px-6 py-2" title={u?.email?.length > 20 ? u.email : undefined}>
+                        {u?.email
+                          ? u.email.length > 20
+                            ? `${u.email.slice(0, 20)}...`
+                            : u.email
+                          : "-"}
                       </td>
 
                       <td className="px-6 py-4">{u.country}</td>
@@ -591,11 +601,11 @@ const RoleManagement = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        {'+' + u?.phone}
+                        {u?.phone??"-"}
                       </td>
 
                       <td className="px-6 py-4">
-                        {u?.sub_vendor_address}
+                        {u?.sub_vendor_address??"-"}
                       </td>
 
                       <td className="px-8 py-4  relative text-right">
@@ -1031,6 +1041,7 @@ const RoleManagement = () => {
                 <div className="flex flex-row gap-3">
                   <button
                     type="submit"
+                    disabled={subVendorLoading}
                     className="px-4 cursor-pointer py-1.5 rounded-md bg-[#1b68c0]  text-white hover:bg-blue-500 transition"
                   >
                     {subVendorLoading ? 'Saving...' : 'Save'}

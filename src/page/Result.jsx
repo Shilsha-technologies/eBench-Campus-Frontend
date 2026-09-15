@@ -432,6 +432,17 @@ export function TestLinkExpired() {
                 <p className="text-center text-xs text-slate-400 mt-6">
                     eBench Campus &middot; Assessment Platform
                 </p>
+                <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+                    Need help?{" "}
+                    <a
+                        href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-slate-500 hover:underline"
+                    >
+                        info@shilshatech.com
+                    </a>
+                </p>
             </div>
         </div>
     );

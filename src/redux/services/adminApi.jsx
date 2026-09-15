@@ -246,8 +246,8 @@ export const adminApi = api.injectEndpoints({
     }),
     // Paginated candidates for a vendor
     getVendorCandidates: builder.query({
-      query: ({ vendorId, page = 1, limit = 10 }) => ({
-        url: `/admin/vendors/${vendorId}/candidates?page=${page}&limit=${limit}`,
+      query: ({ vendorId, page = 1, limit = 10 ,search=''}) => ({
+        url: `/admin/vendors/${vendorId}/candidates?page=${page}&limit=${limit}&search=${search}`,
         method: 'GET',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       }),
@@ -256,8 +256,8 @@ export const adminApi = api.injectEndpoints({
 
     // Paginated sub‑vendors (staff) for a vendor
     getVendorSubvendors: builder.query({
-      query: ({ vendorId, page = 1, limit = 10 }) => ({
-        url: `/admin/vendors/${vendorId}/subvendors?page=${page}&limit=${limit}`,
+      query: ({ vendorId, page = 1, limit = 10,search='' }) => ({
+        url: `/admin/vendors/${vendorId}/subvendors?page=${page}&limit=${limit}&search=${search}`,
         method: 'GET',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       }),

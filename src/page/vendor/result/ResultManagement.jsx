@@ -120,7 +120,7 @@ export default function ResultsPage() {
     },
     // { key: "testDate", label: "Test Date", render: v => v ? new Date(v).toLocaleDateString("en-IN") : "—" },
     { key: "email", label: "Email" },
-    { key: "mobile", label: "Mobile", render: v => v ? `+${v}` : "—" },
+    { key: "mobile", label: "Mobile", render: v => v ? `${v}` : "—" },
     { key: "country_of_residence", label: "Country" },
     // {
     //   key: "status", label: "Status", render: (v, row) => {

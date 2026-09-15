@@ -45,8 +45,8 @@ const validationSchema = yup.object().shape({
         then: (schema) => schema.required("Degree is required"),
     }),
     enrollmentYear: yup
-    .string()
-    .required("Enrollment Year is required"),
+        .string()
+        .required("Enrollment Year is required"),
 
     specialization: yup.string().when([], {
         then: (schema) => schema.required("Specialization is required"),
@@ -614,6 +614,7 @@ export default function UserForm({ onSubmit, isVendorAdding, onClose }) {
                     <div className="col-span-3 flex justify-end gap-4 pt-4">
                         <button
                             type="submit"
+                            disabled={isVendorAdding}
                             className="px-4 cursor-pointer py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
                             {isVendorAdding ? 'Saving...' : 'Save User'}

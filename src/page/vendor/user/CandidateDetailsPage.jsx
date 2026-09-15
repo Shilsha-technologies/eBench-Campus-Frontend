@@ -196,36 +196,36 @@ export default function CandidateDetailsPage() {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+            {/* <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Birth Country</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.birth_country || 'N/A'}</p>
-            </div>
+            </div> */}
 
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Country of Residence</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.country_of_residence || 'N/A'}</p>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+            {/* <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Father's Name</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.father_name || 'N/A'}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+            </div> */}
+            {/* <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Mother's Name</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.mother_name || 'N/A'}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Guardian Name</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.guardian_name || 'N/A'}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+            </div> */}
+            {/* <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Guardian Email</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.guardian_email || 'N/A'}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Guardian Mobile</label>
               <p className="text-base font-medium text-gray-900 mt-2">{candidate.guardian_mobile || 'N/A'}</p>
-            </div>
+            </div> */}
 
 
             <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
