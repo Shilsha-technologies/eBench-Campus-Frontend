@@ -635,6 +635,7 @@ export default function RecordInterviewPage() {
 
 
                 <button
+                  disabled={isLoading}
                   onClick={() => {
                     if (!micTestPassed) {
                       alert('Please pass the mic test first so your audio is loud & clear.');
@@ -650,6 +651,7 @@ export default function RecordInterviewPage() {
 
                 {recording && (
                   <button
+                  disabled={isLoading}
                     onClick={() => {
                       if (paused) handleResume();
                       else handlePause();
@@ -664,8 +666,23 @@ export default function RecordInterviewPage() {
                   <div className="space-y-2">
                     <a href={videoURL} target="_blank" rel="noreferrer" className="block text-sm text-blue-700 underline">Open recorded video</a>
                     <div className="flex gap-2">
-                      <button onClick={() => uploadVideo()} className="flex-1 px-4 py-2 rounded-lg bg-[#0f5e87] text-white font-semibold cursor-pointer">{isLoading ? 'Uploading...' : '⬆ Upload'} </button>
-                      {/* <a href={videoURL} download="interview_recording.webm" className="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-center">⤓ Download</a> */}
+                      <button
+                        disabled={isLoading}
+                        onClick={() => uploadVideo()}
+                        className={`flex-1 px-4 py-2 rounded-lg bg-[#0f5e87] text-white font-semibold flex items-center justify-center gap-2 transition-all ${isLoading
+                            ? "cursor-not-allowed opacity-70"
+                            : "cursor-pointer hover:bg-[#1675a5]"
+                          }`}
+                      >
+                        {isLoading ? (
+                          <>
+                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          "⬆ Upload"
+                        )}
+                      </button>
                     </div>
                   </div>
                 )}

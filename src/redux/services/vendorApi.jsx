@@ -387,9 +387,6 @@ export const vendorApi = api.injectEndpoints({
         url: `/campus/degrees`,
         method: "GET",
         params: { level },
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem('token')}`
-        // },
       }),
     }),
     // Department list filtered by optional degreeId

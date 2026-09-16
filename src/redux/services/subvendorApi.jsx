@@ -113,7 +113,7 @@ export const SubvendorApi = api.injectEndpoints({
     sendTestLinkToCandidates: builder.mutation({
       query: (data) => (
         {
-          url: '/subvendor/send_candidate_test',
+          url: '/subvendor/send-test',
           method: "POST",
           body: data,
           headers: {
@@ -222,10 +222,46 @@ export const SubvendorApi = api.injectEndpoints({
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-    })
+    }),
+    getLevelsBySubvendor: builder.query({
+      query: () => ({
+        url: "/subvendor/levels",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: ["SubvendorLevels"],
+    }),
+
+    getDifficultiesByLevelBySubvendor: builder.query({
+      query: (levelId) => ({
+        url: `/subvendor/levels/${levelId}/difficulties`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }),
+      providesTags: (result, error, levelId) => [{ type: "Difficulties", id: levelId }],
+    }),
+    sendTestLinkToUserBySubvendor: builder.mutation({
+      query: (data) => (
+        {
+          url: '/subvendor/send-test',
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }
+        }
+      ),
+      invalidatesTags: ['Vendor', 'vendorDashboard', 'Candidates'],
+    }),
   })
 })
 
 export const { useSubvendorDashboardApiQuery, useDeleteCandidateByCandidateIdbySubVendorMutation, useResultManagementDetailBySubVendorQuery, useViewResultByUserIdBySubVendorQuery, useEmployeeLoginMutation, useSendTestLinkToCandidatesMutation, useImportCandidateBySubVendorMutation, useAddCandidateBySubVendorMutation, useGetAllCandidatesBySubVendorQuery,
   useSubVendorChangePasswordMutation, useSubVendorResetPasswordMutation, useSubVendorLogoutMutation, useSubVendorResetPasswordApproveMutation,
-  useGetOrganisationDetailQuery, useSubvendorProfileQuery, useGetCandidateByIdBySubVendorQuery, useActivateInactivateUserBySubVendorMutation } = SubvendorApi
+  useGetOrganisationDetailQuery, useSubvendorProfileQuery, useGetCandidateByIdBySubVendorQuery, useActivateInactivateUserBySubVendorMutation
+  , useGetLevelsBySubvendorQuery, useGetDifficultiesByLevelBySubvendorQuery, useSendTestLinkToUserBySubvendorMutation
+} = SubvendorApi

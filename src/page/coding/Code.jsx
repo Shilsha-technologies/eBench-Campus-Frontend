@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useGetLevelsQuery, useGetDifficultiesByLevelQuery } from "../../redux/services/vendorApi";
 import { X, Tag, Clock, BookOpen, Code2, FileText, Layers, ChevronRight, AlertCircle } from "lucide-react";
 import Select from "react-select";
+import { useGetDifficultiesByLevelBySubvendorQuery, useGetLevelsBySubvendorQuery } from "../../redux/services/subvendorApi";
 
 // ─── Technical Skills list ───────────────────────────────────────────────────
 const technicalSkills = [
@@ -148,6 +149,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [visible, setVisible] = useState(false);
   const [animatingOut, setAnimatingOut] = useState(false);
+  const role = localStorage.getItem("role");
 
 
   // console.log("sele", selectedLevelId)
@@ -156,7 +158,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
     data: levelsData,
     isLoading: levelsLoading,
     isError: levelsError,
-  } = useGetLevelsQuery(undefined, { skip: !isOpen });
+  } = role === "sub_vendor" ? useGetLevelsBySubvendorQuery(undefined, { skip: !isOpen }) : useGetLevelsQuery(undefined, { skip: !isOpen });
 
   // ── Auto-select first level once loaded ─────────────────────────────────────
   useEffect(() => {
@@ -171,7 +173,7 @@ export default function LevelDifficultyPopup({ isOpen, onClose, onConfirm, isLoa
     isLoading: diffsLoading,
     isFetching: diffsFetching,
     isError: diffsError,
-  } = useGetDifficultiesByLevelQuery(selectedLevelId, { skip: !selectedLevelId });
+  } = role === "sub_vendor" ? useGetDifficultiesByLevelBySubvendorQuery(selectedLevelId, { skip: !selectedLevelId }) : useGetDifficultiesByLevelQuery(selectedLevelId, { skip: !selectedLevelId });
 
   // Reset selected difficulty when level changes
   useEffect(() => { setSelectedDiffId(null); }, [selectedLevelId]);

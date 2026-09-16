@@ -261,7 +261,7 @@ export default function EmployeeDashboard() {
           {/* Quick Stats & Info */}
           <div className="space-y-8">
             {/* Performance Overview */}
-            <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
+            {/* <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
               <SectionTitle sub="Your performance at a glance">Performance Overview</SectionTitle>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center p-6 bg-[#F4F9FF] rounded-2xl">
@@ -273,10 +273,10 @@ export default function EmployeeDashboard() {
                   <div className="text-sm text-[#378ADD] mt-2">Tests Completed</div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Recent Achievements */}
-            <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
+            {/* <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
               <SectionTitle sub="Your latest accomplishments">Recent Achievements</SectionTitle>
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-2xl">
@@ -294,7 +294,7 @@ export default function EmployeeDashboard() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
