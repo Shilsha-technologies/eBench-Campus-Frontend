@@ -856,7 +856,7 @@ function TechnicalCard({ level }) {
 
 // ---------------- Candidate header ----------------
 function CandidateHeader({ data }) {
-  const fullName = `${data.first_name} ${data.last_name}`.trim();
+  const fullName = `${data?.first_name} ${data?.last_name}`.trim();
   const initials = fullName
     .split(" ")
     .map((w) => w[0])
@@ -891,22 +891,24 @@ export default function CandidateResultDisplay() {
   const [searchParams] = useSearchParams();
   const candidateId = searchParams.get("candidateId");
   const role = localStorage.getItem('role')
-  const { data, isLoading, isError } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
+  const { data, isLoading, isError,error } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
 
-  console.log("fff", data)
+  // console.log("fff", data)
 
   if (isLoading) {
     return <Loader />
   }
 
   if (isError) {
+    console.log("error",error)
+    debugger;
     return (
       <div className="flex items-center h-full justify-center bg-gray-50 px-4">
         <div className="text-center">
           <div className="mb-4 text-6xl">⚠️</div>
 
           <h1 className="mb-2 text-3xl font-bold text-red-900">
-            Something went wrong
+            {error?.data?.detail??"Somthing went wrong"}
           </h1>
 
           <p className="mb-6 text-gray-600">

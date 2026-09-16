@@ -308,7 +308,7 @@ function App() {
                       element={<ResultManagement />}
                     />
                     <Route
-                      path="result-management/view"
+                      path="results/view"
                       element={<IntroAnalysis />}
                     />
                     <Route
