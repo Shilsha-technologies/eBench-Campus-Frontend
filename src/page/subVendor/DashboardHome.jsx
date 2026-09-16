@@ -168,11 +168,11 @@ export default function EmployeeDashboard() {
                   <p className="text-blue-200 text-xs font-medium mb-0.5">
                     {greeting(dt.getHours())} 👋
                   </p>
-                  <h1 className="text-white text-xl font-bold leading-tight">{employee.name || "N/A"}</h1>
+                  <h1 className="text-white text-xl font-bold text-wrap leading-tight">{employee.name || "N/A"}</h1>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
                     <span className="text-blue-100 text-xs">🪪 {employee.id || "N/A"}</span>
                     <span className="text-blue-100 text-xs">💼 {employee.designation || "N/A"}</span>
-                    <span className="text-blue-100 text-xs">🏢 {employee.department || "N/A"}</span>
+                    {/* <span className="text-blue-100 text-xs">🏢 {employee.department || "N/A"}</span> */}
                   </div>
                 </div>
               </div>
@@ -386,7 +386,7 @@ export default function EmployeeDashboard() {
             </div>
 
             {/* Overall Summary */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+            {/* <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
               {[
                 // { label: "Total Countries", value: assignedSubscription.length.toString(), icon: "🌍" },
                 { label: "Active Plans", value: assignedSubscription.filter(s => s.status === "Active").length.toString(), icon: "✅" },
@@ -408,10 +408,10 @@ export default function EmployeeDashboard() {
                   <p className="font-bold text-[#042C53] text-lg">{item.value}</p>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Overall Progress */}
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <div className="flex justify-between text-sm text-[#378ADD] mb-3">
                 <span>Total Credit Usage</span>
                 <span className="font-semibold text-[#042C53]">
@@ -467,7 +467,7 @@ export default function EmployeeDashboard() {
                   })() : '⚠️ No credits remaining'}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

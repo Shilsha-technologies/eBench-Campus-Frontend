@@ -893,7 +893,7 @@ export default function CandidateResultDisplay() {
   const role = localStorage.getItem('role')
   const { data, isLoading, isError,error } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
 
-  // console.log("fff", data)
+  console.log("fff", data)
 
   if (isLoading) {
     return <Loader />
