@@ -169,7 +169,7 @@ function scoreBand(pct) {
   return { label: "Weak", color: "#C4432B", bg: "#FBEAE6" };
 }
 
-function StatBar({ label, passed, total }) {
+export function StatBar({ label, passed, total }) {
   const pct = total > 0 ? Math.round((passed / total) * 100) : 0;
   return (
     <div className="flex items-center gap-3">
@@ -192,9 +192,9 @@ function StatBar({ label, passed, total }) {
 
 function FeedbackTabs({ feedback }) {
   const tabs = [
-    { key: "vendor", label: "Vendor view" },
-    { key: "candidate", label: "Candidate view" },
-    { key: "parent", label: "Parent view" },
+    { key: "vendor", label: "Vendor feedback" },
+    { key: "candidate", label: "Candidate feedback" },
+    { key: "parent", label: "Parent feedback" },
   ].filter((t) => feedback?.[t.key]);
 
   const [active, setActive] = useState(tabs[0]?.key);
@@ -283,7 +283,8 @@ function AttemptCard({ test, index, defaultOpen }) {
   const d = test.details || {};
   const pct = d.overall_score_percentage ?? 0;
   const band = scoreBand(pct);
-  const flagged = d.tab_switch_count > 0 || d.auto_submitted;
+  const flagged = d?.tab_switch_count > 0 || d.auto_submitted;
+  // debugger;
 
   return (
     <div className="relative pl-6">
@@ -855,7 +856,7 @@ function TechnicalCard({ level }) {
 
 // ---------------- Candidate header ----------------
 function CandidateHeader({ data }) {
-  const fullName = `${data.first_name} ${data.last_name}`.trim();
+  const fullName = `${data?.first_name} ${data?.last_name}`.trim();
   const initials = fullName
     .split(" ")
     .map((w) => w[0])
@@ -890,7 +891,7 @@ export default function CandidateResultDisplay() {
   const [searchParams] = useSearchParams();
   const candidateId = searchParams.get("candidateId");
   const role = localStorage.getItem('role')
-  const { data, isLoading, isError } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
+  const { data, isLoading, isError,error } = role === "sub_vendor" ? useViewResultByUserIdBySubVendorQuery({ candidateId }) : useViewResultByUserIdQuery({ candidateId })
 
   console.log("fff", data)
 
@@ -905,7 +906,7 @@ export default function CandidateResultDisplay() {
           <div className="mb-4 text-6xl">⚠️</div>
 
           <h1 className="mb-2 text-3xl font-bold text-red-900">
-            Something went wrong
+            {error?.data?.detail??"Somthing went wrong"}
           </h1>
 
           <p className="mb-6 text-gray-600">

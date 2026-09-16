@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import UserForm from "./UserForm";
 import ImportUsers from "./ImportUsers";
-import { useActiveInactiveCandidateMutation, useAddCampusVendorMutation, useDeleteCandidateByCandidateIdMutation, useGetAllUserByVendorQuery, useImportCampusVendorMutation, useSendTestLinkToUserMutation } from "../../../redux/services/vendorApi";
+import { useActiveInactiveCandidateMutation, useAddCampusVendorMutation, useDeleteCandidateByCandidateIdMutation, useGetAllUserByVendorQuery, useImportCampusVendorMutation, useSendTestLinkToUserMutation, useLazyGetImportStatusQuery } from "../../../redux/services/vendorApi";
 import useDebounce from "../../../libs/useDebounce";
 import { useGetCountryDataQuery } from "../../../redux/services/externalApi";
 import { useActivateInactivateUserBySubVendorMutation, useAddCandidateBySubVendorMutation, useDeleteCandidateByCandidateIdbySubVendorMutation, useGetAllCandidatesBySubVendorQuery, useImportCandidateBySubVendorMutation, useSendTestLinkToCandidatesMutation } from "../../../redux/services/subvendorApi";
@@ -23,6 +23,10 @@ export default function CandidatesPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
+  // Import status polling states
+  const [importId, setImportId] = useState(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const [triggerImportStatus, { data: importStatusData, isFetching: statusFetching }] = useLazyGetImportStatusQuery();
   const [filterNationality, setFilterNationality] = useState("");
   const [filterResidence, setFilterResidence] = useState("");
   const debouncedQuery = useDebounce(search, 500);
@@ -175,12 +179,38 @@ export default function CandidatesPage() {
     }
   }
 
+  console.log("importStatusData", importStatusData)
+
 
 
   // Clear selections when filters change
   useEffect(() => {
     setSelectedIds([]);
   }, [filterStatus, filterBranch, filterTestStatus, debouncedQuery, sortScore]);
+
+  // Poll import status after import initiated
+  useEffect(() => {
+    let timer;
+    if (isPolling && importId) {
+      if (importStatusData?.status && importStatusData.status !== "pending") {
+        // Finished
+        setIsPolling(false);
+        if (importStatusData.status === "completed") {
+          toast.success(importStatusData.message ?? "Import completed successfully");
+          setShowModal(false);
+          setShowImportModal(false);
+        } else {
+          toast.error(importStatusData?.import?.message ?? "Import failed");
+        }
+      } else {
+        // Continue polling after interval (5 seconds)
+        timer = setTimeout(() => {
+          triggerImportStatus(importId);
+        }, 5000);
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [isPolling, importId, importStatusData, triggerImportStatus]);
   // ────────────────────────────────────────────────────────────
 
 
@@ -225,18 +255,29 @@ export default function CandidatesPage() {
       const result = !status ? await addCampusVendor(formdata) : await addImportVendor(formdata);
       if (result?.error) {
         // console.log("eww", result)
-
-        return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info")
+        return toast.error(result?.error?.data?.detail ?? "Pls Fill Correct Info");
       }
+      // If import API returns an import ID, start polling
+      const importIdFromResp = result?.data?.import_id;
+      if (importIdFromResp) {
+        setImportId(importIdFromResp);
+        setIsPolling(true);
+        // Initial delay before first poll (5 seconds)
+        setTimeout(() => {
+          triggerImportStatus(importIdFromResp);
+        }, 5000);
+        toast.success(result?.data?.message ?? "Import started, checking status...");
+        return; // keep modal open while polling
+      }
+      // Existing non-import success path
       if (result?.data?.status) {
         setTimeout(() => {
           toast.success(result?.data?.message ?? "CAndidate Added Successfully");
-        }, 200)
+        }, 200);
         setShowModal(false);
         setShowImportModal(false);
         return;
       }
-
 
     } catch (err) {
       // console.log("first-err", err)
@@ -434,23 +475,27 @@ export default function CandidatesPage() {
       label: "Test",
       render: (_, row) => {
         const status = row.testCompleted;
+        const statusMap = {
+          completed: "Completed",
+          pending: "Pending",
+          not_sent: "Not Sent",
+          auto_submitted: "Auto Submitted",
+          expired: "Expired",
+        };
+        const variantMap = {
+          completed: "green",
+          pending: "amber",
+          not_sent: "gray",
+          auto_submitted: "blue",
+          expired: "red",
+        };
+        const label = statusMap[status] || status;
+        const variant = variantMap[status] || "gray";
 
         return (
           <div className="flex items-center gap-2">
-            <Badge
-              variant={
-                status === "completed"
-                  ? "green"
-                  : status === "pending"
-                    ? "amber"
-                    : "gray"
-              }
-            >
-              {status === "completed"
-                ? "Completed"
-                : status === "pending"
-                  ? "Pending"
-                  : "Not Sent"}
+            <Badge variant={variant}>
+              {label}
             </Badge>
           </div>
         );
@@ -581,7 +626,7 @@ export default function CandidatesPage() {
                       setDeleteUserDetails(row);
                       setShowDeleteModal(true);
                     }}
-                    className="px-3 text-xs cursor-pointer py-2 rounded text-white bg-red-500 hover:bg-red-600"
+                    className="px-3 text-xs w-20 text-center py-2  cursor-pointer py-2 rounded text-white bg-red-500 hover:bg-red-600"
                   >
                     Delete
                   </button>
@@ -993,10 +1038,10 @@ export default function CandidatesPage() {
         Are you sure you want to delete this candidate?
 
         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
-          <p className="font-semibold text-red-700">
+          <p className="font-semibold text-red-700 break-words">
             {deleteUserDetails?.name}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 break-words">
             {deleteUserDetails?.email}
           </p>
         </div>

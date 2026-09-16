@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, useEffect } from "react";
 import "./App.css";
 import ProtectedRoute from "./libs/ProtectedRoute";
-import PageLoader from "./libs/PageLoader";
 import SubVendorLogin from "./page/subVendor/Login";
 import DashboardHome from "./page/subVendor/DashboardHome";
 import { onMessage } from "firebase/messaging";
@@ -308,7 +307,7 @@ function App() {
                       element={<ResultManagement />}
                     />
                     <Route
-                      path="result-management/view"
+                      path="results/view"
                       element={<IntroAnalysis />}
                     />
                     <Route

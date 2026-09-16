@@ -22,14 +22,14 @@ export default function DashboardPage() {
 
 
   useEffect(() => {
-  if (data?.credits!== undefined) {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (data?.credits !== undefined) {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-    user.remaining_credits = data.credits;
+      user.remaining_credits = data.credits;
 
-    localStorage.setItem("user", JSON.stringify(user));
-  }
-}, [data?.credits]);
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [data]);
 
   // If no data is available, show no data message
   if (!data || (!vendor && !dashboard_stats)) {
@@ -109,7 +109,7 @@ export default function DashboardPage() {
           </div>        </div>
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
           <div className="text-sm text-gray-500 mb-1">Average Score</div>
-          <div className="text-2xl font-bold text-gray-900">{avgScore??0}</div>
+          <div className="text-2xl font-bold text-gray-900">{avgScore ?? 0}</div>
           <ProgressBar value={Number(avgScore) || 0} showLabel={false} color="emerald" />
           <div className="text-xs text-gray-400 mt-1">Out of 100</div>
         </div>

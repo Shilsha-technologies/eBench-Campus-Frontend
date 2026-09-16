@@ -11,6 +11,8 @@ import {
 } from "../../redux/services/userApi";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import PageLoader from "../../libs/PageLoader";
+import Loader from "../../libs/Loader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -183,138 +185,6 @@ function buildInitialState(sections) {
 //   durations — { mcq: 20, scenario: 20, coding: 30 }  (minutes, optional)
 //   onSubmit  — (payload) => void  called with final answers on submit
 
-const dummyApiData = {
-    "status": "ok",
-    "candidate": {
-        "name": "dino joshi",
-        "email": "jiyavo6@jc.com",
-        "level": "LEVEL_002",
-        "level_id": "LEVEL_002",
-        "mcq_total_count": 6,
-        "coding_total_count": 2,
-        "scenario_total_count": 3
-    },
-    "time_allocation": {
-        "mcq_minutes": 12,
-        "total_minutes": 65,
-        "coding_minutes": 35,
-        "scenario_minutes": 18
-    },
-    "mcq_questions": [
-        {
-            "id": 547,
-            "question": "What is the average time complexity of searching an element in a list?",
-            "option_a": "O(1)",
-            "option_b": "O(log n)",
-            "option_c": "O(n)",
-            "option_d": "O(n log n)"
-        },
-        {
-            "id": 548,
-            "question": "Which data structure is suitable for implementing a stack?",
-            "option_a": "List",
-            "option_b": "Dictionary",
-            "option_c": "Set",
-            "option_d": "Tuple"
-        },
-        {
-            "id": 549,
-            "question": "What is the time complexity of the append operation in a Python list?",
-            "option_a": "O(1)",
-            "option_b": "O(log n)",
-            "option_c": "O(n)",
-            "option_d": "O(n log n)"
-        },
-        {
-            "id": 550,
-            "question": "Which algorithm is used to find the maximum or minimum element in a list?",
-            "option_a": "Linear Search",
-            "option_b": "Binary Search",
-            "option_c": "Depth-First Search",
-            "option_d": "Breadth-First Search"
-        },
-        {
-            "id": 551,
-            "question": "What is the space complexity of a Python list?",
-            "option_a": "O(1)",
-            "option_b": "O(log n)",
-            "option_c": "O(n)",
-            "option_d": "O(n log n)"
-        },
-        {
-            "id": 552,
-            "question": "Which data structure is suitable for implementing a queue?",
-            "option_a": "List",
-            "option_b": "Dictionary",
-            "option_c": "Set",
-            "option_d": "Tuple"
-        }
-    ],
-    "coding_questions": [
-        {
-            "id": 186,
-            "title": "Find the First Duplicate in an Array",
-            "description": "Given an array of integers, find the first duplicate element. If no duplicate is found, return -1.",
-            "templates": {
-                "cpp": "#include<bits/stdc++.h>\nusing namespace std;\nint main() {\n    // Write solution\n    return 0;\n}\n",
-                "java": "import java.util.Scanner;\npublic class Solution {\n    public static void main(String[] args) {\n        // Write solution\n    }\n}\n",
-                "python": "def solve():\n    # Read input from stdin\n    pass\n",
-                "javascript": "function solve() {\n  // Read input\n}\n"
-            },
-            "default_language": "python",
-            "test_cases": [
-                {
-                    "input": "5\n1 2 3 4 2",
-                    "expected_output": "2"
-                }
-            ]
-        },
-        {
-            "id": 187,
-            "title": "Maximum Subarray Sum",
-            "description": "Given an array of integers, find the maximum contiguous subarray sum.",
-            "templates": {
-                "cpp": "#include<bits/stdc++.h>\nusing namespace std;\nint main() {\n    // Write solution\n    return 0;\n}\n",
-                "java": "import java.util.Scanner;\npublic class Solution {\n    public static void main(String[] args) {\n        // Write solution\n    }\n}\n",
-                "python": "def solve():\n    # Read input from stdin\n    pass\n",
-                "javascript": "function solve() {\n  // Read input\n}\n"
-            },
-            "default_language": "python",
-            "test_cases": [
-                {
-                    "input": "5\n-2 1 -3 4 -1 2 1 -5 4",
-                    "expected_output": "6"
-                }
-            ]
-        }
-    ],
-    "scenario_questions": [
-        {
-            "id": 102,
-            "title": "Delayed Customer Order",
-            "situation": "A customer calls in to report that their order, which was promised to be delivered within 24 hours, has not arrived after 3 days. The customer is understandably frustrated and is threatening to switch to a competitor.",
-            "question": "How would you handle this situation, and what steps would you take to rectify the issue and retain the customer?",
-            "skill_tag": "Customer Service Recovery",
-            "difficulty": "Fresher"
-        },
-        {
-            "id": 103,
-            "title": "Incorrect Product Sent",
-            "situation": "A customer receives an email from a client complaining that the Python-based software solution your team delivered contains a critical bug that is causing their business operations to stall. The client demands immediate resolution.",
-            "question": "How would you prioritize and address the client's concerns, ensuring a swift resolution and maintaining a positive relationship?",
-            "skill_tag": "Customer-Centric Thinking",
-            "difficulty": "Fresher"
-        },
-        {
-            "id": 104,
-            "title": "Miscommunication with Client",
-            "situation": "During a project discussion, a client expresses dissatisfaction with the project timeline, claiming it was not clearly communicated. Your team believes the timeline was discussed and agreed upon earlier.",
-            "question": "How would you handle this miscommunication, ensure the client's concerns are addressed, and align on a mutually acceptable project timeline?",
-            "skill_tag": "Service Recovery",
-            "difficulty": "Fresher"
-        }
-    ]
-}
 
 
 
@@ -324,13 +194,14 @@ export default function ExamPortal({
     onSubmit,
 }) {
     const { data: apiResponse, isLoading, error } = useStartTestQuery();
+    // debugger;
     // let apiResponse = null;
-    const effectiveData = apiResponse || dummyApiData;
+    const effectiveData = apiResponse;
     // let isLoading = false;
     const apiDurations = {
-        mcq: effectiveData.time_allocation?.mcq_minutes,
-        scenario: effectiveData.time_allocation?.scenario_minutes,
-        coding: effectiveData.time_allocation?.coding_minutes,
+        mcq: effectiveData?.time_allocation?.mcq_minutes,
+        scenario: effectiveData?.time_allocation?.scenario_minutes,
+        coding: effectiveData?.time_allocation?.coding_minutes,
     };
     const mergedDurations = { ...apiDurations, ...durations };
     // const sections = buildSectionsFromApiResponse(effectiveData, mergedDurations);
@@ -488,7 +359,7 @@ export default function ExamPortal({
         });
     };
 
-    console.log("state-->", state);
+    // console.log("state-->", state);
 
     const goToQ = (idx) => setState((prev) => ({ ...prev, currentQ: idx }));
     const prevQ = () => currentQ > 0 && goToQ(currentQ - 1);
@@ -607,7 +478,18 @@ export default function ExamPortal({
 
 
     if (isLoading) {
-        return <>Loading Please Wait...</>
+        return <>
+            <PageLoader />
+        </>
+    }
+
+    if (!effectiveData) {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: T.appBg, color: T.text1 }}>
+                <h2 style={{ marginBottom: 8 }}>⚠️ Unable to Load Exam Data</h2>
+                <p>Please check your network connection or contact support.</p>
+            </div>
+        );
     }
 
     // ── Render  ───────────────────── Render ──────────────────────────────────────
@@ -779,6 +661,7 @@ export default function ExamPortal({
                     body={`You've answered ${totalAnswered()} of ${totalQ} questions. This cannot be undone.`}
                     confirm="Submit Test" confirmStyle={btn("danger")}
                     onCancel={() => setModal(null)}
+                    loading={isSubmitting}
                     onConfirm={async () => {
                         if (isSubmitting) return;
                         setIsSubmitting(true);
@@ -811,6 +694,7 @@ export default function ExamPortal({
                             ]);
 
                             await finalSubmit().unwrap();
+                            showToast("✅ Test submitted successfully", "success");
                             setModal("submitted");
                             setTimeout(() => {
                                 localStorage.clear();
@@ -818,8 +702,9 @@ export default function ExamPortal({
                             }, 1500);
 
                         } catch (err) {
+                            const message = err?.data?.detail || "Failed to submit test. Please try again";
                             // console.error('Submit failed', e);
-                            showToast("⚠ Failed to submit test. Please try again", "danger");
+                            showToast(message, "danger");
                         }
                         finally {
                             setIsSubmitting(false);
@@ -1216,16 +1101,146 @@ function CompletedSection({ sec, T }) {
     );
 }
 
-function Modal({ icon, title, body, confirm, confirmStyle, onCancel, onConfirm }) {
+// function Modal({ icon, title, body, confirm, confirmStyle, onCancel, onConfirm }) {
+//     return (
+//         <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
+//             <div style={{ background: "#1a2238", border: "1px solid #2a3555", borderRadius: 14, padding: 28, width: 360, textAlign: "center", animation: "slideIn .2s ease" }}>
+//                 <div style={{ fontSize: 36, marginBottom: 14 }}>{icon}</div>
+//                 <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 8 }}>{title}</div>
+//                 <div style={{ fontSize: 13, color: "#8b95b0", lineHeight: 1.6, marginBottom: 22 }}>{body}</div>
+//                 <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+//                     {onCancel && <button style={{ padding: "8px 18px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer", background: "transparent", border: "1px solid #2a3555", color: "#8b95b0" }} onClick={onCancel}>Stay Here</button>}
+//                     {confirm && onConfirm && <button style={confirmStyle} onClick={onConfirm}>{confirm}</button>}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+function Modal({
+    icon,
+    title,
+    body,
+    confirm,
+    confirmStyle,
+    onCancel,
+    onConfirm,
+    loading = false,
+}) {
     return (
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-            <div style={{ background: "#1a2238", border: "1px solid #2a3555", borderRadius: 14, padding: 28, width: 360, textAlign: "center", animation: "slideIn .2s ease" }}>
-                <div style={{ fontSize: 36, marginBottom: 14 }}>{icon}</div>
-                <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 8 }}>{title}</div>
-                <div style={{ fontSize: 13, color: "#8b95b0", lineHeight: 1.6, marginBottom: 22 }}>{body}</div>
-                <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-                    {onCancel && <button style={{ padding: "8px 18px", borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: "pointer", background: "transparent", border: "1px solid #2a3555", color: "#8b95b0" }} onClick={onCancel}>Stay Here</button>}
-                    {confirm && onConfirm && <button style={confirmStyle} onClick={onConfirm}>{confirm}</button>}
+        <div
+            style={{
+                position: "absolute",
+                inset: 0,
+                background: "rgba(0,0,0,.75)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 100,
+            }}
+        >
+            <div
+                style={{
+                    background: "#1a2238",
+                    border: "1px solid #2a3555",
+                    borderRadius: 14,
+                    padding: 28,
+                    width: 360,
+                    textAlign: "center",
+                    animation: "slideIn .2s ease",
+                }}
+            >
+                {/* Icon */}
+                <div
+                    style={{
+                        fontSize: 36,
+                        marginBottom: 14,
+                    }}
+                >
+                    {loading ? "⏳" : icon}
+                </div>
+
+                {/* Title */}
+                <div
+                    style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        marginBottom: 8,
+                    }}
+                >
+                    {loading ? "Submitting Test..." : title}
+                </div>
+
+                {/* Body */}
+                <div
+                    style={{
+                        fontSize: 13,
+                        color: "#8b95b0",
+                        lineHeight: 1.6,
+                        marginBottom: 22,
+                        minHeight: loading ? 80 : "auto",
+
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 10,
+                    }}
+                >
+
+                    {body}
+                </div>
+
+                {/* Buttons */}
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 12,
+                        justifyContent: "center",
+                    }}
+                >
+                    {onCancel && (
+                        <button
+                            disabled={loading}
+                            style={{
+                                padding: "8px 18px",
+                                borderRadius: 8,
+                                fontSize: 12,
+                                fontWeight: 500,
+                                cursor: loading
+                                    ? "not-allowed"
+                                    : "pointer",
+                                background: "transparent",
+                                border: "1px solid #2a3555",
+                                color: "#8b95b0",
+                                opacity: loading ? 0.5 : 1,
+                            }}
+                            onClick={onCancel}
+                        >
+                            Stay Here
+                        </button>
+                    )}
+
+                    {confirm && onConfirm && (
+                        <button
+                            disabled={loading}
+                            style={{
+                                ...confirmStyle,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: 8,
+                                cursor: loading
+                                    ? "not-allowed"
+                                    : "pointer",
+                                opacity: loading ? 0.7 : 1,
+                            }}
+                            onClick={onConfirm}
+                        >
+                            {loading && <Loader size={12} />}
+                            {loading ? "Submitting..." : confirm}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

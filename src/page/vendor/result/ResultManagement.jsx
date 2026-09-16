@@ -120,7 +120,7 @@ export default function ResultsPage() {
     },
     // { key: "testDate", label: "Test Date", render: v => v ? new Date(v).toLocaleDateString("en-IN") : "—" },
     { key: "email", label: "Email" },
-    { key: "mobile", label: "Mobile", render: v => v ? `+${v}` : "—" },
+    { key: "mobile", label: "Mobile", render: v => v ? `${v}` : "—" },
     { key: "country_of_residence", label: "Country" },
     // {
     //   key: "status", label: "Status", render: (v, row) => {
@@ -159,7 +159,16 @@ export default function ResultsPage() {
       key: "actions",
       label: "Actions",
       render: (_, row) => (
-        <button onClick={() => navigate(`/vendor/results/view?candidateId=${row?.candidate_id}`)} className="text-xs flex justify-center items-center w-full cursor-pointer text-indigo-600 hover:underline font-medium">
+        <button
+        onClick={() => {
+            const basePath =
+                role === "sub_vendor"
+                    ? "/subvendor/results/view"
+                    : "/vendor/results/view";
+
+            navigate(`${basePath}?candidateId=${row?.candidate_id}`);
+        }}
+          className="text-xs flex justify-center items-center w-full cursor-pointer text-indigo-600 hover:underline font-medium">
           <Eye size={18} />
         </button>
       )
@@ -347,17 +356,7 @@ export default function ResultsPage() {
           }
         </div>
       </div>
-      <p className="text-[11px] text-slate-400 text-center leading-relaxed">
-        Need help?{" "}
-        <a
-          href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-slate-500 hover:underline"
-        >
-          info@shilshatech.com
-        </a>
-      </p>
+     
 
       <Modal isOpen={!!selectedResult} onClose={() => setSelectedResult(null)} title="Result Details" size="sm">
         {selectedResult && (

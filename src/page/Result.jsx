@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useBeginTestMutation, useCookiesGenerateQuery, useLazyGetProfileQuery, useVerifyUserOtpMutation } from '../redux/services/userApi';
 import { motion } from "framer-motion";
 import toast from 'react-hot-toast';
+import { Loader } from 'lucide-react';
 
 
 
@@ -17,7 +18,7 @@ export default function ProfilePage() {
     const [isOtpOpen, setIsOtpOpen] = useState(true);
     const [otp, setOtp] = useState("");
 
-    const [verifyOtp] = useVerifyUserOtpMutation();
+    const [verifyOtp, { isLoading: verifyLoading }] = useVerifyUserOtpMutation();
     // Loading state for starting the test
     const [beginLoader, setBeginLoader] = useState(false);
 
@@ -173,10 +174,21 @@ export default function ProfilePage() {
                     />
 
                     <button
+                        disabled={verifyLoading}
                         onClick={handleVerify}
-                        className="w-full mt-4 bg-[#286a94] text-white font-semibold py-2 rounded-lg hover:bg-[#3b7aa7]"
+                        className={`w-full mt-4 bg-[#286a94] text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition-all ${verifyLoading
+                                ? "cursor-not-allowed opacity-70"
+                                : "cursor-pointer hover:bg-[#3b7aa7]"
+                            }`}
                     >
-                        Verify OTP
+                        {verifyLoading ? (
+                            <>
+                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Verifying...
+                            </>
+                        ) : (
+                            "Verify OTP"
+                        )}
                     </button>
                 </motion.div>
             </div>
@@ -431,6 +443,17 @@ export function TestLinkExpired() {
 
                 <p className="text-center text-xs text-slate-400 mt-6">
                     eBench Campus &middot; Assessment Platform
+                </p>
+                <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+                    Need help?{" "}
+                    <a
+                        href="https://mail.google.com/mail/?view=cm&fs=1&to=info@shilshatech.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-slate-500 hover:underline"
+                    >
+                        info@shilshatech.com
+                    </a>
                 </p>
             </div>
         </div>

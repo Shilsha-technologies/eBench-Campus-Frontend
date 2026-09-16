@@ -71,11 +71,17 @@ export default function CampusManagement() {
     {
       key: "email",
       label: "Email",
-      render: (value, row) => (
-        <div className="text-sm text-[#1e293b] truncate" title={value || 'N/A'}>
-          {value || 'N/A'}
-        </div>
-      )
+      render: (value, row) => {
+        const email = value || "N/A";
+        const displayEmail =
+          email.length > 24 ? `${email.substring(0, 24)}...` : email;
+
+        return (
+          <div className="text-sm text-[#1e293b]" title={email}>
+            {displayEmail}
+          </div>
+        );
+      }
     },
     {
       key: "location",

@@ -172,8 +172,8 @@ const EmployeeView = () => {
 
                         <Card title="Employee Summary">
                             {/* <Info label="Employee ID" value={emp.id} /> */}
-                            <Info label="Vendor ID" value={emp.vendor_id} />
-                            <Info label="Plan" value={emp.plan_name || "Not Assigned"} />
+                            {/* <Info label="Vendor ID" value={emp.vendor_id} /> */}
+                            <Info label="Plan" value={emp?.plan_name || "Not Assigned"} />
                             <Info
                                 label="Created"
                                 value={new Date(emp.created_at).toLocaleString()}
@@ -181,7 +181,13 @@ const EmployeeView = () => {
                         </Card>
 
                         <Card title="Contact">
-                            <Info label="Phone" value={`+${emp.phone}`} />
+                            <Info label="Phone"
+                                value={
+                                    emp?.country_code && emp?.phone
+                                        ? `${emp.country_code} ${emp.phone}`
+                                        : "-"
+                                }
+                            />
                             <Info label="Address" value={emp.sub_vendor_address} />
                             <Info label="Country" value={emp.country} />
                         </Card>

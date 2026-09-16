@@ -69,7 +69,7 @@ export default function VendorForgotPassword() {
             style={{ fontSize: "clamp(28px, 3.5vw, 42px)", fontWeight: 800, color: "white", marginBottom: 16, letterSpacing: "-1px", lineHeight: 1.2 }}>
             Reset Your Password<br />
             <span style={{ background: "linear-gradient(135deg, #60A5FA, #38BDF8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              with eBench
+              with eBench Campus
             </span>
           </motion.h1>
 

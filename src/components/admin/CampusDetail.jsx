@@ -1,7 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useGetCampusDetailsQuery } from "../../redux/services/adminApi";
+import { useGetCampusDetailsQuery, useGetRecentActivitySubvendorsQuery, useGetVendorCandidatesQuery, useGetVendorSubvendorsQuery } from "../../redux/services/adminApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Pagination } from "../../page/vendor/user/UserManagement";
+import { Loader } from "lucide-react";
+
+const PAGE_LIMIT = 10;
 
 
 // ─── Helper utils ────────────────────────────────────────────────────────────
@@ -106,7 +110,7 @@ function OverviewTab({ vendor }) {
           <div className="p-5">
             <h3 className="text-sm font-bold text-gray-800 mb-2">Campus Details</h3>
             <div>
-              <InfoRow label="Campus name" value={vendor?.campus_name} />
+              <InfoRow label="Campus name" value={vendor?.name ?? "-"} />
               <InfoRow label="University" value={vendor?.university} />
               <InfoRow label="Established" value={vendor?.established} />
               <InfoRow label="Address" value={vendor?.campus_address} />
@@ -176,14 +180,14 @@ function OverviewTab({ vendor }) {
           </div>
         </div>
 
-        <div className="bg-white border border-green-100/15 rounded-2xl overflow-hidden" style={{
+        {/* <div className="bg-white border border-green-100/15 rounded-2xl overflow-hidden" style={{
           boxShadow: "0 8px 32px rgba(0,0,0,.08), 0 0 0 1px rgba(255,255,255,.5) inset"
         }}>
           <div className="h-1.5 bg-gradient-to-r from-green-500 via-green-600 to-emerald-500 w-full"></div>
           <div className="p-5">
             <h3 className="text-sm font-bold text-gray-800 mb-2">Recent Activity</h3>
             <div className="divide-y divide-gray-100">
-              {vendor.recentActivity?.map(([title, desc, time, icon], i) => (
+              {vendor?.recentActivity?.map(([title, desc, time, icon], i) => (
                 <div key={i} className="flex items-start gap-3 py-3">
                   <div className="w-8 h-8 rounded-lg bg-green-50/50 border border-green-100/50 flex items-center justify-center text-base shrink-0">
                     {icon}
@@ -195,24 +199,38 @@ function OverviewTab({ vendor }) {
                   </div>
                 </div>
               ))}
+               {vendor?.recentActivity?.length === 0 && (
+                <p className="py-4 text-center text-sm text-gray-400">
+                  No recent activity
+                </p>
+              )}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
 }
 
 // ─── Students Tab ────────────────────────────────────────────────────────────
-function StudentsTab({ candidates }) {
+function StudentsTab() {
   const [search, setSearch] = useState("");
+  const [studentsPage, setStudentsPage] = useState(1);
+  const { campusId } = useParams();
 
-  const filtered = candidates.filter((c) =>
-    [c.name, c.email, c.phone, c.branch, c.addedBy]
-      .join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+
+  const { data: candidatesData, isLoading: candidatesLoading } = useGetVendorCandidatesQuery({ vendorId: campusId, page: studentsPage, limit: PAGE_LIMIT, search: search });
+
+  console.log("candidatesData", candidatesData);
+
+  const candidates = candidatesData?.candidates || [];
+
+
+  if (candidatesLoading) {
+    return <div className="flex items-center justify-center h-32">
+      <Loader className="animate-spin" />
+    </div>;
+  }
 
   return (
     <div>
@@ -248,33 +266,61 @@ function StudentsTab({ candidates }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filtered.length === 0 ? (
+              {candidates.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-10 text-gray-400 text-sm">
                     No students match your search.
                   </td>
                 </tr>
               ) : (
-                filtered.map((c, i) => (
+                candidates?.map((c, i) => (
                   <tr key={c._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={c.name} index={i} />
-                        <span className="font-medium text-gray-800 capitalize">{c.name}</span>
-                      </div>
+                        <span
+                          className="font-medium text-gray-800 capitalize"
+                          title={c.name.length > 25 ? c.name : undefined}
+                        >
+                          {c.name.length > 25 ? `${c.name.slice(0, 25)}...` : c.name}
+                        </span>                      </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{c.email}</td>
+                    <td
+                      className="px-4 py-3 text-gray-500 max-w-[200px] truncate"
+                      title={c.email.length > 25 ? c.email : undefined}
+                    >
+                      {c.email.length > 25 ? `${c.email.slice(0, 25)}...` : c.email}
+                    </td>
                     <td className="px-4 py-3 text-gray-500">{c.phone}</td>
                     <td className="px-4 py-3">
-                      <Badge variant="info">Branch {c.branch}</Badge>
+                      <Badge variant="info"> {c.branch}</Badge>
                     </td>
                     <td className="px-4 py-3 capitalize text-gray-600">{c.addedBy}</td>
                     <td className="px-4 py-3">
-                      {c.testCompleted ? (
-                        <Badge variant="success">Done — {c.testScore}%</Badge>
-                      ) : (
-                        <Badge variant="warning">Pending</Badge>
-                      )}
+                      {(() => {
+                        const status = c?.test_status;
+                        const statusMap = {
+                          completed: "Completed",
+                          pending: "Pending",
+                          not_sent: "Not Sent",
+                          auto_submitted: "Auto Submitted",
+                          expired: "Expired",
+                        };
+                        const variantMap = {
+                          completed: "green",
+                          pending: "amber",
+                          not_sent: "gray",
+                          auto_submitted: "blue",
+                          expired: "red",
+                        };
+                        const label = statusMap[status] || status;
+                        const variant = variantMap[status] || "gray";
+                        return (
+                          <Badge variant={variant}>
+                            {label??""}
+                          </Badge>
+                        );
+                      })()}
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={c.status === "active" ? "success" : "danger"}>
@@ -287,18 +333,52 @@ function StudentsTab({ candidates }) {
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 text-right">
-          {filtered.length} of {candidates.length} students
-        </div>
+        {
+          candidates?.length > 0 &&
+          <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 w-full flex justify-end text-right">
+            <Pagination totalPages={candidatesData?.totalPages} page={studentsPage} setPage={setStudentsPage} />
+          </div>
+        }
       </div>
     </div>
   );
 }
 
 // ─── SubVendor Tab ───────────────────────────────────────────────────────────────
-function StaffTab({ staff }) {
+function StaffTab() {
+  const [search, setSearch] = useState("");
+
+  const { campusId } = useParams();
+  const [staffPage, setStaffPage] = useState(1);
+  // Paginated staff (subvendors)
+  const { data: staffData, isLoading: staffLoading } = useGetVendorSubvendorsQuery({ vendorId: campusId, page: staffPage, limit: PAGE_LIMIT, search: search });
+  const staff = staffData?.subvendors || [];
+  const staffTotal = staffData?.totalPages || 0;
+
+  if (staffLoading) {
+    return (
+      <div className="flex items-center justify-center ">
+        <div className="text-center">
+          <Loader className="animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+      <div className="relative mb-4">
+        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Search students by name, email, phone…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-green-300 placeholder-gray-400"
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -314,18 +394,35 @@ function StaffTab({ staff }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {staff.map((s, i) => (
+            {staff?.map((s, i) => (
               <tr key={s._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
                     <Avatar name={s.name} index={i} />
-                    <span className="font-medium text-gray-800 capitalize">{s.name}</span>
-                  </div>
+                    <span
+                      className="font-medium text-gray-800 capitalize"
+                      title={s?.name?.length > 25 ? s.name : undefined}
+                    >
+                      {s?.name
+                        ? s.name.length > 25
+                          ? `${s.name.slice(0, 25)}...`
+                          : s.name
+                        : "-"}
+                    </span>                  </div>
                 </td>
-                <td className="px-4 py-3 text-gray-500">{s.email}</td>
+                <td
+                  className="px-4 py-3 text-gray-500"
+                  title={s?.email?.length > 25 ? s.email : undefined}
+                >
+                  {s?.email
+                    ? s.email.length > 25
+                      ? `${s.email.slice(0, 25)}...`
+                      : s.email
+                    : "-"}
+                </td>
                 <td className="px-4 py-3 text-gray-500">{s.phone}</td>
                 <td className="px-4 py-3">
-                  <Badge variant="info">{s.role}</Badge>
+                  <Badge variant="info">{s?.role}</Badge>
                 </td>
                 <td className="px-4 py-3 text-gray-600">{s.department}</td>
                 <td className="px-4 py-3 text-gray-500">{s.joinDate}</td>
@@ -337,18 +434,48 @@ function StaffTab({ staff }) {
                 </td>
               </tr>
             ))}
+            {staff?.length === 0 && (
+              <tr>
+                <td colSpan={8} className="text-center py-8 text-gray-400 text-sm">
+                  No SubVendor Present
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+        {
+          staff?.length > 0 &&
+          <div className="px-4 py-2.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 w-full flex justify-end text-right">
+            <Pagination
+              totalPages={staffTotal}
+              page={staffPage}
+              setPage={setStaffPage}
+            />
+          </div>
+        }
+
       </div>
     </div>
   );
 }
 
 // ─── Activity Tab ────────────────────────────────────────────────────────────
-function ActivityTab({ activities }) {
+function ActivityTab() {
+  const { campusId } = useParams();
+  const { data: recentActivityData, isLoading: recentActivityLoading } = useGetRecentActivitySubvendorsQuery({ vendorId: campusId });
+  const recentActivity = recentActivityData?.recentActivity || [];
+
+  if (recentActivityLoading) {
+    return (
+      <div className="flex items-center justify-center h-32">
+        <Loader className="w-8 h-8 animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white border border-gray-100 rounded-xl px-4 divide-y divide-gray-100">
-      {activities.map(([title, desc, time, icon], i) => (
+      {recentActivity.map(([title, desc, time, icon], i) => (
         <div key={i} className="flex items-start gap-4 py-4">
           <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-lg shrink-0">
             {icon}
@@ -367,20 +494,27 @@ function ActivityTab({ activities }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function VendorDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [studentsPage, setStudentsPage] = useState(1);
   const { campusId } = useParams();
   const navigate = useNavigate();
 
-  const { data: vendorData, isLoading, error } = useGetCampusDetailsQuery(campusId);
+  const { data: vendorData, isLoading: vendorLoading, error } = useGetCampusDetailsQuery(campusId);
   const vendor = vendorData?.vendor;
-  const candidates = vendorData?.candidates || [];
-  const staff = vendorData?.subvendor || [];
-  const stats = vendorData?.statistics || {};
+  console.log("ff", vendor)
+  // Paginated candidates (students)
+
+  const stats = vendorData?.statistics;
+
+
+
+
+
 
   const onBack = () => {
     navigate(-1);
   };
 
-  if (isLoading) {
+  if (vendorLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
@@ -433,11 +567,19 @@ export default function VendorDetailPage() {
           <div className="flex flex-wrap items-center gap-4 px-6 py-5 border-b border-green-50">
             {/* Logo / initials */}
             <div className="w-14 h-14 rounded-xl bg-green-200 text-green-700 flex items-center justify-center text-xl font-bold shrink-0">
-              {getInitials(vendor.campus_name || vendor.name || "Vendor")}
+              {getInitials(vendor?.name)}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-bold text-gray-900 truncate">{vendor.campus_name}</h1>
-              <p className="text-sm text-gray-500 mt-0.5 truncate">
+              <h1
+                className="text-lg font-bold text-gray-900 truncate"
+                title={vendor?.name?.length > 55 ? vendor.name : undefined}
+              >
+                {vendor?.name
+                  ? vendor.name.length > 55
+                    ? `${vendor.name.slice(0, 55)}...`
+                    : vendor.name
+                  : "-"}
+              </h1>              <p className="text-sm text-gray-500 mt-0.5 truncate">
                 {vendor.university} &nbsp;·&nbsp; {vendor.city}, {vendor.state}
               </p>
             </div>
@@ -451,12 +593,12 @@ export default function VendorDetailPage() {
           {/* Stats grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-green-50">
             {[
-              { label: "Total students", value: stats.totalCandidates || 0, icon: "👥" },
-              { label: "Tests sent", value: stats.totalTestSent || 0, icon: "📤" },
-              { label: "Tests pending", value: stats.totalTestPending || 0, icon: "⏳" },
-              { label: "Completed", value: stats.totalTestCompleted || 0, icon: "✅" },
-              { label: "SubVendor", value: vendorData?.subvendorCount || staff.length, icon: "🧑‍💼" },
-              { label: "Plan credits", value: vendor.subscription_credits || 0, icon: "💳" },
+              { label: "Total students", value: stats?.totalCandidates || 0, icon: "👥" },
+              { label: "Tests sent", value: stats?.totalTestSent || 0, icon: "📤" },
+              { label: "Tests pending", value: stats?.totalTestPending || 0, icon: "⏳" },
+              { label: "Completed", value: stats?.totalTestCompleted || 0, icon: "✅" },
+              { label: "SubVendor", value: stats?.totalSubvendors || 0, icon: "🧑‍💼" },
+              { label: "Plan credits", value: stats?.subscription_credits || 0, icon: "💳" },
             ].map(({ label, value, icon }) => (
               <div key={label} className="px-5 py-4">
                 <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">{label}</p>
@@ -473,10 +615,10 @@ export default function VendorDetailPage() {
         <div className="border-b border-green-100/30 mb-6">
           <div className="flex gap-1 -mb-px overflow-x-auto">
             {TABS.map((tab) => {
-              const counts = {
-                students: ` (${candidates.length})`,
-                staff: ` (${staff.length})`,
-              };
+              // const counts = {
+              //   students: ` (${candidates?.length??0})`,
+              //   staff: ` (${staff?.length??0})`,
+              // };
               return (
                 <button
                   key={tab.key}
@@ -487,11 +629,11 @@ export default function VendorDetailPage() {
                     }`}
                 >
                   {tab.label}
-                  {counts[tab.key] && (
+                  {/* {counts[tab.key] && (
                     <span className="ml-1.5 text-xs bg-gray-100 text-gray-500 rounded-full px-1.5 py-0.5">
                       {tab.key === "students" ? candidates.length : staff.length}
                     </span>
-                  )}
+                  )} */}
                 </button>
               );
             })}
@@ -500,9 +642,9 @@ export default function VendorDetailPage() {
 
         {/* ── Tab Content ── */}
         {activeTab === "overview" && <OverviewTab vendor={vendor} />}
-        {activeTab === "students" && <StudentsTab candidates={candidates} />}
-        {activeTab === "staff" && <StaffTab staff={staff} />}
-        {activeTab === "activity" && <ActivityTab activities={vendor.recentActivity} />}
+        {activeTab === "students" && <StudentsTab />}
+        {activeTab === "staff" && <StaffTab />}
+        {activeTab === "activity" && <ActivityTab />}
 
       </div>
     </div>

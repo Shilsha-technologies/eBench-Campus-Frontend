@@ -4,6 +4,7 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
+import { useSubvendorDashboardApiQuery } from "../../redux/services/subvendorApi";
 
 // ── Icon Mappings ──────────────────────────────────────────────────────────────
 const statIcons = {
@@ -167,11 +168,11 @@ export default function EmployeeDashboard() {
                   <p className="text-blue-200 text-xs font-medium mb-0.5">
                     {greeting(dt.getHours())} 👋
                   </p>
-                  <h1 className="text-white text-xl font-bold leading-tight">{employee.name || "N/A"}</h1>
+                  <h1 className="text-white text-xl font-bold text-wrap leading-tight">{employee.name || "N/A"}</h1>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
                     <span className="text-blue-100 text-xs">🪪 {employee.id || "N/A"}</span>
                     <span className="text-blue-100 text-xs">💼 {employee.designation || "N/A"}</span>
-                    <span className="text-blue-100 text-xs">🏢 {employee.department || "N/A"}</span>
+                    {/* <span className="text-blue-100 text-xs">🏢 {employee.department || "N/A"}</span> */}
                   </div>
                 </div>
               </div>
@@ -260,7 +261,7 @@ export default function EmployeeDashboard() {
           {/* Quick Stats & Info */}
           <div className="space-y-8">
             {/* Performance Overview */}
-            <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
+            {/* <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
               <SectionTitle sub="Your performance at a glance">Performance Overview</SectionTitle>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center p-6 bg-[#F4F9FF] rounded-2xl">
@@ -272,10 +273,10 @@ export default function EmployeeDashboard() {
                   <div className="text-sm text-[#378ADD] mt-2">Tests Completed</div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Recent Achievements */}
-            <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
+            {/* <div className="bg-white rounded-3xl shadow-lg border border-[#B5D4F4] p-8">
               <SectionTitle sub="Your latest accomplishments">Recent Achievements</SectionTitle>
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-2xl">
@@ -293,7 +294,7 @@ export default function EmployeeDashboard() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -385,7 +386,7 @@ export default function EmployeeDashboard() {
             </div>
 
             {/* Overall Summary */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+            {/* <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
               {[
                 // { label: "Total Countries", value: assignedSubscription.length.toString(), icon: "🌍" },
                 { label: "Active Plans", value: assignedSubscription.filter(s => s.status === "Active").length.toString(), icon: "✅" },
@@ -407,10 +408,10 @@ export default function EmployeeDashboard() {
                   <p className="font-bold text-[#042C53] text-lg">{item.value}</p>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Overall Progress */}
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <div className="flex justify-between text-sm text-[#378ADD] mb-3">
                 <span>Total Credit Usage</span>
                 <span className="font-semibold text-[#042C53]">
@@ -466,7 +467,7 @@ export default function EmployeeDashboard() {
                   })() : '⚠️ No credits remaining'}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
