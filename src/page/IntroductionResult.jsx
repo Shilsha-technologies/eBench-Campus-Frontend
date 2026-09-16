@@ -900,8 +900,6 @@ export default function CandidateResultDisplay() {
   }
 
   if (isError) {
-    console.log("error",error)
-    debugger;
     return (
       <div className="flex items-center h-full justify-center bg-gray-50 px-4">
         <div className="text-center">
